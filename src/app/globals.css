@@ -3,12 +3,19 @@
 
    COLOUR LAW. Ochre marks provenance and nothing else: an evidence marker, a
    citation, a source. It is never a heading colour, never a hover state, never
-   a decorative rule, never an eyebrow. If a colour is doing decoration, it is
-   on the neutral ink scale. Decorative ochre is a bug.
+   a decorative rule, never an eyebrow, and never a focus ring. If a colour is
+   doing decoration or system feedback, it is on the neutral ink scale.
+   Decorative ochre is a bug.
 
    The layout carries the same argument the site makes: the RAIL holds what can
-   be verified, the COLUMN holds what is claimed. Evidence never moves into the
-   column, and prose never moves into the rail.
+   be verified, the COLUMN holds what is claimed, and a hairline runs between
+   them. Evidence never moves into the column, and prose never moves into the
+   rail.
+
+   ONE VERTICAL LINE. The ledger rule, the timeline spine and the date gutter
+   all sit at exactly --rail-width from the start edge of the shell. Everything
+   in that gutter is mono, small, and set flush against the rule. Anything that
+   breaks that alignment is a bug too.
    ============================================================================ */
 
 :root {
@@ -24,9 +31,13 @@
   --ink-secondary: #5a5f63;
   --ink-ghost: #7c8286;
 
-  /* Provenance — evidence only */
-  --ochre: #a06e1c;
-  --ochre-dim: rgba(160, 110, 28, 0.14);
+  /* Provenance — evidence only.
+     Measured, not picked: the rail label is 11px, which is small text, so it
+     needs 4.5:1. The lighter ochre this started as reached only 3.67:1 on
+     paper. This one clears 4.66:1 on paper and 5.11:1 on the raised ground a
+     work row takes on hover. */
+  --ochre: #8a5f18;
+  --ochre-dim: rgba(138, 95, 24, 0.14);
 
   /* Structure */
   --hairline: #c6c6bf;
@@ -36,6 +47,11 @@
   --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-plex-serif), Georgia, serif;
   --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* The var() fallback is load-bearing. Only the Arabic layout defines
+     --font-plex-arabic, and a font-family list naming an undefined custom
+     property is thrown away whole — which would leave Arabic on the English
+     pages with no stack at all rather than a worse one. */
+  --font-arabic: var(--font-plex-arabic, "SF Arabic"), "Segoe UI", Tahoma, sans-serif;
 
   /* Space — 4px base */
   --space-1: 4px;
@@ -101,7 +117,7 @@ html[data-theme="dark"] {
 html {
   scroll-behavior: smooth;
   overflow-x: clip;
-  scroll-padding-top: var(--space-8);
+  scroll-padding-top: var(--space-7);
   -webkit-text-size-adjust: 100%;
 }
 
@@ -118,6 +134,8 @@ body {
 }
 
 img, svg, video { max-width: 100%; height: auto; display: block; }
+
+ul, ol { margin: 0; padding: 0; list-style: none; }
 
 /* ---------------------------------------------------------------- type --- */
 
@@ -162,6 +180,18 @@ a { color: inherit; }
 
 .voice em { font-style: italic; }
 
+/* An underline that darkens, rather than a colour change: nothing on this site
+   turns ochre for being hovered. */
+.link {
+  text-decoration: underline;
+  text-decoration-color: var(--hairline-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--micro) var(--ease);
+}
+
+.link:hover { text-decoration-color: var(--ink); }
+
 /* ----------------------------------------------------------- structure --- */
 
 .shell {
@@ -170,7 +200,30 @@ a { color: inherit; }
   padding-inline: var(--gutter);
 }
 
-.section { padding-block: var(--section-pad); }
+/* One-sided on purpose: adjacent sections each contributing a full pad
+   stack into a gap twice the size of the intended one. */
+.section { padding-block-start: var(--section-pad); }
+
+/* Section headings are set like the column headers of a ledger, not like
+   billboards. The only large type on the site is the thesis and the names of
+   the work — everything structural stays quiet, which is also what keeps the
+   page from looking like every other portfolio. */
+.section-head {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+  padding-block-end: var(--space-3);
+  border-block-end: 1px solid var(--hairline);
+  /* Matched to the work rows, which bleed their hover ground past the text.
+     Every horizontal rule on the page is then exactly the same width. */
+  margin-inline: calc(var(--space-4) * -1);
+  padding-inline: var(--space-4);
+  margin-block-end: var(--space-6);
+}
 
 .rule {
   border: 0;
@@ -178,7 +231,7 @@ a { color: inherit; }
   margin: 0;
 }
 
-/* The ledger: evidence rail + story column.
+/* The ledger: evidence rail + story column, divided by the rule.
    Rail is inline-start, so RTL flips it with no extra rules. */
 .ledger {
   display: grid;
@@ -187,7 +240,18 @@ a { color: inherit; }
   align-items: start;
 }
 
+/* Source order is claim-then-evidence, for the reading order. Screen order is
+   evidence-then-claim, for the layout. Explicit placement is what lets the two
+   disagree without either being wrong. */
+.rail { grid-column: 1; grid-row: 1; }
+.ledger-column,
+.hero-column { grid-column: 2; grid-row: 1; }
+
 .ledger-column { max-inline-size: var(--measure); }
+
+/* Content that has no evidence beside it still starts where the column starts,
+   so the gutter stays a gutter all the way down the page. */
+.offset { padding-inline-start: calc(var(--rail-width) + var(--rail-gap)); }
 
 .rail {
   font-family: var(--font-mono);
@@ -196,9 +260,11 @@ a { color: inherit; }
   letter-spacing: 0.005em;
   color: var(--ink-secondary);
   font-variant-numeric: tabular-nums;
-  padding-block-start: 0.55rem;
-  border-inline-start: 1px solid var(--hairline);
-  padding-inline-start: var(--space-4);
+  padding-block-start: 0.5rem;
+  /* Set flush against the rule that divides evidence from claim. */
+  text-align: end;
+  border-inline-end: 1px solid var(--hairline);
+  padding-inline-end: var(--space-4);
 }
 
 .rail-entry + .rail-entry { margin-block-start: var(--space-5); }
@@ -220,10 +286,15 @@ a { color: inherit; }
    expressed in one dimension instead of two. */
 @media (max-width: 900px) {
   .ledger { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+  .offset { padding-inline-start: 0; }
+  .rail,
+  .ledger-column,
+  .hero-column { grid-column: 1; grid-row: auto; }
   .rail {
-    border-inline-start: 0;
+    text-align: start;
+    border-inline-end: 0;
     border-block-start: 1px solid var(--hairline);
-    padding-inline-start: 0;
+    padding-inline-end: 0;
     padding-block-start: var(--space-4);
     display: flex;
     flex-wrap: wrap;
@@ -231,6 +302,319 @@ a { color: inherit; }
   }
   .rail-entry + .rail-entry { margin-block-start: 0; }
 }
+
+/* -------------------------------------------------------------- chrome --- */
+
+.header-band { border-block-end: 1px solid var(--hairline); }
+
+.site-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-5);
+  padding-block: var(--space-5);
+}
+
+.wordmark {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-decoration: none;
+}
+
+.header-nav {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-5);
+  font-size: 0.875rem;
+}
+
+.header-link,
+.lang-switch {
+  color: var(--ink-secondary);
+  text-decoration: none;
+  transition: color var(--micro) var(--ease);
+}
+
+.header-link:hover,
+.lang-switch:hover { color: var(--ink); }
+
+/* The one control that changes what the whole page is, so it is boxed to read
+   as a control rather than another link. */
+.lang-switch {
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.lang-switch:hover { border-color: var(--hairline-strong); }
+
+/* The control is always labelled in the language it switches TO, so on the
+   English page this label is Arabic — which needs the extra step to match the
+   optical size of the Latin around it. */
+.lang-switch:lang(ar) { font-size: 0.9375rem; }
+
+.footer-band {
+  border-block-start: 1px solid var(--hairline);
+  margin-block-start: var(--section-pad);
+}
+
+.site-footer {
+  padding-block: var(--space-6) var(--space-8);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.site-footer .lang-switch { flex: 0 0 auto; }
+
+.footer-legal {
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: var(--ink-secondary);
+  max-inline-size: 52ch;
+}
+
+/* ----------------------------------------------------------------- hero --- */
+
+.hero { padding-block-start: var(--space-8); }
+
+/* Align the first source with the eyebrow it sits beside, not with the
+   headline below it. */
+.hero .rail { padding-block-start: 0.2rem; }
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-secondary);
+  margin-block-end: var(--space-5);
+}
+
+/* A seven-line statement, not a three-word headline — so the weight comes down
+   and the measure is set in `em`, which holds the characters-per-line constant
+   as the type scales. The claims carry the extra weight instead. */
+.hero-statement {
+  font-size: clamp(1.5rem, 3vw, 2.35rem);
+  font-weight: 500;
+  line-height: 1.26;
+  letter-spacing: -0.018em;
+  max-inline-size: 17em;
+  text-wrap: pretty;
+}
+
+/* An annotated claim: heavier, and ruled underneath in the provenance colour,
+   because every one of these has a line in the rail beside it. It is a
+   citation mark, not a highlighter. */
+.mark {
+  font-style: normal;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--ochre);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.16em;
+  text-decoration-skip-ink: none;
+}
+
+/* ------------------------------------------------------------- timeline --- */
+
+/* The spine lands on the same vertical line as the ledger rule above it. */
+.timeline-entry {
+  position: relative;
+  padding-inline-start: var(--rail-width);
+}
+
+.timeline-when {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0.35rem;
+  inline-size: var(--rail-width);
+  padding-inline-end: var(--space-4);
+  text-align: end;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-secondary);
+}
+
+.timeline-body {
+  position: relative;
+  border-inline-start: 1px solid var(--hairline);
+  padding-inline-start: var(--rail-gap);
+  padding-block-end: var(--space-7);
+  max-inline-size: var(--measure);
+}
+
+.timeline-body::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.4rem;
+  inset-inline-start: -5px;
+  inline-size: 9px;
+  block-size: 9px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink-secondary);
+  background: var(--ink-secondary);
+}
+
+/* The only distinction the timeline draws, because it is the only one that is
+   true: this has happened, that has not. The dashed segment runs off the end
+   of the list rather than stopping at it. */
+.is-ahead .timeline-body {
+  border-inline-start-style: dashed;
+  padding-block-end: var(--space-8);
+}
+
+.is-ahead .timeline-body::before { background: var(--paper); }
+
+.timeline-what {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-block-end: var(--space-2);
+}
+
+.timeline-detail { color: var(--ink-secondary); }
+
+@media (max-width: 900px) {
+  .timeline-entry { padding-inline-start: 0; }
+  .timeline-when {
+    position: static;
+    display: block;
+    inline-size: auto;
+    padding-inline-end: 0;
+    text-align: start;
+    margin-block-end: var(--space-1);
+  }
+  .timeline-body {
+    border-inline-start: 0;
+    padding-inline-start: 0;
+    padding-block-end: var(--space-6);
+  }
+  .timeline-body::before { display: none; }
+  .timeline-entry + .timeline-entry {
+    border-block-start: 1px solid var(--hairline);
+    padding-block-start: var(--space-5);
+  }
+  .is-ahead .timeline-body { padding-block-end: 0; }
+}
+
+/* ----------------------------------------------------------------- work --- */
+
+/* A ledger lists entries in rows. Cards in a grid would be the default answer
+   and would say nothing; a ruled index says "these are the four things". */
+.work-row {
+  display: grid;
+  grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  gap: var(--rail-gap);
+  align-items: start;
+  text-decoration: none;
+  border-block-start: 1px solid var(--hairline);
+  padding-block: var(--space-6);
+  /* Bleed the hover ground past the text so it reads as a row, not a box. */
+  margin-inline: calc(var(--space-4) * -1);
+  padding-inline: var(--space-4);
+  transition: background-color var(--micro) var(--ease);
+}
+
+/* The section head's rule opens the list, so the first row does not draw its
+   own — two parallel hairlines a row-gap apart read as a bug. */
+.work-row:first-child { border-block-start: 0; padding-block-start: 0; }
+
+.work-row:last-child { border-block-end: 1px solid var(--hairline); }
+
+.work-row:hover { background: var(--paper-raised); }
+
+.work-tech { grid-column: 1; grid-row: 1; }
+.work-main { grid-column: 2; grid-row: 1; }
+
+.work-tech {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--ink-secondary);
+  text-align: end;
+  padding-inline-end: var(--space-4);
+  /* Lands on the title's first baseline, not the top of its line box. */
+  padding-block-start: 0.85rem;
+}
+
+.work-main { max-inline-size: var(--measure); }
+
+.work-title {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  margin-block-end: var(--space-3);
+}
+
+.work-arrow {
+  display: inline-block;
+  margin-inline-start: var(--space-3);
+  font-size: 0.55em;
+  color: var(--ink-secondary);
+  transform: translateX(0);
+  transition: transform var(--micro) var(--ease), color var(--micro) var(--ease);
+}
+
+.work-row:hover .work-arrow {
+  transform: translateX(5px);
+  color: var(--ink);
+}
+
+.work-line { margin-block-end: var(--space-2); }
+
+.work-role { font-size: 0.9375rem; color: var(--ink-secondary); }
+
+@media (max-width: 900px) {
+  .work-row { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
+  .work-tech,
+  .work-main { grid-column: 1; grid-row: auto; }
+  .work-tech {
+    text-align: start;
+    padding-inline-end: 0;
+    padding-block-start: 0;
+  }
+}
+
+/* -------------------------------------------------------------- contact --- */
+
+.contact-body { max-inline-size: 54ch; }
+
+.contact-email {
+  display: inline-block;
+  margin-block-start: var(--space-5);
+  font-size: clamp(1.125rem, 2.2vw, 1.5rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  text-decoration: underline;
+  text-decoration-color: var(--hairline-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color var(--micro) var(--ease);
+}
+
+.contact-email:hover { text-decoration-color: var(--ink); }
+
+.contact-links {
+  display: flex;
+  gap: var(--space-5);
+  margin-block-start: var(--space-5);
+  font-size: 0.9375rem;
+}
+
+/* ------------------------------------------------------------- 404 page --- */
+
+.notfound { padding-block: var(--space-9) var(--space-9); max-inline-size: 44rem; }
+.notfound-code { display: inline-block; border-block-end: 0; margin-block-end: var(--space-5); }
+.notfound-title { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 500; letter-spacing: -0.02em; }
+.notfound-body { margin-block-start: var(--space-4); color: var(--ink-secondary); max-inline-size: 52ch; }
+.notfound-links { margin-block-start: var(--space-6); }
 
 /* --------------------------------------------------------------- a11y --- */
 
@@ -251,8 +635,11 @@ a { color: inherit; }
 
 .skip-link:focus-visible { transform: translate(-50%, var(--space-3)); }
 
+/* Ink, not ochre. Two reasons: the colour law reserves ochre for provenance,
+   and #16181a on #eaeae5 clears WCAG non-text contrast by a wide margin where
+   the ochre only just scraped it. */
 :focus-visible {
-  outline: 2px solid var(--ochre);
+  outline: 2px solid var(--ink);
   outline-offset: 3px;
   border-radius: 3px;
 }
@@ -271,19 +658,35 @@ a { color: inherit; }
 /* Tracking breaks joined Arabic script; italics do not exist in it. The rest
    of the sheet uses logical properties, so this block stays short. */
 /* Latin face first in the stack: Latin glyphs and figures stay in the brand
-   face, Arabic falls through to Plex Sans Arabic. */
-html[lang="ar"] body {
-  font-family: var(--font-plex-sans), var(--font-plex-arabic), ui-sans-serif, system-ui, sans-serif;
-  line-height: 1.8;
-}
+   face, Arabic falls through to Plex Sans Arabic.
+   Keyed on :lang rather than on the document, so the one Arabic word in the
+   English header — the control that switches to it — is set in the same face
+   as the page it leads to. The English pages do not load the Arabic subset for
+   it; the stack above degrades to a good system face instead. */
+:lang(ar) { font-family: var(--font-plex-sans), var(--font-arabic); }
+html[lang="ar"] body { line-height: 1.8; }
 html[lang="ar"] h1,
 html[lang="ar"] h2,
 html[lang="ar"] h3 { letter-spacing: 0; }
 [dir="rtl"] .rail-label { letter-spacing: 0; text-transform: none; }
+[dir="rtl"] .section-head { letter-spacing: 0; text-transform: none; font-size: 0.75rem; }
+[dir="rtl"] .hero-eyebrow { letter-spacing: 0; }
+[dir="rtl"] .hero-statement,
+[dir="rtl"] .work-title,
+[dir="rtl"] .wordmark,
+[dir="rtl"] .contact-email { letter-spacing: 0; }
+[dir="rtl"] .mark { text-underline-offset: 0.3em; }
 [dir="rtl"] .voice { font-family: var(--font-sans); font-style: normal; }
 [dir="rtl"] .voice em { font-style: normal; font-weight: 500; }
 /* The same idea needs more runway set in Arabic. */
-[dir="rtl"] .ledger-column { max-inline-size: 58ch; }
+[dir="rtl"] .ledger-column,
+[dir="rtl"] .work-main,
+[dir="rtl"] .timeline-body { max-inline-size: 58ch; }
+[dir="rtl"] .hero-statement { max-inline-size: 19em; }
+/* A directional glyph is mirrored, never re-pointed by swapping the character:
+   the translate below then reads as "forward" in both directions. */
+[dir="rtl"] .work-arrow { transform: scaleX(-1); }
+[dir="rtl"] .work-row:hover .work-arrow { transform: scaleX(-1) translateX(5px); }
 
 /* Latin runs inside Arabic prose — every figure in the rail is one — are
    isolated so punctuation cannot scramble across the direction boundary. */
@@ -291,25 +694,20 @@ bdi { unicode-bidi: isolate; }
 
 /* -------------------------------------------------------------- motion --- */
 
-/* Scroll-driven, no observers, and deliberately NO opacity:0 default — a
-   browser without support shows the content rather than hiding it forever. */
-@keyframes reveal-in {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: none; }
-}
-
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .reveal {
-      animation: reveal-in linear both;
-      animation-timeline: view();
-      animation-range: entry 4% cover 20%;
-    }
-    .reveal-delay-1 { animation-range: entry 10% cover 26%; }
-    .reveal-delay-2 { animation-range: entry 16% cover 32%; }
-  }
-}
-
+/* There is no scroll-reveal here, and its absence is the decision.
+ *
+ * A staggered fade-up on every row is the most-copied effect on the web, it
+ * says nothing about this page in particular, and `animation-fill-mode: both`
+ * on a view() timeline holds content at opacity 0 until its range is reached —
+ * so a print, a preview, a full-page screenshot, or a document too short to
+ * scroll renders a page of blank space. A site whose argument is that it will
+ * not state what it cannot prove should not hide its evidence behind a scroll
+ * position.
+ *
+ * What motion remains is feedback on something the reader is touching: a row
+ * ground, an arrow, an underline. All of it is a transition, so the switch
+ * below turns all of it off.
+ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {

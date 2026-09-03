@@ -1,5 +1,6 @@
 import type { LedgerBlock, Locale, RailEntry } from "@/data/types";
 import { railValue } from "@/lib/evidence";
+import { bindSeparators } from "@/lib/typography";
 
 /**
  * The site's one structural idea: what can be verified sits in the rail, what
@@ -20,7 +21,7 @@ export function Rail({ entries, locale }: { entries: RailEntry[]; locale: Locale
     <aside className="rail" aria-label={locale === "ar" ? "المصادر" : "Sources"}>
       {resolved.map(({ label, value }) => (
         <div className="rail-entry" key={label}>
-          <span className="rail-label">{label}</span>
+          <span className="rail-label">{bindSeparators(label)}</span>
           {/* Latin figures inside Arabic prose: isolated so digits, dots and
               en-dashes cannot reorder across the direction boundary. */}
           <span className="rail-value">
@@ -34,8 +35,11 @@ export function Rail({ entries, locale }: { entries: RailEntry[]; locale: Locale
 
 export function Ledger({ block, locale }: { block: LedgerBlock; locale: Locale }) {
   return (
+    /* Column before rail in the DOM, rail before column on screen: grid
+       placement puts each where it belongs. A screen reader should hear the
+       claim and then its sources, not four measurements and then the sentence
+       they were supporting. */
     <div className="ledger">
-      <Rail entries={block.rail} locale={locale} />
       <div className={block.voice ? "ledger-column voice" : "ledger-column"}>
         {block.body.map((paragraph) => (
           <p className="ledger-para" key={paragraph.slice(0, 48)}>
@@ -43,6 +47,7 @@ export function Ledger({ block, locale }: { block: LedgerBlock; locale: Locale }
           </p>
         ))}
       </div>
+      <Rail entries={block.rail} locale={locale} />
     </div>
   );
 }

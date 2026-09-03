@@ -62,15 +62,33 @@ export interface NavCopy {
   skipToContent: string;
 }
 
+/**
+ * The footer carries the legal lines and the language control, and no profile
+ * links: the contact section sits directly above it and already offers them,
+ * so a second copy a hundred pixels lower reads as a duplication bug.
+ */
 export interface FooterCopy {
   /** One line per inner array: bidirectional text can never bleed across
       sentences. Latin runs inside an Arabic line are flagged `ltr` and render
       isolated in a <bdi>. */
   legal: FooterSegment[][];
-  links: { label: string; href: string; external?: boolean }[];
 }
 
 export type FooterSegment = string | { text: string; href?: string; ltr?: boolean };
+
+/**
+ * An off-site destination named by key, never by URL.
+ *
+ * Copy supplies the label; `src/data/site.ts` supplies the address. A link can
+ * therefore not be correct in English and stale in Arabic, which is the same
+ * failure the rest of the site is built to prevent.
+ */
+export type ExternalKey = "github" | "linkedin" | "email";
+
+export interface ExternalLink {
+  label: string;
+  to: ExternalKey;
+}
 
 /* -------------------------------------------------------------------- home --- */
 
@@ -85,21 +103,30 @@ export interface HeroCopy {
   rail: RailEntry[];
 }
 
-/** One stop on the timeline. `kind` picks the marker; order carries meaning
-    here, so this really is a sequence and not decorative numbering. */
+/**
+ * One stop on the timeline. Order carries meaning here, so this really is a
+ * sequence and not decorative numbering.
+ *
+ * The only flag is `ahead`, because it is the only distinction the page can
+ * honestly draw: everything else has happened, and that one has not. A richer
+ * taxonomy of markers would be decoration wearing the costume of information.
+ */
 export interface TimelineEntry {
   when: string;
   what: string;
   detail?: string;
-  kind: "start" | "move" | "grind" | "school" | "ship" | "ahead";
+  ahead?: boolean;
 }
 
 export interface WorkCard {
   slug: ProjectSlug;
-  eyebrow: string;
+  /** Technologies, set in the rail. Not a sentence. */
+  tech: string;
   title: string;
+  /** What the project is, in one sentence. */
   line: string;
-  stack: string;
+  /** What he did on it, and where it stands. */
+  role: string;
 }
 
 export interface HomeCopy {
@@ -108,7 +135,7 @@ export interface HomeCopy {
   hero: HeroCopy;
   timeline: { heading: string; entries: TimelineEntry[] };
   work: { heading: string; cards: WorkCard[] };
-  contact: { heading: string; body: string; email: string; links: { label: string; href: string }[] };
+  contact: { heading: string; body: string; links: ExternalLink[] };
   footer: FooterCopy;
   meta: { title: string; description: string };
 }

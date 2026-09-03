@@ -6,8 +6,7 @@ export const SITE_METADATA: SiteMetadata = {
   url: "https://morad.dev",
   name: "Mohamed Morad",
   role: "Backend engineer",
-  // TODO(confirm with Mohamed): which address goes on a public page.
-  email: "REPLACE_BEFORE_LAUNCH@example.com",
+  email: "momurad.business@gmail.com",
   github: "https://github.com/mo7morad",
   linkedin: "https://www.linkedin.com/in/momorad/",
   keywords: [
