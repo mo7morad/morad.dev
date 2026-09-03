@@ -12,4 +12,6 @@ import type { ProjectSlug } from "./types";
  */
 export const PROJECT_LINK: Partial<Record<ProjectSlug, string>> = {
   trippe: "https://apps.apple.com/app/id6766072256",
+  roadmap: "https://github.com/mo7morad/BackEnd-Fundamentals-RoadMap",
+  dvld: "https://github.com/mo7morad/BackEnd-Fundamentals-RoadMap/tree/main/Fundamentals/Coding/19%20-%20Full%20Real%20Project/DVLD-Project",
 };

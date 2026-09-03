@@ -25,6 +25,16 @@ function read(repo: EvidenceKey, field: EvidenceField): string | null {
       return r.testCases.toLocaleString("en-US");
     case "authorCount":
       return String(r.authors.filter((a) => !a.bot).length);
+    case "certificates":
+      return r.artifacts ? String(r.artifacts.certificatesBackend) : null;
+    case "dvldPresentationLines":
+      return r.artifacts ? r.artifacts.dvldPresentationLines.toLocaleString("en-US") : null;
+    case "dvldBusinessLines":
+      return r.artifacts ? r.artifacts.dvldBusinessLines.toLocaleString("en-US") : null;
+    case "dvldDataAccessLines":
+      return r.artifacts ? r.artifacts.dvldDataAccessLines.toLocaleString("en-US") : null;
+    case "dvldForms":
+      return r.artifacts ? String(r.artifacts.dvldForms) : null;
     default:
       return null;
   }

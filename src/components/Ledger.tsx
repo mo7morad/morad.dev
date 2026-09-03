@@ -1,3 +1,4 @@
+import { CommitHistogram } from "./CommitHistogram";
 import { Citation, Prose } from "./Prose";
 import { railValue } from "@/lib/evidence";
 import { bindSeparators } from "@/lib/typography";
@@ -80,6 +81,43 @@ export function Ledger({ block, locale }: { block: LedgerBlock; locale: Locale }
             </span>
           </figcaption>
         </figure>
+      );
+
+    case "chart":
+      return (
+        <div className="ledger">
+          <div className="ledger-column chart-column">
+            <CommitHistogram
+              source={block.source}
+              caption={block.caption}
+              tableLabel={block.tableLabel}
+              altText={block.altText}
+              locale={locale}
+            />
+          </div>
+          <Rail entries={block.rail} locale={locale} />
+        </div>
+      );
+
+    case "video":
+      return (
+        <div className="ledger">
+          <figure className="ledger-column video-figure">
+            <div className="video-frame">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${block.youtubeId}`}
+                title={block.title}
+                loading="lazy"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <figcaption className="table-caption">
+              <Prose text={block.caption} locale={locale} />
+            </figcaption>
+          </figure>
+          <Rail entries={block.rail} locale={locale} />
+        </div>
       );
 
     case "table":

@@ -34,7 +34,7 @@ const REPOS = [
   { id: "roadmap", label: "Backend roadmap", kind: "csharp", paths: [
     "/Users/mohamedmorad/Developer/Extras/BackEnd-Fundamentals-RoadMap",
     "/Users/mohamedmorad/Developer/BackEnd-Fundamentals-RoadMap",
-  ] },
+  ], artifacts: "roadmap" },
   { id: "wasteSort", label: "ECOdyssey", kind: "swift", paths: [
     "/Users/mohamedmorad/Developer/ECOdyssey/waste-sort",
   ] },
@@ -271,6 +271,78 @@ function defaultRef(repoPath) {
   return "HEAD";
 }
 
+/* Some of what the roadmap page states is a property of the files on disk, not
+   of the git history: how many certificates were actually earned, and how the
+   capstone's three tiers actually divide.
+ *
+ * The repository's own README disagrees with itself on the first one - a badge
+ * reading "25/25" above a sentence saying twenty-six - which is exactly why
+ * this is counted rather than quoted. The certificates are the checkable
+ * artefact: twenty-five numbered PDFs, plus one more for the front-end course
+ * that the badge does not count. */
+function countPdfs(dir) {
+  try {
+    return readdirSync(dir).filter((f) => f.toLowerCase().endsWith(".pdf")).length;
+  } catch {
+    return 0;
+  }
+}
+
+function sourceLines(dir) {
+  let lines = 0;
+  let designers = 0;
+  const visit = (d) => {
+    let entries;
+    try {
+      entries = readdirSync(d, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const e of entries) {
+      const full = join(d, e.name);
+      if (e.isDirectory()) {
+        if (!SKIP_DIRS.has(e.name)) visit(full);
+      } else if (e.name.endsWith(".Designer.cs")) {
+        // Counted, not read: a designer file is a form, and the number of
+        // forms is the interesting figure. Its lines are not authored.
+        designers += 1;
+      } else if (extname(e.name) === ".cs") {
+        try {
+          lines += countLines(readFileSync(full, "utf8"));
+        } catch {
+          /* unreadable file contributes nothing rather than crashing */
+        }
+      }
+    }
+  };
+  visit(dir);
+  return { lines, designers };
+}
+
+const ARTIFACT_MEASURES = {
+  roadmap(repoPath) {
+    const dvld = join(
+      repoPath, "Fundamentals", "Coding", "19 - Full Real Project", "DVLD-Project",
+    );
+    if (!existsSync(dvld)) return null;
+    const presentation = sourceLines(join(dvld, "DVLD"));
+    const business = sourceLines(join(dvld, "DVLD_Buisness"));
+    const dataAccess = sourceLines(join(dvld, "DVLD_DataAccess"));
+    return {
+      // Split, because the two are different claims. The backend track is the
+      // twenty-one-month story the site tells; the front-end certificate is
+      // one course alongside it, and lumping them makes the headline figure
+      // quietly larger than the thing it names.
+      certificatesBackend: countPdfs(join(repoPath, "Fundamentals", "Certificates")),
+      certificatesFrontend: countPdfs(join(repoPath, "Front-End", "certificates")),
+      dvldPresentationLines: presentation.lines,
+      dvldBusinessLines: business.lines,
+      dvldDataAccessLines: dataAccess.lines,
+      dvldForms: presentation.designers,
+    };
+  },
+};
+
 function measure(repo) {
   const repoPath = repo.paths.find((candidate) => existsSync(join(candidate, ".git")));
   if (!repoPath) return null;
@@ -307,6 +379,7 @@ function measure(repo) {
     authors: mergeAuthors(authorRows),
     commitsByMonth: zeroFillMonths(monthCounts),
     ...walk(repoPath, repo.kind),
+    artifacts: repo.artifacts ? ARTIFACT_MEASURES[repo.artifacts](repoPath) : null,
   };
 }
 
@@ -354,6 +427,18 @@ function serialise(results, generatedAt) {
   L.push("  readonly testFiles: number;");
   L.push("  readonly testLines: number;");
   L.push("  readonly testCases: number;");
+  L.push("  /** Counted from the files, not the git history. Null when the repo");
+  L.push("      has none of these to count. */");
+  L.push("  readonly artifacts: RepoArtifacts | null;");
+  L.push("}");
+  L.push("");
+  L.push("export interface RepoArtifacts {");
+  L.push("  readonly certificatesBackend: number;");
+  L.push("  readonly certificatesFrontend: number;");
+  L.push("  readonly dvldPresentationLines: number;");
+  L.push("  readonly dvldBusinessLines: number;");
+  L.push("  readonly dvldDataAccessLines: number;");
+  L.push("  readonly dvldForms: number;");
   L.push("}");
   L.push("");
   L.push("export const EVIDENCE = {");
@@ -375,6 +460,13 @@ function serialise(results, generatedAt) {
     L.push(`    testFiles: ${r.testFiles},`);
     L.push(`    testLines: ${r.testLines},`);
     L.push(`    testCases: ${r.testCases},`);
+    if (r.artifacts) {
+      L.push("    artifacts: {");
+      for (const [k, v] of Object.entries(r.artifacts)) L.push(`      ${k}: ${v},`);
+      L.push("    },");
+    } else {
+      L.push("    artifacts: null,");
+    }
     L.push("  },");
   }
   L.push("} as const satisfies Record<string, RepoEvidence>;");

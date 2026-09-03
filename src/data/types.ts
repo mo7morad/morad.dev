@@ -25,7 +25,15 @@ export type EvidenceField =
   | "dateRange"
   | "productionLines"
   | "testCases"
-  | "authorCount";
+  | "authorCount"
+  /* Counted from the files rather than the git history, and present on only
+     one repository. A rail entry asking any repo without them resolves to
+     null and is dropped, which is the same contract as everything else. */
+  | "certificates"
+  | "dvldPresentationLines"
+  | "dvldBusinessLines"
+  | "dvldDataAccessLines"
+  | "dvldForms";
 
 /**
  * One line of the evidence rail: a source, and what it says.
@@ -48,7 +56,7 @@ export type RailEntry =
  * quotation is checked as one. The three kinds are the only three things this
  * site says: it argues, it quotes the work, or it shows a measurement.
  */
-export type LedgerBlock = ProseBlock | QuoteBlock | TableBlock;
+export type LedgerBlock = ProseBlock | QuoteBlock | TableBlock | ChartBlock | VideoBlock;
 
 export interface ProseBlock {
   kind: "prose";
@@ -90,6 +98,40 @@ export interface QuoteBlock {
  * states being compared. Every row must be the same length as `head`, which the
  * component asserts rather than papering over.
  */
+/**
+ * A chart drawn from the generated evidence rather than from copy.
+ *
+ * The block names which repository to plot; it carries no numbers of its own,
+ * for the same reason the rail's derived entries carry none.
+ */
+export interface ChartBlock {
+  kind: "chart";
+  source: EvidenceKey;
+  caption: string;
+  /** Label on the disclosure holding the numbers behind the picture. */
+  tableLabel: string;
+  /** One sentence describing the shape, for anyone not seeing it. */
+  altText: string;
+  rail: RailEntry[];
+}
+
+/**
+ * An embedded walkthrough.
+ *
+ * Served from youtube-nocookie.com and lazily loaded: it is one third-party
+ * frame on one page, chosen deliberately because sending a reader away to
+ * watch the most persuasive thing here loses most of them. Everywhere else on
+ * this site, third-party anything is absent.
+ */
+export interface VideoBlock {
+  kind: "video";
+  youtubeId: string;
+  /** Names the frame for assistive technology. Not decoration. */
+  title: string;
+  caption: string;
+  rail: RailEntry[];
+}
+
 export interface TableBlock {
   kind: "table";
   caption: string;

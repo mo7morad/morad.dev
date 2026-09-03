@@ -1,25 +1,25 @@
 import { CaseStudyView } from "@/components/CaseStudyView";
 import { HOME_EN } from "@/data/content.en";
-import { TRIPPE_EN } from "@/data/case.trippe.en";
-import { TRIPPE_AR } from "@/data/case.trippe.ar";
+import { DVLD_EN } from "@/data/case.dvld.en";
+import { DVLD_AR } from "@/data/case.dvld.ar";
 import { caseMetadata, casePath } from "@/lib/casePage";
 import { assertParity } from "@/lib/parity";
 
 /* Runs at build time. A section or a measurement present in one language and
    missing from the other fails the build rather than shipping. */
-assertParity(TRIPPE_EN, TRIPPE_AR);
+assertParity(DVLD_EN, DVLD_AR);
 
-export const metadata = caseMetadata(TRIPPE_EN, "en");
+export const metadata = caseMetadata(DVLD_EN, "en");
 
-export default function TrippeCaseStudy() {
+export default function DvldCaseStudy() {
   return (
     <CaseStudyView
-      copy={TRIPPE_EN}
+      copy={DVLD_EN}
       nav={HOME_EN.nav}
       footer={HOME_EN.footer}
       locale="en"
       homeHref="/"
-      altHref={casePath("trippe", "ar")}
+      altHref={casePath("dvld", "ar")}
     />
   );
 }

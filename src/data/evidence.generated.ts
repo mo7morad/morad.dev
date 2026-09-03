@@ -40,6 +40,18 @@ export interface RepoEvidence {
   readonly testFiles: number;
   readonly testLines: number;
   readonly testCases: number;
+  /** Counted from the files, not the git history. Null when the repo
+      has none of these to count. */
+  readonly artifacts: RepoArtifacts | null;
+}
+
+export interface RepoArtifacts {
+  readonly certificatesBackend: number;
+  readonly certificatesFrontend: number;
+  readonly dvldPresentationLines: number;
+  readonly dvldBusinessLines: number;
+  readonly dvldDataAccessLines: number;
+  readonly dvldForms: number;
 }
 
 export const EVIDENCE = {
@@ -64,6 +76,7 @@ export const EVIDENCE = {
     testFiles: 123,
     testLines: 21270,
     testCases: 989,
+    artifacts: null,
   },
   trippeIOS: {
     label: "Trippe iOS",
@@ -84,6 +97,7 @@ export const EVIDENCE = {
     testFiles: 99,
     testLines: 15409,
     testCases: 768,
+    artifacts: null,
   },
   roadmap: {
     label: "Backend roadmap",
@@ -124,6 +138,14 @@ export const EVIDENCE = {
     testFiles: 14,
     testLines: 2982,
     testCases: 71,
+    artifacts: {
+      certificatesBackend: 25,
+      certificatesFrontend: 1,
+      dvldPresentationLines: 8384,
+      dvldBusinessLines: 2071,
+      dvldDataAccessLines: 3005,
+      dvldForms: 45,
+    },
   },
   wasteSort: {
     label: "ECOdyssey",
@@ -145,6 +167,7 @@ export const EVIDENCE = {
     testFiles: 46,
     testLines: 8093,
     testCases: 446,
+    artifacts: null,
   },
   academy: {
     label: "Apple Developer Academy",
@@ -172,6 +195,7 @@ export const EVIDENCE = {
     testFiles: 0,
     testLines: 0,
     testCases: 0,
+    artifacts: null,
   },
 } as const satisfies Record<string, RepoEvidence>;
 

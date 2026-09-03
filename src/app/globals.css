@@ -757,6 +757,86 @@ code {
   color: var(--ink-secondary);
 }
 
+/* --------------------------------------------------------------- chart --- */
+
+.chart-figure { margin: 0; }
+
+/* The time axis reads left-to-right in both languages. Mirroring it in Arabic
+   is defensible for a purely Arabic chart, but this one is labelled in Latin
+   numerals — and a reader who reads "2024 2025 2026" left to right while the
+   bars run the other way has been told two different stories about the same
+   picture. */
+.histogram {
+  inline-size: 100%;
+  block-size: auto;
+  direction: ltr;
+  overflow: visible;
+}
+
+.histogram-bar path {
+  fill: var(--ink-secondary);
+  transition: fill var(--micro) var(--ease);
+}
+
+.histogram-bar:hover path { fill: var(--ink); }
+
+.histogram-axis { stroke: var(--hairline); stroke-width: 1; }
+
+.histogram-tick {
+  fill: var(--ink-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.histogram-peak {
+  fill: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* The picture shows the shape; this shows the numbers. Native disclosure, so
+   it costs no JavaScript and prints open if the reader opened it. */
+.chart-data { margin-block-start: var(--space-5); }
+
+.chart-data summary {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+  cursor: pointer;
+  padding-block: var(--space-2);
+}
+
+.chart-data summary:hover { color: var(--ink); }
+
+.chart-data[open] summary { margin-block-end: var(--space-3); }
+
+.chart-data .measure-table { font-size: 0.875rem; }
+
+/* --------------------------------------------------------------- video --- */
+
+.video-figure { margin: 0; }
+
+/* The box reserves its own space, so the lazy frame cannot shift the page when
+   it finally loads. */
+.video-frame {
+  aspect-ratio: 16 / 9;
+  inline-size: 100%;
+  background: var(--paper-sunk);
+  border: 1px solid var(--hairline);
+  overflow: hidden;
+}
+
+.video-frame iframe {
+  inline-size: 100%;
+  block-size: 100%;
+  border: 0;
+  display: block;
+}
+
 /* ------------------------------------------------------------- 404 page --- */
 
 .notfound { padding-block: var(--space-9) var(--space-9); max-inline-size: 44rem; }
@@ -828,6 +908,7 @@ html[lang="ar"] h3 { letter-spacing: 0; }
 [dir="rtl"] .case-title,
 [dir="rtl"] .case-thesis { letter-spacing: 0; }
 [dir="rtl"] .measure-table thead th { letter-spacing: 0; text-transform: none; }
+[dir="rtl"] .chart-data summary { letter-spacing: 0; text-transform: none; font-size: 0.75rem; }
 [dir="rtl"] .voice { font-family: var(--font-sans); font-style: normal; }
 [dir="rtl"] .voice em { font-style: normal; font-weight: 500; }
 /* The same idea needs more runway set in Arabic. */
