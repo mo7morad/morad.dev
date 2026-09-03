@@ -1,0 +1,320 @@
+/* ============================================================================
+   morad.dev — the provenance ledger
+
+   COLOUR LAW. Ochre marks provenance and nothing else: an evidence marker, a
+   citation, a source. It is never a heading colour, never a hover state, never
+   a decorative rule, never an eyebrow. If a colour is doing decoration, it is
+   on the neutral ink scale. Decorative ochre is a bug.
+
+   The layout carries the same argument the site makes: the RAIL holds what can
+   be verified, the COLUMN holds what is claimed. Evidence never moves into the
+   column, and prose never moves into the rail.
+   ============================================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* Ground */
+  --paper: #eaeae5;
+  --paper-raised: #f5f4f0;
+  --paper-sunk: #e2e2dc;
+
+  /* Ink */
+  --ink: #16181a;
+  --ink-secondary: #5a5f63;
+  --ink-ghost: #7c8286;
+
+  /* Provenance — evidence only */
+  --ochre: #a06e1c;
+  --ochre-dim: rgba(160, 110, 28, 0.14);
+
+  /* Structure */
+  --hairline: #c6c6bf;
+  --hairline-strong: #adada5;
+
+  /* Type */
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-plex-serif), Georgia, serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Space — 4px base */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+  --space-9: 112px;
+
+  /* Layout */
+  --rail-width: 13rem;
+  --rail-gap: clamp(24px, 4vw, 56px);
+  --measure: 64ch;
+  --shell-max: 68rem;
+  --gutter: clamp(20px, 5vw, 56px);
+  --section-pad: clamp(56px, 7vw, 104px);
+
+  /* Motion */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --micro: 180ms;
+}
+
+:root[data-theme="dark"],
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #14171a;
+  --paper-raised: #1c2024;
+  --paper-sunk: #101315;
+  --ink: #e8e6e0;
+  --ink-secondary: #9aa0a4;
+  --ink-ghost: #7a8084;
+  --ochre: #d9a441;
+  --ochre-dim: rgba(217, 164, 65, 0.16);
+  --hairline: #2a2f34;
+  --hairline-strong: #3b4248;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #14171a;
+    --paper-raised: #1c2024;
+    --paper-sunk: #101315;
+    --ink: #e8e6e0;
+    --ink-secondary: #9aa0a4;
+    --ink-ghost: #7a8084;
+    --ochre: #d9a441;
+    --ochre-dim: rgba(217, 164, 65, 0.16);
+    --hairline: #2a2f34;
+    --hairline-strong: #3b4248;
+  }
+}
+
+/* --------------------------------------------------------------- reset --- */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+  scroll-padding-top: var(--space-8);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img, svg, video { max-width: 100%; height: auto; display: block; }
+
+/* ---------------------------------------------------------------- type --- */
+
+h1, h2, h3, h4 {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2.35rem, 6vw, 4.1rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+  line-height: 1.14;
+  letter-spacing: -0.025em;
+}
+
+h3 {
+  font-size: 1.0625rem;
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+}
+
+p { margin: 0; text-wrap: pretty; }
+
+a { color: inherit; }
+
+/* The serif is the personal register: it appears only where the author is
+   speaking about himself, never on engineering prose. That is the whole reason
+   a second family exists here. */
+.voice {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.72;
+  color: var(--ink);
+}
+
+.voice em { font-style: italic; }
+
+/* ----------------------------------------------------------- structure --- */
+
+.shell {
+  max-inline-size: var(--shell-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section { padding-block: var(--section-pad); }
+
+.rule {
+  border: 0;
+  border-block-start: 1px solid var(--hairline);
+  margin: 0;
+}
+
+/* The ledger: evidence rail + story column.
+   Rail is inline-start, so RTL flips it with no extra rules. */
+.ledger {
+  display: grid;
+  grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  gap: var(--rail-gap);
+  align-items: start;
+}
+
+.ledger-column { max-inline-size: var(--measure); }
+
+.rail {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  letter-spacing: 0.005em;
+  color: var(--ink-secondary);
+  font-variant-numeric: tabular-nums;
+  padding-block-start: 0.55rem;
+  border-inline-start: 1px solid var(--hairline);
+  padding-inline-start: var(--space-4);
+}
+
+.rail-entry + .rail-entry { margin-block-start: var(--space-5); }
+
+/* The only sanctioned ochre: the marker that says "this is a source". */
+.rail-label {
+  display: block;
+  color: var(--ochre);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.6875rem;
+  margin-block-end: var(--space-1);
+}
+
+.rail-value { display: block; color: var(--ink-secondary); }
+
+/* Below the ledger breakpoint the rail is not a column any more — evidence
+   sits directly under the claim it supports, which is the same relationship
+   expressed in one dimension instead of two. */
+@media (max-width: 900px) {
+  .ledger { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+  .rail {
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--hairline);
+    padding-inline-start: 0;
+    padding-block-start: var(--space-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+  }
+  .rail-entry + .rail-entry { margin-block-start: 0; }
+}
+
+/* --------------------------------------------------------------- a11y --- */
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 0;
+  transform: translate(-50%, -140%);
+  z-index: 200;
+  background: var(--paper-raised);
+  color: var(--ink);
+  border: 1px solid var(--hairline-strong);
+  padding: var(--space-3) var(--space-5);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.skip-link:focus-visible { transform: translate(-50%, var(--space-3)); }
+
+:focus-visible {
+  outline: 2px solid var(--ochre);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------------- RTL --- */
+
+/* Tracking breaks joined Arabic script; italics do not exist in it. The rest
+   of the sheet uses logical properties, so this block stays short. */
+/* Latin face first in the stack: Latin glyphs and figures stay in the brand
+   face, Arabic falls through to Plex Sans Arabic. */
+html[lang="ar"] body {
+  font-family: var(--font-plex-sans), var(--font-plex-arabic), ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.8;
+}
+html[lang="ar"] h1,
+html[lang="ar"] h2,
+html[lang="ar"] h3 { letter-spacing: 0; }
+[dir="rtl"] .rail-label { letter-spacing: 0; text-transform: none; }
+[dir="rtl"] .voice { font-family: var(--font-sans); font-style: normal; }
+[dir="rtl"] .voice em { font-style: normal; font-weight: 500; }
+/* The same idea needs more runway set in Arabic. */
+[dir="rtl"] .ledger-column { max-inline-size: 58ch; }
+
+/* Latin runs inside Arabic prose — every figure in the rail is one — are
+   isolated so punctuation cannot scramble across the direction boundary. */
+bdi { unicode-bidi: isolate; }
+
+/* -------------------------------------------------------------- motion --- */
+
+/* Scroll-driven, no observers, and deliberately NO opacity:0 default — a
+   browser without support shows the content rather than hiding it forever. */
+@keyframes reveal-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 4% cover 20%;
+    }
+    .reveal-delay-1 { animation-range: entry 10% cover 26%; }
+    .reveal-delay-2 { animation-range: entry 16% cover 32%; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
