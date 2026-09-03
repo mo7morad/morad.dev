@@ -41,12 +41,60 @@ export type RailEntry =
   | { label: string; value: string; derived?: never }
   | { label: string; value?: never; derived: { repo: EvidenceKey; field: EvidenceField } };
 
-/** A claim and its receipts: prose in the column, sources in the rail. */
-export interface LedgerBlock {
+/**
+ * A claim and its receipts: prose in the column, sources in the rail.
+ *
+ * A union rather than a bag of optional fields, so a block that says it is a
+ * quotation is checked as one. The three kinds are the only three things this
+ * site says: it argues, it quotes the work, or it shows a measurement.
+ */
+export type LedgerBlock = ProseBlock | QuoteBlock | TableBlock;
+
+export interface ProseBlock {
+  kind: "prose";
   /** Paragraphs. Rendered in the neutral engineering register by default. */
   body: string[];
   /** Render in the serif personal register — the author speaking as himself. */
   voice?: boolean;
+  rail: RailEntry[];
+}
+
+/**
+ * A verbatim quotation from the work itself.
+ *
+ * `attribution` is required and is not part of `rail`, which is the point: on
+ * this site a quotation cannot be published without the file it came from. It
+ * is a repository path rather than a URL because Trippé's repositories are
+ * private — the path is checkable by anyone who is shown the code, and honest
+ * about the fact that not everyone can be.
+ */
+export interface QuoteBlock {
+  kind: "quote";
+  quote: string;
+  /**
+   * The quotation's own language, which is not the page's.
+   *
+   * Source code and its comments are English on both sides of this site — a
+   * quotation that gets translated stops being a quotation. So this defaults
+   * to "en", and the blockquote is marked with it so a screen reader switches
+   * voice rather than reading English through an Arabic pronunciation.
+   */
+  quoteLang?: Locale;
+  attribution: string;
+}
+
+/**
+ * A measurement with a before and an after.
+ *
+ * `head[0]` labels the rows and is usually empty; the remaining columns are the
+ * states being compared. Every row must be the same length as `head`, which the
+ * component asserts rather than papering over.
+ */
+export interface TableBlock {
+  kind: "table";
+  caption: string;
+  head: readonly string[];
+  rows: readonly (readonly string[])[];
   rail: RailEntry[];
 }
 
@@ -144,19 +192,6 @@ export interface HomeCopy {
 
 export type ProjectSlug = "trippe" | "ecodyssey" | "dvld" | "roadmap";
 
-/**
- * Facts about a project that are the same in every language — dates, stack,
- * URLs. Kept out of the copy objects so a link can never be correct in one
- * language and stale in the other.
- */
-export interface ProjectFacts {
-  slug: ProjectSlug;
-  years: string;
-  stack: readonly string[];
-  links: readonly { label: string; href: string; external: boolean }[];
-  evidence?: EvidenceKey;
-}
-
 /** A section of a case study. */
 export interface CaseSection {
   heading: string;
@@ -169,7 +204,11 @@ export interface CaseStudyCopy {
   title: string;
   /** The one-sentence thesis, shown under the title. */
   thesis: string;
-  intro: LedgerBlock;
+  /** The title block's rail. Derived entries are measured, not typed. */
+  facts: RailEntry[];
+  /** Label only. The address lives in `projects.ts`, once, for both languages. */
+  linkLabel?: string;
+  intro: ProseBlock;
   sections: CaseSection[];
   /** Stated plainly when true. An unfinished project says so. */
   unfinished?: string;

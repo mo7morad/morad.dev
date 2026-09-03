@@ -1,6 +1,7 @@
-import type { LedgerBlock, Locale, RailEntry } from "@/data/types";
+import { Citation, Prose } from "./Prose";
 import { railValue } from "@/lib/evidence";
 import { bindSeparators } from "@/lib/typography";
+import type { LedgerBlock, Locale, RailEntry } from "@/data/types";
 
 /**
  * The site's one structural idea: what can be verified sits in the rail, what
@@ -25,7 +26,7 @@ export function Rail({ entries, locale }: { entries: RailEntry[]; locale: Locale
           {/* Latin figures inside Arabic prose: isolated so digits, dots and
               en-dashes cannot reorder across the direction boundary. */}
           <span className="rail-value">
-            <bdi>{value}</bdi>
+            <Citation value={value} />
           </span>
         </div>
       ))}
@@ -33,21 +34,99 @@ export function Rail({ entries, locale }: { entries: RailEntry[]; locale: Locale
   );
 }
 
+/**
+ * One block of the argument. The `kind` decides everything: there is no shared
+ * fallback rendering, so a block that gains a new kind fails to compile until
+ * it is given a shape here.
+ */
 export function Ledger({ block, locale }: { block: LedgerBlock; locale: Locale }) {
-  return (
-    /* Column before rail in the DOM, rail before column on screen: grid
-       placement puts each where it belongs. A screen reader should hear the
-       claim and then its sources, not four measurements and then the sentence
-       they were supporting. */
-    <div className="ledger">
-      <div className={block.voice ? "ledger-column voice" : "ledger-column"}>
-        {block.body.map((paragraph) => (
-          <p className="ledger-para" key={paragraph.slice(0, 48)}>
-            {paragraph}
-          </p>
-        ))}
-      </div>
-      <Rail entries={block.rail} locale={locale} />
-    </div>
-  );
+  switch (block.kind) {
+    case "prose":
+      return (
+        <div className="ledger">
+          <div className={block.voice ? "ledger-column voice" : "ledger-column"}>
+            {block.body.map((paragraph) => (
+              <p className="ledger-para" key={paragraph.slice(0, 48)}>
+                <Prose text={paragraph} locale={locale} />
+              </p>
+            ))}
+          </div>
+          <Rail entries={block.rail} locale={locale} />
+        </div>
+      );
+
+    case "quote":
+      /* The attribution is the rail. A quotation on this site cannot be
+         published without the file it came from, so it is not an optional
+         entry in a list of sources — it is the only one. */
+      return (
+        <figure className="ledger quote-block">
+          {/* One <bdi> around the whole quotation, not one per Latin run: the
+              quotation is a single-language block, and its direction comes
+              from its own first strong character. The rule stays on the
+              document's reading-start side, because it separates the quote
+              from its source, not the quote from itself. */}
+          <blockquote className="ledger-column quote-text" lang={block.quoteLang ?? "en"}>
+            <bdi>
+              <Prose text={block.quote} locale={locale} verbatim />
+            </bdi>
+          </blockquote>
+          <figcaption className="rail quote-source">
+            <span className="rail-label">{locale === "ar" ? "من الكود" : "in the repo"}</span>
+            <span className="rail-value">
+              {/* A path is a Latin run whose slashes and dots would otherwise
+                  reorder inside Arabic. */}
+              <Citation value={block.attribution} />
+            </span>
+          </figcaption>
+        </figure>
+      );
+
+    case "table":
+      return (
+        <div className="ledger">
+          <figure className="ledger-column table-figure">
+            <div className="table-scroll">
+              <table className="measure-table">
+                <thead>
+                  <tr>
+                    {block.head.map((cell, i) => (
+                      <th key={cell || i} scope="col">
+                        <bdi>{cell}</bdi>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {block.rows.map((row) => (
+                    <tr key={row[0]}>
+                      {row.map((cell, i) =>
+                        i === 0 ? (
+                          <th key={i} scope="row">
+                            {/* "EG → JO" is one Latin token pair, not Arabic
+                                prose containing Latin: isolated whole, it
+                                keeps its arrow pointing the right way. */}
+                            <bdi>
+                              <Prose text={cell} locale={locale} verbatim />
+                            </bdi>
+                          </th>
+                        ) : (
+                          <td key={i}>
+                            <bdi>{cell}</bdi>
+                          </td>
+                        ),
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <figcaption className="table-caption">
+              <Prose text={block.caption} locale={locale} />
+            </figcaption>
+          </figure>
+          <Rail entries={block.rail} locale={locale} />
+        </div>
+      );
+  }
 }

@@ -168,6 +168,15 @@ p { margin: 0; text-wrap: pretty; }
 
 a { color: inherit; }
 
+/* A literal token inside a sentence. Isolated because in Arabic prose the
+   surrounding direction would otherwise reorder its punctuation, and set a
+   touch smaller because mono runs optically large beside the sans. */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  unicode-bidi: isolate;
+}
+
 /* The serif is the personal register: it appears only where the author is
    speaking about himself, never on engineering prose. That is the whole reason
    a second family exists here. */
@@ -245,7 +254,8 @@ a { color: inherit; }
    disagree without either being wrong. */
 .rail { grid-column: 1; grid-row: 1; }
 .ledger-column,
-.hero-column { grid-column: 2; grid-row: 1; }
+.hero-column,
+.case-title-column { grid-column: 2; grid-row: 1; }
 
 .ledger-column { max-inline-size: var(--measure); }
 
@@ -281,6 +291,15 @@ a { color: inherit; }
 
 .rail-value { display: block; color: var(--ink-secondary); }
 
+/* Rail values include repository paths, which are single unbreakable tokens.
+   Below the breakpoint the rail is a flex row, where an item's min-content
+   width is that whole token — so without both of these a long path pushes the
+   entire page sideways. `anywhere` rather than `break-word` because only
+   `anywhere` also shrinks the min-content size that the flex item is sized
+   from. */
+.rail-entry { min-inline-size: 0; }
+.rail-value { overflow-wrap: anywhere; }
+
 /* Below the ledger breakpoint the rail is not a column any more — evidence
    sits directly under the claim it supports, which is the same relationship
    expressed in one dimension instead of two. */
@@ -289,7 +308,8 @@ a { color: inherit; }
   .offset { padding-inline-start: 0; }
   .rail,
   .ledger-column,
-  .hero-column { grid-column: 1; grid-row: auto; }
+  .hero-column,
+  .case-title-column { grid-column: 1; grid-row: auto; }
   .rail {
     text-align: start;
     border-inline-end: 0;
@@ -608,6 +628,135 @@ a { color: inherit; }
   font-size: 0.9375rem;
 }
 
+/* ---------------------------------------------------------- case study --- */
+
+.case-head { padding-block: var(--space-8) 0; }
+.case-head .rail { padding-block-start: 0.2rem; }
+
+.case-title {
+  font-size: clamp(2.6rem, 7vw, 4.4rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  margin-block: var(--space-4) 0;
+}
+
+/* The claim the whole page is spent defending, so it is set as prose rather
+   than as a second headline — a reader should be able to take this sentence
+   away having read nothing else. */
+.case-thesis {
+  font-size: clamp(1.125rem, 2.2vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.012em;
+  color: var(--ink-secondary);
+  max-inline-size: 26em;
+  margin-block-start: var(--space-4);
+}
+
+.case-link { margin-block-start: var(--space-5); font-size: 0.9375rem; }
+
+.case-intro { padding-block-start: var(--section-pad); }
+
+/* More air above a case-study heading than a home-page one: it is separating
+   arguments, not labelling a list. */
+.case-section { padding-block-start: var(--space-9); }
+
+.case-block + .case-block { margin-block-start: var(--space-6); }
+
+.ledger-para + .ledger-para { margin-block-start: var(--space-4); }
+
+.case-unfinished {
+  margin-block-start: var(--section-pad);
+  padding-block-start: var(--space-5);
+  border-block-start: 1px solid var(--hairline);
+  color: var(--ink-secondary);
+  max-inline-size: var(--measure);
+}
+
+/* ------------------------------------------------------------- quoting --- */
+
+/* A quotation from the work. The attribution occupies the rail slot, which is
+   the whole argument of the layout made literal: the words are the claim, the
+   path is what makes them checkable. */
+.quote-block { margin: 0; }
+
+.quote-text {
+  margin: 0;
+  padding-inline-start: var(--space-5);
+  border-inline-start: 2px solid var(--ochre);
+  font-size: 1.0625rem;
+  line-height: 1.62;
+  color: var(--ink);
+}
+
+/* Code quoted verbatim is set as code; prose quoted verbatim is set as prose.
+   The distinction is carried by the copy, so the rule keys on length instead:
+   a single short line reads as a declaration either way. */
+/* The isolate is made a block so text-align applies to it, and `start`
+   resolves against the quotation's OWN direction — so an English quote on an
+   Arabic page sets flush left, the way English is read, instead of ragged-left
+   against a right margin it does not belong to. */
+.quote-text > bdi { display: block; text-align: start; }
+
+.quote-source { font-size: 0.6875rem; }
+
+/* --------------------------------------------------------------- table --- */
+
+.table-figure { margin: 0; }
+
+/* A wide table scrolls inside its own box. The page never scrolls sideways. */
+.table-scroll {
+  overflow-x: auto;
+  border-block: 1px solid var(--hairline);
+}
+
+.measure-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.measure-table th,
+.measure-table td {
+  padding: var(--space-3) var(--space-4);
+  text-align: start;
+  vertical-align: top;
+}
+
+.measure-table thead th {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+  border-block-end: 1px solid var(--hairline);
+}
+
+.measure-table tbody th {
+  font-weight: 400;
+  color: var(--ink-secondary);
+  padding-inline-start: 0;
+}
+
+.measure-table tbody tr + tr th,
+.measure-table tbody tr + tr td { border-block-start: 1px solid var(--hairline); }
+
+.measure-table thead th:first-child { padding-inline-start: 0; }
+
+/* The last column is the state that holds now, so it is the one set in ink. */
+.measure-table td:last-child { color: var(--ink); font-weight: 500; }
+.measure-table td { color: var(--ink-secondary); }
+
+.table-caption {
+  margin-block-start: var(--space-3);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--ink-secondary);
+}
+
 /* ------------------------------------------------------------- 404 page --- */
 
 .notfound { padding-block: var(--space-9) var(--space-9); max-inline-size: 44rem; }
@@ -676,6 +825,9 @@ html[lang="ar"] h3 { letter-spacing: 0; }
 [dir="rtl"] .wordmark,
 [dir="rtl"] .contact-email { letter-spacing: 0; }
 [dir="rtl"] .mark { text-underline-offset: 0.3em; }
+[dir="rtl"] .case-title,
+[dir="rtl"] .case-thesis { letter-spacing: 0; }
+[dir="rtl"] .measure-table thead th { letter-spacing: 0; text-transform: none; }
 [dir="rtl"] .voice { font-family: var(--font-sans); font-style: normal; }
 [dir="rtl"] .voice em { font-style: normal; font-weight: 500; }
 /* The same idea needs more runway set in Arabic. */
