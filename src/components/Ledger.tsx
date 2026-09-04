@@ -126,15 +126,17 @@ export function Ledger({ block, locale }: { block: LedgerBlock; locale: Locale }
           <figure className="ledger-column table-figure">
             <div className="table-scroll">
               <table className="measure-table">
-                <thead>
-                  <tr>
-                    {block.head.map((cell, i) => (
-                      <th key={cell || i} scope="col">
-                        <bdi>{cell}</bdi>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
+                {block.head ? (
+                  <thead>
+                    <tr>
+                      {block.head.map((cell, i) => (
+                        <th key={cell || i} scope="col">
+                          <bdi>{cell}</bdi>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                ) : null}
                 <tbody>
                   {block.rows.map((row) => (
                     <tr key={row[0]}>

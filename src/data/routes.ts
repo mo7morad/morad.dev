@@ -21,6 +21,8 @@ export interface RoutePair {
 export const ROUTES: readonly RoutePair[] = [
   { en: "/", ar: "/ar/", priority: 1 },
   { en: "/trippe/", ar: "/ar/trippe/", priority: 0.9 },
+  { en: "/ecodyssey/", ar: "/ar/ecodyssey/", priority: 0.85 },
   { en: "/roadmap/", ar: "/ar/roadmap/", priority: 0.8 },
   { en: "/dvld/", ar: "/ar/dvld/", priority: 0.7 },
+  { en: "/about/", ar: "/ar/about/", priority: 0.6 },
 ] as const;

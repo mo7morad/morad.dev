@@ -1,11 +1,10 @@
 import Link from "next/link";
+import { Contact } from "./Contact";
 import { Prose } from "./Prose";
 import { Rail } from "./Ledger";
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
-import { EXTERNAL_HREF, EXTERNAL_REL } from "@/lib/links";
 import { bindSeparators } from "@/lib/typography";
-import { SITE_METADATA } from "@/data/site";
 import type { HomeCopy, ProjectSlug } from "@/data/types";
 
 /**
@@ -120,30 +119,7 @@ export function HomeView({
           </div>
         </section>
 
-        <section className="section" aria-labelledby="contact-heading">
-          <h2 className="section-head" id="contact-heading">
-            {contact.heading}
-          </h2>
-          {/* The serif appears exactly once on this page, here, where he stops
-              describing systems and addresses the reader. */}
-          <div className="offset">
-            <p className="voice contact-body">
-              <Prose text={contact.body} locale={locale} />
-            </p>
-            <a className="contact-email" href={EXTERNAL_HREF.email}>
-              <bdi>{SITE_METADATA.email}</bdi>
-            </a>
-            <ul className="contact-links">
-              {contact.links.map((link) => (
-                <li key={link.to}>
-                  <a className="link" href={EXTERNAL_HREF[link.to]} rel={EXTERNAL_REL[link.to]}>
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
+        <Contact contact={contact} locale={locale} headingId="contact-heading" />
       </main>
 
       <SiteFooter footer={footer} locale={locale} nav={nav} altHref={altHref} />

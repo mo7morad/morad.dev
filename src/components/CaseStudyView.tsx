@@ -1,10 +1,18 @@
+import { Contact } from "./Contact";
 import { Ledger, Rail } from "./Ledger";
 import { Prose } from "./Prose";
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
 import { bindSeparators } from "@/lib/typography";
 import { PROJECT_LINK } from "@/data/projects";
-import type { CaseStudyCopy, FooterCopy, Locale, NavCopy } from "@/data/types";
+import type {
+  ArticleCopy,
+  ContactCopy,
+  ProjectSlug,
+  FooterCopy,
+  Locale,
+  NavCopy,
+} from "@/data/types";
 
 /**
  * A case study is the home page's grammar at length: the same rail, the same
@@ -23,14 +31,21 @@ export function CaseStudyView({
   homeHref,
   altHref,
 }: {
-  copy: CaseStudyCopy;
+  copy: ArticleCopy & {
+    slug?: ProjectSlug;
+    linkLabel?: string;
+    unfinished?: string;
+    /* Present on the about page, absent on a case study: a case study ends by
+       handing the reader back to the work, not by asking for an email. */
+    contact?: ContactCopy;
+  };
   nav: NavCopy;
   footer: FooterCopy;
   locale: Locale;
   homeHref: string;
   altHref: string;
 }) {
-  const href = PROJECT_LINK[copy.slug];
+  const href = copy.slug ? PROJECT_LINK[copy.slug] : undefined;
 
   return (
     <>
@@ -89,6 +104,10 @@ export function CaseStudyView({
             </p>
           ) : null}
         </article>
+
+        {copy.contact ? (
+          <Contact contact={copy.contact} locale={locale} headingId="contact-heading" />
+        ) : null}
       </main>
 
       <SiteFooter footer={footer} locale={locale} nav={nav} altHref={altHref} />

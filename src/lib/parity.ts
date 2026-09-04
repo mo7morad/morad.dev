@@ -1,4 +1,4 @@
-import type { CaseStudyCopy, LedgerBlock } from "@/data/types";
+import type { ArticleCopy, LedgerBlock } from "@/data/types";
 
 /**
  * Structural parity between two language versions of a case study.
@@ -13,23 +13,36 @@ import type { CaseStudyCopy, LedgerBlock } from "@/data/types";
  * `next build` rather than shipping. Nothing is checked at runtime in the
  * browser: a static export has already run this before the HTML exists.
  */
-function signature(copy: CaseStudyCopy): string {
-  const blockKinds = (blocks: LedgerBlock[]) => blocks.map((b) => b.kind).join(",");
+type Article = ArticleCopy & {
+  slug?: string;
+  linkLabel?: string;
+  unfinished?: string;
+  contact?: { links: readonly unknown[] };
+};
+
+function signature(copy: Article): string {
+  const blockKinds = (blocks: LedgerBlock[]) =>
+    blocks
+      .map((b) =>
+        b.kind === "table" ? `table(${b.head?.length ?? "-"}x${b.rows.length})` : b.kind,
+      )
+      .join(",");
   return [
     `facts:${copy.facts.length}`,
     `intro:${copy.intro.body.length}`,
     `link:${copy.linkLabel === undefined ? "no" : "yes"}`,
     `unfinished:${copy.unfinished === undefined ? "no" : "yes"}`,
+    `contact:${copy.contact ? copy.contact.links.length : "no"}`,
     ...copy.sections.map((s, i) => `s${i}[${blockKinds(s.blocks)}]`),
   ].join(" ");
 }
 
-export function assertParity(a: CaseStudyCopy, b: CaseStudyCopy): void {
+export function assertParity(a: Article, b: Article): void {
   const sa = signature(a);
   const sb = signature(b);
   if (sa !== sb) {
     throw new Error(
-      `Case study "${a.slug}" has drifted between languages.\n` +
+      `Article "${a.slug ?? a.title}" has drifted between languages.\n` +
         `  en: ${sa}\n  ar: ${sb}\n` +
         `Both languages must present the same structure and the same evidence.`,
     );

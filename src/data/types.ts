@@ -135,7 +135,15 @@ export interface VideoBlock {
 export interface TableBlock {
   kind: "table";
   caption: string;
-  head: readonly string[];
+  /**
+   * Column headers, when the columns have names.
+   *
+   * Optional, and omitted rather than filled with empty strings: a table whose
+   * rows are label-and-value pairs has a row header and no column headers, and
+   * emitting `<th scope="col"></th>` twice would be markup asserting a heading
+   * that is not there. The first cell of every row is a row header either way.
+   */
+  head?: readonly string[];
   rows: readonly (readonly string[])[];
   rail: RailEntry[];
 }
@@ -178,6 +186,19 @@ export type ExternalKey = "github" | "linkedin" | "email";
 export interface ExternalLink {
   label: string;
   to: ExternalKey;
+}
+
+/**
+ * The one place on a page that addresses the reader directly.
+ *
+ * Shared by the home page and the about page rather than written twice: they
+ * are the same offer, and a reader who lands on either should be given the
+ * same address in the same words.
+ */
+export interface ContactCopy {
+  heading: string;
+  body: string;
+  links: ExternalLink[];
 }
 
 /* -------------------------------------------------------------------- home --- */
@@ -225,7 +246,7 @@ export interface HomeCopy {
   hero: HeroCopy;
   timeline: { heading: string; entries: TimelineEntry[] };
   work: { heading: string; cards: WorkCard[] };
-  contact: { heading: string; body: string; links: ExternalLink[] };
+  contact: ContactCopy;
   footer: FooterCopy;
   meta: { title: string; description: string };
 }
@@ -240,33 +261,38 @@ export interface CaseSection {
   blocks: LedgerBlock[];
 }
 
-export interface CaseStudyCopy {
-  slug: ProjectSlug;
+/**
+ * The shape every long page on this site shares: a title, a claim, a rail of
+ * facts beside them, and a sequence of sections. A case study and the about
+ * page differ in what they are about, not in how they are built.
+ */
+export interface ArticleCopy {
   eyebrow: string;
   title: string;
   /** The one-sentence thesis, shown under the title. */
   thesis: string;
   /** The title block's rail. Derived entries are measured, not typed. */
   facts: RailEntry[];
-  /** Label only. The address lives in `projects.ts`, once, for both languages. */
-  linkLabel?: string;
   intro: ProseBlock;
   sections: CaseSection[];
+  meta: { title: string; description: string };
+}
+
+export interface CaseStudyCopy extends ArticleCopy {
+  slug: ProjectSlug;
+  /** Label only. The address lives in `projects.ts`, once, for both languages. */
+  linkLabel?: string;
   /** Stated plainly when true. An unfinished project says so. */
   unfinished?: string;
-  meta: { title: string; description: string };
 }
 
 /* ------------------------------------------------------------------- about --- */
 
-export interface AboutCopy {
+export interface AboutCopy extends ArticleCopy {
   locale: Locale;
-  eyebrow: string;
-  title: string;
-  blocks: LedgerBlock[];
-  homelab: { heading: string; body: string[]; rail: RailEntry[] };
-  availability: { heading: string; lines: string[] };
-  meta: { title: string; description: string };
+  /* The about page is the end of the site's one argument, so it closes the
+     way the home page does rather than leaving the reader at a full stop. */
+  contact: ContactCopy;
 }
 
 /* ------------------------------------------------------------------- site --- */
