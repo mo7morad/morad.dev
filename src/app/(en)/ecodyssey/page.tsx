@@ -20,6 +20,7 @@ export default function EcodysseyCaseStudy() {
       locale="en"
       homeHref="/"
       altHref={casePath("ecodyssey", "ar")}
+      currentPath="/ecodyssey/"
     />
   );
 }

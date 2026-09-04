@@ -19,18 +19,40 @@ const plexSans = IBM_Plex_Sans({
   variable: "--font-plex-sans",
 });
 
+/* Not preloaded, and that is a trade rather than a free win.
+ *
+ * Next emits the same font preloads on every page of the build regardless of
+ * which layout declared them, so preloading this face put 103 KB of Arabic on
+ * every English page — 63% of their font budget, for glyphs those pages never
+ * draw. Turning it off moves the cost to the pages that use it: Arabic text
+ * swaps in once the face arrives, which on a throttled connection measures
+ * CLS 0.057 — inside Google's 0.1 "good" band, against 0.002 with the
+ * preload. The English side is what a hiring manager loads first, so it wins
+ * the tie.
+ *
+ * The metric-matched fallback next/font generates is what keeps that number
+ * small, which is why it is named in the stack in globals.css and why it must
+ * stay behind the real Arabic face there. */
 const plexArabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
   weight: ["400", "500", "600"],
   display: "swap",
+  preload: false,
   variable: "--font-plex-arabic",
 });
 
+/* Not preloaded, and no italic.
+   The serif marks the passages where he speaks as himself, and every one of
+   them sits below the fold — so preloading it spends first-paint bandwidth on
+   a face nothing on screen is using yet. Italic is dropped outright: the only
+   <em> on this site is the hero mark, which `.mark` sets to `font-style:
+   normal`, so the italic face was 16 KB preloaded on every page and rendered
+   on none. */
 const plexSerif = IBM_Plex_Serif({
   subsets: ["latin"],
   weight: ["400"],
-  style: ["normal", "italic"],
   display: "swap",
+  preload: false,
   variable: "--font-plex-serif",
 });
 

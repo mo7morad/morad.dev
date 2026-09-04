@@ -30,6 +30,7 @@ export function CaseStudyView({
   locale,
   homeHref,
   altHref,
+  currentPath,
 }: {
   copy: ArticleCopy & {
     slug?: ProjectSlug;
@@ -44,6 +45,7 @@ export function CaseStudyView({
   locale: Locale;
   homeHref: string;
   altHref: string;
+  currentPath: string;
 }) {
   const href = copy.slug ? PROJECT_LINK[copy.slug] : undefined;
 
@@ -53,7 +55,13 @@ export function CaseStudyView({
         {nav.skipToContent}
       </a>
 
-      <SiteHeader nav={nav} locale={locale} homeHref={homeHref} altHref={altHref} />
+      <SiteHeader
+        nav={nav}
+        locale={locale}
+        homeHref={homeHref}
+        altHref={altHref}
+        currentPath={currentPath}
+      />
 
       <main id="content" className="shell">
         <article>
@@ -75,7 +83,7 @@ export function CaseStudyView({
                   </p>
                 ) : null}
               </div>
-              <Rail entries={copy.facts} locale={locale} />
+              <Rail entries={copy.facts} />
             </div>
           </header>
 

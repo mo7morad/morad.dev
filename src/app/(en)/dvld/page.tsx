@@ -20,6 +20,7 @@ export default function DvldCaseStudy() {
       locale="en"
       homeHref="/"
       altHref={casePath("dvld", "ar")}
+      currentPath="/dvld/"
     />
   );
 }

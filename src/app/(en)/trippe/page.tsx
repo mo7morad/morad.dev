@@ -20,6 +20,7 @@ export default function TrippeCaseStudy() {
       locale="en"
       homeHref="/"
       altHref={casePath("trippe", "ar")}
+      currentPath="/trippe/"
     />
   );
 }

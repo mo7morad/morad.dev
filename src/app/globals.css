@@ -43,15 +43,28 @@
   --hairline: #c6c6bf;
   --hairline-strong: #adada5;
 
-  /* Type */
-  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-plex-serif), Georgia, serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  /* The var() fallback is load-bearing. Only the Arabic layout defines
-     --font-plex-arabic, and a font-family list naming an undefined custom
-     property is thrown away whole — which would leave Arabic on the English
-     pages with no stack at all rather than a worse one. */
-  --font-arabic: var(--font-plex-arabic, "SF Arabic"), "Segoe UI", Tahoma, sans-serif;
+  /* Type
+   *
+   * One rule governs every stack here: EVERY REAL FAMILY COMES BEFORE EVERY
+   * METRIC FALLBACK. `next/font` pairs each family with a `… Fallback` face
+   * declared `unicode-range: U+0-10FFFF`, so a fallback placed mid-stack
+   * matches every character of every script and nothing after it is ever
+   * consulted. That is why these lists are written out instead of composed
+   * from the `--font-plex-*` variables, each of which is a family AND its
+   * fallback glued together.
+   *
+   * Plex Mono and Plex Serif carry no Arabic, so both name the Arabic text
+   * face ahead of their own fallback: a figure in the evidence rail stays
+   * mono, and the Arabic label beside it is still set in Plex Sans Arabic
+   * rather than dropping to whatever the system offers. */
+  --font-sans:
+    "IBM Plex Sans", "IBM Plex Sans Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-serif:
+    "IBM Plex Serif", "IBM Plex Sans Arabic", "IBM Plex Serif Fallback",
+    "IBM Plex Sans Arabic Fallback", Georgia, serif;
+  --font-mono:
+    "IBM Plex Mono", "IBM Plex Sans Arabic", "IBM Plex Mono Fallback",
+    "IBM Plex Sans Arabic Fallback", ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Space — 4px base */
   --space-1: 4px;
@@ -187,7 +200,6 @@ code {
   color: var(--ink);
 }
 
-.voice em { font-style: italic; }
 
 /* An underline that darkens, rather than a colour change: nothing on this site
    turns ochre for being hovered. */
@@ -264,6 +276,10 @@ code {
 .offset { padding-inline-start: calc(var(--rail-width) + var(--rail-gap)); }
 
 .rail {
+  /* A <dl>, so the browser supplies margins on the list and an indent on every
+     <dd>. All three are cleared here rather than in a reset, next to the rule
+     that positions the rail, so the two cannot drift apart. */
+  margin: 0;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   line-height: 1.5;
@@ -289,7 +305,7 @@ code {
   margin-block-end: var(--space-1);
 }
 
-.rail-value { display: block; color: var(--ink-secondary); }
+.rail-value { display: block; margin-inline-start: 0; color: var(--ink-secondary); }
 
 /* Rail values include repository paths, which are single unbreakable tokens.
    Below the breakpoint the rail is a flex row, where an item's min-content
@@ -360,6 +376,20 @@ code {
 .header-link:hover,
 .lang-switch:hover { color: var(--ink); }
 
+/* Which section you are in, answered without being asked. Every link carries
+   the same transparent rule so marking one moves nothing, and the mark is a
+   neutral line rather than ochre: ochre says "this is a source", and a nav
+   link is not one. */
+.header-link {
+  padding-block-end: 2px;
+  border-block-end: 1px solid transparent;
+}
+
+.header-link.is-current {
+  color: var(--ink);
+  border-block-end-color: var(--hairline-strong);
+}
+
 /* The one control that changes what the whole page is, so it is boxed to read
    as a control rather than another link. */
 .lang-switch {
@@ -376,6 +406,51 @@ code {
    English page this label is Arabic — which needs the extra step to match the
    optical size of the Latin around it. */
 .lang-switch:lang(ar) { font-size: 0.9375rem; }
+
+/* Touch targets.
+ *
+ * The type here is deliberately small, and enlarging it to reach the 44px
+ * minimum would change the design to solve an input problem. So the hit area
+ * grows instead of the text: a pseudo-element centred on each control,
+ * expanding symmetrically only when the control is smaller than 44px in that
+ * axis — `min(0px, …)` is what stops it ever shrinking a target that is
+ * already big enough.
+ *
+ * Scoped to coarse pointers. On a mouse an invisible 44px box around a 17px
+ * link would start swallowing clicks meant for its neighbour. */
+@media (pointer: coarse) {
+  .wordmark,
+  .header-link,
+  .lang-switch,
+  .contact-email,
+  .contact-links a,
+  .cv-contact a,
+  .footer-legal a,
+  .link {
+    position: relative;
+  }
+
+  .wordmark::after,
+  .header-link::after,
+  .lang-switch::after,
+  .contact-email::after,
+  .contact-links a::after,
+  .cv-contact a::after,
+  .footer-legal a::after,
+  .link::after {
+    content: "";
+    position: absolute;
+    inset-block: min(0px, calc((100% - 44px) / 2));
+    inset-inline: min(0px, calc((100% - 44px) / 2));
+  }
+
+  /* The header links are the only row where two enlarged targets sit side by
+     side; "CV" is 17px wide, so it grows 13.5px each way and the gap has to
+     clear that. */
+  .header-nav { gap: var(--space-6); }
+
+  .contact-links { gap: var(--space-6); }
+}
 
 .footer-band {
   border-block-start: 1px solid var(--hairline);
@@ -886,13 +961,41 @@ code {
 
 /* Tracking breaks joined Arabic script; italics do not exist in it. The rest
    of the sheet uses logical properties, so this block stays short. */
-/* Latin face first in the stack: Latin glyphs and figures stay in the brand
-   face, Arabic falls through to Plex Sans Arabic.
-   Keyed on :lang rather than on the document, so the one Arabic word in the
-   English header — the control that switches to it — is set in the same face
-   as the page it leads to. The English pages do not load the Arabic subset for
-   it; the stack above degrades to a good system face instead. */
-:lang(ar) { font-family: var(--font-plex-sans), var(--font-arabic); }
+/* Set on <body>, not on every element.
+ *
+ * The obvious spelling, `:lang(ar) { font-family: … }`, matches every element
+ * in the document — including the ones inside a block that has deliberately
+ * chosen a face. `.rail` would still be mono while every `.rail-value` inside
+ * it was overridden directly, so the Arabic evidence rail lost its figures to
+ * the text face and stopped looking like evidence, in one language only.
+ * Setting it once at the root lets it inherit, which is what "default" means,
+ * and any element that asks for mono keeps it for its children too.
+ *
+ * The families are spelled out rather than composed from `--font-plex-*`, for
+ * the reason given at the token definitions: `next/font` pairs every family
+ * with a metric fallback declared `unicode-range: U+0-10FFFF`, so a fallback
+ * placed mid-stack matches every script and nothing after it is consulted.
+ * Composed the obvious way, the entire Arabic side of this site rendered in
+ * Arial while preloading 103 KB of an Arabic font that nothing used. There is
+ * now a gate that asks the renderer which face actually drew the glyphs. */
+html[lang="ar"] body {
+  font-family:
+    "IBM Plex Sans",
+    "IBM Plex Sans Arabic",
+    "IBM Plex Sans Fallback",
+    "IBM Plex Sans Arabic Fallback",
+    "SF Arabic",
+    "Segoe UI",
+    Tahoma,
+    sans-serif;
+}
+
+/* The one Arabic word on an English page is the control that switches to it.
+   A system Arabic face draws it: naming Plex Sans Arabic here would pull the
+   whole Arabic font down on every English page for four glyphs. */
+.lang-switch:lang(ar) {
+  font-family: "SF Arabic", "Segoe UI", Tahoma, sans-serif;
+}
 html[lang="ar"] body { line-height: 1.8; }
 html[lang="ar"] h1,
 html[lang="ar"] h2,
@@ -910,7 +1013,6 @@ html[lang="ar"] h3 { letter-spacing: 0; }
 [dir="rtl"] .measure-table thead th { letter-spacing: 0; text-transform: none; }
 [dir="rtl"] .chart-data summary { letter-spacing: 0; text-transform: none; font-size: 0.75rem; }
 [dir="rtl"] .voice { font-family: var(--font-sans); font-style: normal; }
-[dir="rtl"] .voice em { font-style: normal; font-weight: 500; }
 /* The same idea needs more runway set in Arabic. */
 [dir="rtl"] .ledger-column,
 [dir="rtl"] .work-main,
@@ -943,10 +1045,16 @@ bdi { unicode-bidi: isolate; }
  */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  /* `0s`, not the usual `0.01ms`. That trick exists so `transitionend` still
+     fires for scripts that wait on it, and nothing here waits on it — so the
+     only thing 0.01ms buys is a duration that is technically non-zero, which
+     makes "is every transition off?" unanswerable by measurement. */
   *, *::before, *::after {
-    animation-duration: 0.01ms !important;
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
   }
 }
 
@@ -1236,6 +1344,12 @@ bdi { unicode-bidi: isolate; }
   a {
     color: inherit;
     text-decoration: none;
+  }
+
+  /* Touch targets are an input affordance. On paper they are invisible boxes
+     that can only push the layout past two pages. */
+  a::after {
+    content: none;
   }
 }
 

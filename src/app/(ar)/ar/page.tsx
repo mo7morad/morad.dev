@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function ArabicHomePage() {
-  return <HomeView copy={HOME_AR} homeHref="/ar/" altHref="/" />;
+  return <HomeView copy={HOME_AR} homeHref="/ar/" altHref="/" currentPath="/ar/" />;
 }

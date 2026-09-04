@@ -17,10 +17,12 @@ export function HomeView({
   copy,
   homeHref,
   altHref,
+  currentPath,
 }: {
   copy: HomeCopy;
   homeHref: string;
   altHref: string;
+  currentPath: string;
 }) {
   const { locale, nav, hero, timeline, work, contact, footer } = copy;
   const projectHref = (slug: ProjectSlug) =>
@@ -32,7 +34,13 @@ export function HomeView({
         {nav.skipToContent}
       </a>
 
-      <SiteHeader nav={nav} locale={locale} homeHref={homeHref} altHref={altHref} />
+      <SiteHeader
+        nav={nav}
+        locale={locale}
+        homeHref={homeHref}
+        altHref={altHref}
+        currentPath={currentPath}
+      />
 
       <main id="content" className="shell">
         {/* The thesis, annotated. Each marked claim has a line in the rail
@@ -55,7 +63,7 @@ export function HomeView({
                 )}
               </h1>
             </div>
-            <Rail entries={hero.rail} locale={locale} />
+            <Rail entries={hero.rail} />
           </div>
         </section>
 

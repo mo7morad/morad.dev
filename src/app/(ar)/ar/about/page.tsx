@@ -25,6 +25,7 @@ export default function AboutPageArabic() {
       locale="ar"
       homeHref="/ar/"
       altHref="/about/"
+      currentPath="/ar/about/"
     />
   );
 }

@@ -20,6 +20,7 @@ export default function DvldCaseStudyArabic() {
       locale="ar"
       homeHref="/ar/"
       altHref={casePath("dvld", "en")}
+      currentPath="/ar/dvld/"
     />
   );
 }

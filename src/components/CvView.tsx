@@ -13,12 +13,22 @@ export function CvView({
   copy,
   nav,
   footer,
+  currentPath,
 }: {
   copy: CvCopy;
   nav: NavCopy;
   footer: FooterCopy;
+  currentPath: string;
 }) {
   const summary = fillPoint(copy.summary);
+
+  /* The CV has no Arabic counterpart, so its switch routes to the Arabic home
+     page. Assistive technology is told the destination plainly. */
+  const cvNav: NavCopy = {
+    ...nav,
+    switchAriaLabel:
+      "Switch to Arabic — the CV is English only, so this goes to the Arabic home page",
+  };
 
   return (
     <>
@@ -26,7 +36,13 @@ export function CvView({
         {nav.skipToContent}
       </a>
 
-      <SiteHeader nav={nav} locale="en" homeHref="/" altHref="/ar/" />
+      <SiteHeader
+        nav={cvNav}
+        locale="en"
+        homeHref="/"
+        altHref="/ar/"
+        currentPath={currentPath}
+      />
 
       <main id="content" className="shell">
         <article className="cv">
@@ -118,7 +134,7 @@ export function CvView({
         </article>
       </main>
 
-      <SiteFooter footer={footer} locale="en" nav={nav} altHref="/ar/" />
+      <SiteFooter footer={footer} locale="en" nav={cvNav} altHref="/ar/" />
     </>
   );
 }

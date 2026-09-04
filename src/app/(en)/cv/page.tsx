@@ -15,5 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function CvPage() {
-  return <CvView copy={CV} nav={HOME_EN.nav} footer={HOME_EN.footer} />;
+  return <CvView copy={CV} nav={HOME_EN.nav} footer={HOME_EN.footer} currentPath="/cv/" />;
 }

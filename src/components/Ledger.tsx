@@ -8,11 +8,12 @@ import type { LedgerBlock, Locale, RailEntry } from "@/data/types";
  * The site's one structural idea: what can be verified sits in the rail, what
  * is claimed sits in the column. Nothing crosses.
  *
- * The rail is `aria-label`led rather than visually-hidden-headed because it is
- * supporting apparatus — a screen reader should be able to skip it or read it,
- * but it must not be announced as a section of the argument.
+ * The rail is apparatus attached to the block beside it, not a section of the
+ * page, so it must be skippable without appearing in the landmark map. A
+ * description list represents the label-and-value pairs without emitting a
+ * landmark.
  */
-export function Rail({ entries, locale }: { entries: RailEntry[]; locale: Locale }) {
+export function Rail({ entries }: { entries: RailEntry[] }) {
   // An entry whose figure could not be derived is dropped, never rendered with
   // a placeholder — a dash in an evidence column still reads as evidence.
   const resolved = entries
@@ -20,18 +21,18 @@ export function Rail({ entries, locale }: { entries: RailEntry[]; locale: Locale
     .filter((e): e is { label: string; value: string } => e.value !== null);
   if (resolved.length === 0) return null;
   return (
-    <aside className="rail" aria-label={locale === "ar" ? "المصادر" : "Sources"}>
+    <dl className="rail">
       {resolved.map(({ label, value }) => (
         <div className="rail-entry" key={label}>
-          <span className="rail-label">{bindSeparators(label)}</span>
+          <dt className="rail-label">{bindSeparators(label)}</dt>
           {/* Latin figures inside Arabic prose: isolated so digits, dots and
               en-dashes cannot reorder across the direction boundary. */}
-          <span className="rail-value">
+          <dd className="rail-value">
             <Citation value={value} />
-          </span>
+          </dd>
         </div>
       ))}
-    </aside>
+    </dl>
   );
 }
 
@@ -52,7 +53,7 @@ export function Ledger({ block, locale }: { block: LedgerBlock; locale: Locale }
               </p>
             ))}
           </div>
-          <Rail entries={block.rail} locale={locale} />
+          <Rail entries={block.rail} />
         </div>
       );
 
@@ -95,7 +96,7 @@ export function Ledger({ block, locale }: { block: LedgerBlock; locale: Locale }
               locale={locale}
             />
           </div>
-          <Rail entries={block.rail} locale={locale} />
+          <Rail entries={block.rail} />
         </div>
       );
 
@@ -116,7 +117,7 @@ export function Ledger({ block, locale }: { block: LedgerBlock; locale: Locale }
               <Prose text={block.caption} locale={locale} />
             </figcaption>
           </figure>
-          <Rail entries={block.rail} locale={locale} />
+          <Rail entries={block.rail} />
         </div>
       );
 
@@ -165,7 +166,7 @@ export function Ledger({ block, locale }: { block: LedgerBlock; locale: Locale }
               <Prose text={block.caption} locale={locale} />
             </figcaption>
           </figure>
-          <Rail entries={block.rail} locale={locale} />
+          <Rail entries={block.rail} />
         </div>
       );
   }

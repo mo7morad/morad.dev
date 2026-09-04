@@ -25,6 +25,7 @@ export default function AboutPage() {
       locale="en"
       homeHref="/"
       altHref="/ar/about/"
+      currentPath="/about/"
     />
   );
 }

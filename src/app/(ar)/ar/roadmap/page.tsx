@@ -20,6 +20,7 @@ export default function RoadmapCaseStudyArabic() {
       locale="ar"
       homeHref="/ar/"
       altHref={casePath("roadmap", "en")}
+      currentPath="/ar/roadmap/"
     />
   );
 }

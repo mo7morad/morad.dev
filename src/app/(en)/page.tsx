@@ -14,5 +14,5 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <HomeView copy={HOME_EN} homeHref="/" altHref="/ar/" />;
+  return <HomeView copy={HOME_EN} homeHref="/" altHref="/ar/" currentPath="/" />;
 }

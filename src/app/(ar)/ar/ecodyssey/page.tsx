@@ -20,6 +20,7 @@ export default function EcodysseyCaseStudyArabic() {
       locale="ar"
       homeHref="/ar/"
       altHref={casePath("ecodyssey", "en")}
+      currentPath="/ar/ecodyssey/"
     />
   );
 }

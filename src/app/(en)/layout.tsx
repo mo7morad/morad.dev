@@ -11,11 +11,18 @@ const plexSans = IBM_Plex_Sans({
   variable: "--font-plex-sans",
 });
 
+/* Not preloaded, and no italic.
+   The serif marks the passages where he speaks as himself, and every one of
+   them sits below the fold — so preloading it spends first-paint bandwidth on
+   a face nothing on screen is using yet. Italic is dropped outright: the only
+   <em> on this site is the hero mark, which `.mark` sets to `font-style:
+   normal`, so the italic face was 16 KB preloaded on every page and rendered
+   on none. */
 const plexSerif = IBM_Plex_Serif({
   subsets: ["latin"],
   weight: ["400"],
-  style: ["normal", "italic"],
   display: "swap",
+  preload: false,
   variable: "--font-plex-serif",
 });
 
