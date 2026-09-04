@@ -33,7 +33,9 @@ export type EvidenceField =
   | "dvldPresentationLines"
   | "dvldBusinessLines"
   | "dvldDataAccessLines"
-  | "dvldForms";
+  | "dvldForms"
+  | "dvldQueries"
+  | "dvldBoundParameters";
 
 /**
  * One line of the evidence rail: a source, and what it says.
@@ -153,7 +155,7 @@ export interface TableBlock {
 export interface NavCopy {
   /** Where the wordmark links. */
   homeLabel: string;
-  links: { label: string; href: string }[];
+  links: { label: string; href: string; lang?: Locale }[];
   /** Label on the control that switches language. */
   switchLabel: string;
   switchAriaLabel: string;
@@ -181,7 +183,7 @@ export type FooterSegment = string | { text: string; href?: string; ltr?: boolea
  * therefore not be correct in English and stale in Arabic, which is the same
  * failure the rest of the site is built to prevent.
  */
-export type ExternalKey = "github" | "linkedin" | "email";
+export type ExternalKey = "github" | "linkedin" | "email" | "site";
 
 export interface ExternalLink {
   label: string;
@@ -306,3 +308,51 @@ export interface SiteMetadata {
   linkedin: string;
   keywords: readonly string[];
 }
+
+/* --------------------------------------------------------------------- cv --- */
+
+/** An inline figure in CV copy, resolved from the evidence generator. */
+export interface CvFigure {
+  repo: EvidenceKey;
+  field: EvidenceField;
+}
+
+/**
+ * One CV line. `template` carries `{0}`, `{1}` … placeholders, filled in
+ * order from `figures`.
+ */
+export interface CvPoint {
+  template: string;
+  figures?: CvFigure[];
+}
+
+export interface CvEntry {
+  title: string;
+  /** What he did, and in what capacity. */
+  role?: string;
+  /** Right-aligned on the same baseline as the title. */
+  when?: string;
+  /** Technologies, set in mono. Not a sentence. */
+  stack?: string;
+  points: CvPoint[];
+}
+
+export interface CvSection {
+  heading: string;
+  entries: CvEntry[];
+}
+
+export interface CvCopy {
+  name: string;
+  role: string;
+  /** Email, site, GitHub, LinkedIn — rendered as one line of links. */
+  contactLine: ExternalLink[];
+  /** Nationality, location, work authorisation. One sentence. */
+  standing: string;
+  summary: CvPoint;
+  sections: CvSection[];
+  /** Shown on screen, hidden in print. */
+  printNote: string;
+  meta: { title: string; description: string };
+}
+

@@ -17,6 +17,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
 
   return ROUTES.flatMap(({ en, ar, priority }) => {
+    if (ar === null) {
+      // Declaring an alternate that does not exist is a lie to a crawler.
+      return [
+        {
+          url: `${base}${en}`,
+          lastModified,
+          changeFrequency: "monthly" as const,
+          priority,
+        },
+      ];
+    }
+
     const languages = { en: `${base}${en}`, ar: `${base}${ar}` };
     return [
       {

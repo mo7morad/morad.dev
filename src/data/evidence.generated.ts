@@ -10,7 +10,7 @@
  * only count a reader could reproduce from a clone. Line counts exclude
  * generated and vendored files.
  *
- * Generated: 2026-09-03
+ * Generated: 2026-09-04
  */
 
 export interface AuthorEvidence {
@@ -52,6 +52,9 @@ export interface RepoArtifacts {
   readonly dvldBusinessLines: number;
   readonly dvldDataAccessLines: number;
   readonly dvldForms: number;
+  readonly dvldQueries: number;
+  readonly dvldBoundParameters: number;
+  readonly dvldSqlAboveDataAccess: number;
 }
 
 export const EVIDENCE = {
@@ -145,6 +148,9 @@ export const EVIDENCE = {
       dvldBusinessLines: 2071,
       dvldDataAccessLines: 3005,
       dvldForms: 45,
+      dvldQueries: 92,
+      dvldBoundParameters: 222,
+      dvldSqlAboveDataAccess: 0,
     },
   },
   wasteSort: {
@@ -199,4 +205,4 @@ export const EVIDENCE = {
   },
 } as const satisfies Record<string, RepoEvidence>;
 
-export const EVIDENCE_GENERATED_AT = "2026-09-03";
+export const EVIDENCE_GENERATED_AT = "2026-09-04";

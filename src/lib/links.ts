@@ -12,6 +12,7 @@ export const EXTERNAL_HREF: Record<ExternalKey, string> = {
   github: SITE_METADATA.github,
   linkedin: SITE_METADATA.linkedin,
   email: `mailto:${SITE_METADATA.email}`,
+  site: SITE_METADATA.url,
 };
 
 /** `rel="me"` on a profile link is what lets a reader — and a verifier —

@@ -12,8 +12,8 @@
 export interface RoutePair {
   /** English path. Leading and trailing slash, matching `trailingSlash: true`. */
   en: string;
-  /** Arabic path. */
-  ar: string;
+  /** Arabic path, or null when the page exists in English only. */
+  ar: string | null;
   /** Relative weight within the site, not a ranking promise. */
   priority: number;
 }
@@ -25,4 +25,5 @@ export const ROUTES: readonly RoutePair[] = [
   { en: "/roadmap/", ar: "/ar/roadmap/", priority: 0.8 },
   { en: "/dvld/", ar: "/ar/dvld/", priority: 0.7 },
   { en: "/about/", ar: "/ar/about/", priority: 0.6 },
+  { en: "/cv/", ar: null, priority: 0.5 },
 ] as const;

@@ -53,6 +53,8 @@ export const DVLD_EN: CaseStudyCopy = {
           ],
           rail: [
             { label: "forms", derived: { repo: "roadmap", field: "dvldForms" } },
+            { label: "query sites", derived: { repo: "roadmap", field: "dvldQueries" } },
+            { label: "bound parameters", derived: { repo: "roadmap", field: "dvldBoundParameters" } },
             { label: "rule", value: "no SQL above data access" },
           ],
         },

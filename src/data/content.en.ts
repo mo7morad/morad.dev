@@ -8,6 +8,7 @@ export const HOME_EN: HomeCopy = {
     links: [
       { label: "Work", href: "/#work" },
       { label: "About", href: "/about/" },
+      { label: "CV", href: "/cv/" },
     ],
     switchLabel: "عربي",
     switchAriaLabel: "Switch to Arabic",
@@ -102,7 +103,7 @@ export const HOME_EN: HomeCopy = {
         tech: "C# · WinForms · SQL Server",
         title: "DVLD",
         line: "A driving-licence department system in strict three-tier architecture. The capstone of the roadmap, and the largest thing I had built at the time.",
-        role: "30+ forms, 50+ stored procedures, and a walkthrough I recorded.",
+        role: "Three tiers that actually hold, a data-access layer no form reaches past, and a walkthrough I recorded.",
       },
     ],
   },

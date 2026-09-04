@@ -26,7 +26,13 @@ export function SiteHeader({
         </Link>
         <nav className="header-nav" aria-label={locale === "ar" ? "روابط الموقع" : "Site"}>
           {nav.links.map((link) => (
-            <Link key={link.href} href={link.href} className="header-link">
+            <Link
+              key={link.href}
+              href={link.href}
+              className="header-link"
+              /* The Arabic nav points at an English document and must say so. */
+              {...(link.lang ? { lang: link.lang, hrefLang: link.lang } : {})}
+            >
               {link.label}
             </Link>
           ))}

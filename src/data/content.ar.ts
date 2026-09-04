@@ -20,6 +20,7 @@ export const HOME_AR: HomeCopy = {
     links: [
       { label: "الشغل", href: "/ar/#work" },
       { label: "عني", href: "/ar/about/" },
+      { label: "السيرة الذاتية", href: "/cv/", lang: "en" },
     ],
     switchLabel: "English",
     switchAriaLabel: "التبديل إلى الإنجليزية",
@@ -111,7 +112,7 @@ export const HOME_AR: HomeCopy = {
         tech: "C# · WinForms · SQL Server",
         title: "DVLD",
         line: "نظام لإدارة رخص القيادة بمعمارية تلات طبقات صارمة. خاتمة الرودماب، وأكبر حاجة كنت بنيتها وقتها.",
-        role: "أكتر من 30 شاشة و50 stored procedure، وشرح معماري سجّلته بنفسي.",
+        role: "تلات طبقات مفصولة فعلًا، وطبقة وصول للبيانات مفيش شاشة بتعدّيها، وشرح معماري سجّلته بنفسي.",
       },
     ],
   },

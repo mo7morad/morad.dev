@@ -11,7 +11,7 @@ const isMeasured = (repo: EvidenceKey): repo is EvidenceKey & keyof typeof EVIDE
 /** "2024-05-25" -> "05.2024" */
 const asMonth = (iso: string) => `${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
 
-function read(repo: EvidenceKey, field: EvidenceField): string | null {
+export function evidenceValue(repo: EvidenceKey, field: EvidenceField): string | null {
   if (!isMeasured(repo)) return null;
   const r = EVIDENCE[repo];
   switch (field) {
@@ -33,6 +33,10 @@ function read(repo: EvidenceKey, field: EvidenceField): string | null {
       return r.artifacts ? r.artifacts.dvldBusinessLines.toLocaleString("en-US") : null;
     case "dvldDataAccessLines":
       return r.artifacts ? r.artifacts.dvldDataAccessLines.toLocaleString("en-US") : null;
+    case "dvldQueries":
+      return r.artifacts ? String(r.artifacts.dvldQueries) : null;
+    case "dvldBoundParameters":
+      return r.artifacts ? String(r.artifacts.dvldBoundParameters) : null;
     case "dvldForms":
       return r.artifacts ? String(r.artifacts.dvldForms) : null;
     default:
@@ -51,5 +55,5 @@ function read(repo: EvidenceKey, field: EvidenceField): string | null {
  */
 export function railValue(entry: RailEntry): string | null {
   if (entry.value !== undefined) return entry.value;
-  return read(entry.derived.repo, entry.derived.field);
+  return evidenceValue(entry.derived.repo, entry.derived.field);
 }

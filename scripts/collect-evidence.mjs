@@ -319,6 +319,47 @@ function sourceLines(dir) {
   return { lines, designers };
 }
 
+/**
+ * How a C# project talks to its database, counted.
+ *
+ * `dvldQueries` is the number of command sites, `dvldBoundParameters` the
+ * number of values bound to them, and `dvldSqlAboveDataAccess` the number of
+ * command sites found anywhere above the data-access layer — which is the
+ * separation claim, and must be zero for the site to be allowed to make it.
+ */
+function sqlShape(dataAccessDir, presentationDir) {
+  const count = (dir, pattern) => {
+    let n = 0;
+    const visit = (d) => {
+      let entries;
+      try {
+        entries = readdirSync(d, { withFileTypes: true });
+      } catch {
+        return;
+      }
+      for (const e of entries) {
+        const full = join(d, e.name);
+        if (e.isDirectory()) {
+          if (!SKIP_DIRS.has(e.name)) visit(full);
+        } else if (extname(e.name) === ".cs") {
+          try {
+            n += (readFileSync(full, "utf8").match(pattern) ?? []).length;
+          } catch {
+            /* unreadable file contributes nothing rather than crashing */
+          }
+        }
+      }
+    };
+    visit(dir);
+    return n;
+  };
+  return {
+    dvldQueries: count(dataAccessDir, /new SqlCommand/g),
+    dvldBoundParameters: count(dataAccessDir, /Parameters\.Add/g),
+    dvldSqlAboveDataAccess: count(presentationDir, /new SqlCommand/g),
+  };
+}
+
 const ARTIFACT_MEASURES = {
   roadmap(repoPath) {
     const dvld = join(
@@ -339,6 +380,14 @@ const ARTIFACT_MEASURES = {
       dvldBusinessLines: business.lines,
       dvldDataAccessLines: dataAccess.lines,
       dvldForms: presentation.designers,
+      // The claim the site makes about this project is that no form reaches
+      // the database and no value is concatenated into SQL. Both halves are
+      // countable, so they are counted rather than asserted: every command
+      // site lives in the data-access layer, and every value it sends is
+      // bound. An earlier draft of this site claimed fifty stored procedures
+      // instead; the repository has none, which is exactly the kind of claim
+      // this generator exists to prevent.
+      ...sqlShape(join(dvld, "DVLD_DataAccess"), join(dvld, "DVLD")),
     };
   },
 };
@@ -439,6 +488,9 @@ function serialise(results, generatedAt) {
   L.push("  readonly dvldBusinessLines: number;");
   L.push("  readonly dvldDataAccessLines: number;");
   L.push("  readonly dvldForms: number;");
+  L.push("  readonly dvldQueries: number;");
+  L.push("  readonly dvldBoundParameters: number;");
+  L.push("  readonly dvldSqlAboveDataAccess: number;");
   L.push("}");
   L.push("");
   L.push("export const EVIDENCE = {");

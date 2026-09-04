@@ -292,6 +292,6 @@ export const TRIPPE_EN: CaseStudyCopy = {
   meta: {
     title: "Trippé — a system that refuses to state what it cannot prove",
     description:
-      "A travel app whose backend withholds any price it cannot trace to a quoted source. The provenance rule, the property test that enforces it, and the measurements that condemned my own corpus.",
+      "A travel app whose backend withholds any price it cannot trace to a quoted source: the rule, the test that enforces it, the audit that condemned my corpus.",
   },
 };

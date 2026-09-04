@@ -105,6 +105,6 @@ export const ROADMAP_EN: CaseStudyCopy = {
   meta: {
     title: "The roadmap — twenty-one months of fundamentals",
     description:
-      "669 commits from May 2024 to February 2026, twenty-five certificates, and the part of the story that explains the rest: unit testing with mocked dependencies, expression trees, SOLID as diffs.",
+      "Twenty-one months before shipping anything: unit tests with mocked dependencies, expression trees, and SOLID taught as before-and-after diffs.",
   },
 };

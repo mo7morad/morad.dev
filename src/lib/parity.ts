@@ -21,11 +21,17 @@ type Article = ArticleCopy & {
 };
 
 function signature(copy: Article): string {
+  /* Kind, shape and evidence count. A quote block carries no rail — its
+     attribution is the evidence — so it is the one kind with nothing to
+     count. */
   const blockKinds = (blocks: LedgerBlock[]) =>
     blocks
-      .map((b) =>
-        b.kind === "table" ? `table(${b.head?.length ?? "-"}x${b.rows.length})` : b.kind,
-      )
+      .map((b) => {
+        if (b.kind === "quote") return "quote";
+        const rail = `r${b.rail.length}`;
+        if (b.kind === "table") return `table(${b.head?.length ?? "-"}x${b.rows.length},${rail})`;
+        return `${b.kind}(${rail})`;
+      })
       .join(",");
   return [
     `facts:${copy.facts.length}`,

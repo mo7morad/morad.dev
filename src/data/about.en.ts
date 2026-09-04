@@ -171,6 +171,6 @@ export const ABOUT_EN: AboutCopy = {
   meta: {
     title: "About — Mohamed Morad",
     description:
-      "Egyptian backend engineer in Indonesia. Started at twenty-one, spent twenty-one months on fundamentals before shipping anything, and states availability, nationality and visa status plainly.",
+      "Egyptian backend engineer in Indonesia. Started at twenty-one, spent twenty-one months on fundamentals, and states availability and visa status plainly.",
   },
 };

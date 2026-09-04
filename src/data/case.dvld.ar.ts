@@ -53,6 +53,8 @@ export const DVLD_AR: CaseStudyCopy = {
           ],
           rail: [
             { label: "شاشات", derived: { repo: "roadmap", field: "dvldForms" } },
+            { label: "مواضع الاستعلام", derived: { repo: "roadmap", field: "dvldQueries" } },
+            { label: "قيم مربوطة", derived: { repo: "roadmap", field: "dvldBoundParameters" } },
             { label: "القاعدة", value: "مفيش SQL فوق طبقة البيانات" },
           ],
         },

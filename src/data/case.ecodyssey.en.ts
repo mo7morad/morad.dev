@@ -168,8 +168,8 @@ export const ECODYSSEY_EN: CaseStudyCopy = {
     "It is not finished, and the specific way it is unfinished is worth stating. The learned-corrections loop — the part that would notice the judge repeatedly overruling the detector on a class and adjust the routing — is built and tested, and has never fired. It needs twelve answered judgments for a class before it will act on anything. The only export in existence has five answers in total. The mechanism is correct and the data does not exist yet, which is a different problem from the mechanism being wrong, and I would rather say which one it is.",
 
   meta: {
-    title: "ECOdyssey — measuring your own model honestly enough to stop trusting it",
+    title: "ECOdyssey — measuring a model enough to distrust it",
     description:
-      "A waste-sorting kiosk built by five people, where the interesting work was a benchmark that redirected the project, a post-mortem on my own fabricated-confidence code, and one export that showed the signal and the leak at the same time.",
+      "A waste-sorting kiosk built by five: the benchmark that redirected it, a post-mortem on my own fabricated-confidence code, and one revealing export.",
   },
 };
