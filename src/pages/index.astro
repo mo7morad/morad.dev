@@ -1,293 +1,361 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PhoneMockup from '../components/PhoneMockup.astro';
+import * as si from 'simple-icons';
+
+function brandIcon(icon: { hex: string; path: string; title: string }, color?: string) {
+  return `<svg role="img" aria-label="${icon.title}" viewBox="0 0 24 24" fill="${color ?? `#${icon.hex}`}" xmlns="http://www.w3.org/2000/svg"><path d="${icon.path}"/></svg>`;
+}
+
+const LIGHT = '#e5e7eb'; // override for brand marks whose official color is near-black/invisible on this dark ground
+
+const techList = [
+  { icon: si.siTypescript, label: 'TypeScript' },
+  { icon: si.siNodedotjs, label: 'Node.js' },
+  { icon: si.siCloudflare, label: 'Cloudflare' },
+  { icon: si.siPostgresql, label: 'PostgreSQL' },
+  { icon: si.siSupabase, label: 'Supabase' },
+  { icon: si.siDotnet, label: '.NET' },
+  { icon: si.siSwift, label: 'Swift' },
+  { icon: si.siApple, label: 'Apple', color: LIGHT },
+  { icon: si.siGit, label: 'Git' },
+  { icon: si.siGithub, label: 'GitHub', color: LIGHT },
+  { icon: si.siHono, label: 'Hono' },
+  { icon: si.siVitest, label: 'Vitest' },
+  { icon: si.siDebian, label: 'Debian' },
+  { icon: si.siNginx, label: 'NGINX' },
+  { icon: si.siAstro, label: 'Astro' },
+];
+
+const specList = [
+  { icon: si.siDebian, title: 'Headless Server', desc: 'A repurposed laptop, wiped and running headless Debian under my desk — driven entirely over SSH, no monitor, ever.' },
+  { icon: si.siNginx, title: 'Reverse Proxy', desc: "Fronts every self-hosted service, TLS-terminated and configured by hand — not a managed dashboard." },
+  { icon: si.siPihole, title: 'Network-Wide Ad Block', desc: 'DNS-level blocking for every device on the network, not just one browser.' },
+  { icon: si.siImmich, title: 'Self-Hosted Photos', desc: 'Replaces a Google Photos or iCloud subscription with a photo library I actually control.' },
+];
+
+const badges = [
+  { src: '/images/certificates/cert-01.png', n: '01', title: 'Foundations — Level 1' },
+  { src: '/images/certificates/cert-10.png', n: '10', title: 'Object-Oriented Programming' },
+  { src: '/images/certificates/cert-14.png', n: '14', title: 'C# — Level 1' },
+  { src: '/images/certificates/cert-19.png', n: '19', title: 'Full Real Project — DVLD Capstone' },
+  { src: '/images/certificates/cert-23.png', n: '23', title: 'Algorithms — Level 6' },
+  { src: '/images/certificates/cert-25.png', n: '25', title: 'SOLID Principles' },
+];
+
+const iconPin = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-7.58 7-13a7 7 0 1 0-14 0c0 5.42 7 13 7 13Z"/><circle cx="12" cy="9" r="2.5"/></svg>`;
+const iconMail = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>`;
+const iconExternal = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>`;
+const iconLinkedin = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="22" height="22" rx="4" fill="#0A66C2"/><path fill="#fff" d="M7.4 9.7h2.55v7.9H7.4zm1.28-1.1a1.48 1.48 0 1 1 0-2.96 1.48 1.48 0 0 1 0 2.96zm3.1 1.1h2.44v1.08h.03c.34-.64 1.17-1.32 2.41-1.32 2.58 0 3.06 1.7 3.06 3.9v4.24h-2.55v-3.76c0-.9-.02-2.05-1.25-2.05-1.25 0-1.44.98-1.44 1.98v3.83h-2.55z"/></svg>`;
+const iconBriefcase = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg>`;
+const iconChip = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>`;
+const iconBrackets = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></svg>`;
+const iconServer = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>`;
+const iconAward = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M9 14.5 7 22l5-3 5 3-2-7.5"/></svg>`;
+const iconRocket = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15s-1-5 4-9c4-3 9-3 9-3s0 5-3 9c-4 5-9 4-9 4Z"/><path d="m9 15-4 4M5 19l-.5.5"/><circle cx="14.5" cy="8.5" r="1.7"/></svg>`;
 ---
 
 <Layout
   title="Mohamed Morad"
   description="Backend engineer, Apple Developer Academy Bali. Trippé — a travel app whose backend refuses to state a price it cannot trace to a quoted source."
 >
-  <header class="nav">
+  <div class="ambient" aria-hidden="true">
+    <span class="b1"></span><span class="b2"></span><span class="b3"></span><span class="b4"></span>
+  </div>
+
+  <header class="nav glass">
     <div class="wrap nav-inner">
-      <a href="#top" class="brand" data-scroll-to>MORAD<span>.</span></a>
-      <nav class="nav-links">
-        <a href="#about" class="textlink hide-mobile" data-scroll-to>About</a>
-        <a href="#work" class="textlink hide-mobile" data-scroll-to>Work</a>
-        <a href="mailto:momurad.business@gmail.com" class="btn btn-ghost">Email</a>
-      </nav>
+      <a href="#top" class="brand" data-scroll-to>
+        <img src="/images/profile-avatar.jpg" alt="" />
+        <span>morad</span>
+      </a>
+      <span id="clock" class="num"></span>
     </div>
   </header>
 
   <main id="top">
     <section class="hero">
-      <div class="wrap">
-        <div class="hero-grid">
-          <div>
-            <p class="eyebrow">Backend Engineer &middot; Apple Developer Academy, Bali</p>
-            <h1 class="thesis" id="hero-h1" aria-label="The engineer who won't state what he can't prove.">
-              <span class="word" aria-hidden="true">The</span> <span class="word" aria-hidden="true">engineer</span> <span class="word" aria-hidden="true">who</span> <span class="word" aria-hidden="true">won&rsquo;t</span> <span class="word" aria-hidden="true">state</span> <span class="word" aria-hidden="true">what</span> <span class="word" aria-hidden="true">he</span> <span class="word" aria-hidden="true">can&rsquo;t</span> <span class="word" aria-hidden="true">prove.</span>
-            </h1>
-            <p class="lede" data-reveal>I spent twenty-one months on fundamentals before I shipped anything. Then I built Trippé &mdash; a travel app whose backend refuses to state a price it cannot trace to a quoted source. Backend, iOS client, cost engine: I wrote all three.</p>
-            <div class="hero-cta" data-reveal>
-              <a href="#work" class="btn btn-cream" data-scroll-to>View the work &darr;</a>
-              <a href="https://apps.apple.com/app/id6766072256" class="textlink" target="_blank" rel="noopener">Live on the App Store &nearr;</a>
-              <a href="mailto:momurad.business@gmail.com" class="textlink">momurad.business@gmail.com</a>
-            </div>
-            <div class="record-row" id="record" data-reveal>
-              <div class="record-item"><div class="v mono num">669+599</div><div class="l">Commits, roadmap + Trippé backend</div></div>
-              <div class="record-item"><div class="v mono num">21 months</div><div class="l">Fundamentals before first ship</div></div>
-              <div class="record-item"><div class="v mono num">0.9&thinsp;:&thinsp;1</div><div class="l">Test files to source files</div></div>
-              <div class="record-item"><div class="v mono">Open</div><div class="l">Remote or relocation</div></div>
-            </div>
+      <div class="wrap hero-grid" data-reveal>
+        <div class="hero-photo-col">
+          <div class="hero-photo">
+            <img src="/images/profile-avatar.jpg" alt="Mohamed Morad" />
           </div>
-          <div class="phone-wrap" data-reveal>
-            <PhoneMockup
-              src="/images/trippe/destination-sao-miguel.jpg"
-              alt="Trippé app screen showing a São Miguel, Azores trip recommendation with who/length/when/budget details."
-            />
+          <p class="hero-loc"><Fragment set:html={iconPin} />Bali, Indonesia</p>
+          <div class="hero-social">
+            <a href="https://github.com/mo7morad" target="_blank" rel="noopener" aria-label="GitHub" set:html={brandIcon(si.siGithub, LIGHT)} />
+            <a href="https://www.linkedin.com/in/momorad" target="_blank" rel="noopener" aria-label="LinkedIn" set:html={iconLinkedin} />
+            <a href="https://apps.apple.com/app/id6766072256" target="_blank" rel="noopener" aria-label="Trippé on the App Store" set:html={brandIcon(si.siAppstore)} />
+            <a href="mailto:momurad.business@gmail.com" aria-label="Email" set:html={iconMail} />
           </div>
+        </div>
+        <div>
+          <h1 class="hero-name">Mohamed Morad</h1>
+          <p class="hero-role">Backend Engineer &middot; TypeScript &middot; Cloudflare Workers &middot; SwiftUI</p>
+          <p class="hero-bio">I spent twenty-one months on fundamentals before I shipped anything. Then I built Trippé &mdash; a travel app whose backend refuses to state a price it cannot trace to a quoted source. Backend, iOS client, cost engine: I wrote all three, alone.</p>
+          <a href="mailto:momurad.business@gmail.com" class="btn glass glass-interactive" set:html={`${iconMail}Work With Me`} />
         </div>
       </div>
     </section>
 
-    <hr class="divider" />
-
-    <section id="about">
+    <section id="journey">
       <div class="wrap">
         <div class="section-head" data-reveal>
-          <p class="section-eyebrow">About</p>
-          <h2 class="section-title">Bali, by way of Cairo.</h2>
+          <span class="section-badge glass" set:html={iconBriefcase} />
+          <h2 class="section-title" style="--grad-end:var(--cyan)">Professional Journey</h2>
         </div>
-        <div class="about-grid">
-          <div data-reveal>
-            <p class="p-lede">Egyptian, in Bali since 2023 on an Informatics scholarship. Backend-first: on Tripp&eacute; I wrote the Cloudflare Worker backend, the SwiftUI client, and the cost engine myself, because the alternative was hiring someone I couldn&rsquo;t afford or shipping half a product. I don&rsquo;t trust a number until I can see where it came from &mdash; including the ones my own code produces.</p>
-            <div class="arc-list">
-              <div class="a"><b>2023</b><span>CS50 in Cairo explains what a computer actually does. First build &mdash; a Python/tkinter download manager &mdash; loses its source: no git, no backup. <code class="mono">git init</code> has been the first thing I type ever since.</span></div>
-              <div class="a"><b>AUG 2023</b><span>Leave Egypt on a scholarship &mdash; Informatics at UII, Indonesia.</span></div>
-              <div class="a"><b>MAY 2024&ndash;FEB 2026</b><span>Twenty-one months of self-curated backend fundamentals: 25 courses, 1,329 problems, 669 commits, ending in DVLD.</span></div>
-              <div class="a"><b>MAR 2026</b><span>Apple Developer Academy, Bali &mdash; first Egyptian in the cohort, ~220 places from 5,000+ applicants.</span></div>
-              <div class="a"><b>SEP 2026</b><span>Tripp&eacute; goes live on the App Store &mdash; backend, iOS app, and cost engine, alone.</span></div>
-              <div class="a"><b>DEC 2026 &rarr; AUG 2027</b><span>Academy ends, then the degree lands. Open to remote work or relocation now.</span></div>
+        <div class="section-line"></div>
+
+        <div class="journey-list">
+          <div class="journey-item" data-reveal>
+            <div class="journey-head">
+              <div>
+                <h3>Apple Developer Academy, Bali</h3>
+                <p class="journey-role">iOS &amp; Backend Engineer &middot; Cohort 2026</p>
+              </div>
+              <span class="journey-date">Mar 2026 &ndash; Present</span>
             </div>
+            <p class="journey-desc">First Egyptian in the cohort, ~220 places from 5,000+ applicants. Built Trippé end to end and shipped it to the App Store in September 2026. The Academy runs through December 2026; the UII degree lands August 2027 &mdash; open to remote work or relocation now.</p>
+            <ul>
+              <li>Trippé: the pricing table rejects any row without a quoted source &mdash; a database constraint, not a suggestion</li>
+              <li>ECOdyssey: wrote the belief-fusion engine for a waste-sorting kiosk; a 7-scenario test harness caught the legacy logic failing 3/7, mine failing 1/7</li>
+              <li>ADA-Stickies: a magic-link note wall for the actual cohort, live since July 2026, still running</li>
+              <li>Numo: a one-week studio build reading meal photos through Apple's on-device models at temperature 0, for reproducible structured output</li>
+            </ul>
           </div>
-          <div data-reveal>
-            <div class="stack-groups">
-              <div class="grp">
-                <p class="lbl">Backend</p>
-                <div class="chips"><span class="chip">TypeScript</span><span class="chip">Cloudflare Workers</span><span class="chip">Node.js</span><span class="chip">Postgres / Supabase</span><span class="chip">C#</span><span class="chip">ADO.NET</span><span class="chip">SQL Server</span></div>
+
+          <div class="journey-item" data-reveal>
+            <div class="journey-head">
+              <div>
+                <h3>Backend Fundamentals Roadmap</h3>
+                <p class="journey-role">Self-Directed Curriculum</p>
               </div>
-              <div class="grp">
-                <p class="lbl">iOS</p>
-                <div class="chips"><span class="chip">Swift</span><span class="chip">SwiftUI</span><span class="chip">SwiftData</span><span class="chip">Core ML</span><span class="chip">App Intents</span></div>
-              </div>
-              <div class="grp">
-                <p class="lbl">Systems</p>
-                <div class="chips"><span class="chip">Debian</span><span class="chip">Nginx</span><span class="chip">SSH</span><span class="chip">Git</span></div>
-              </div>
+              <span class="journey-date">May 2024 &ndash; Feb 2026</span>
             </div>
-            <p class="foot" style="margin-top:1.1rem;">Every item here is proven on a project on this page, not a wishlist.</p>
+            <p class="journey-desc">Twenty-one months of fundamentals before shipping anything real: C++, algorithms across six levels, OOP, data structures, C#, SQL and T-SQL, REST APIs, SOLID &mdash; 25 courses, 1,329 solved problems, 669 commits.</p>
+            <ul>
+              <li>A banking-system project rewritten four times, ending in full OOP with multi-currency exchange (~6,000 lines)</li>
+              <li>Capstone: DVLD, a C# WinForms + SQL Server driving-license system &mdash; 134 files, 28,541 lines, strict 3-tier architecture, raw parameterized ADO.NET by choice</li>
+            </ul>
+          </div>
+
+          <div class="journey-item" data-reveal>
+            <div class="journey-head">
+              <div>
+                <h3>Scholarship to Indonesia</h3>
+                <p class="journey-role">Informatics, Universitas Islam Indonesia</p>
+              </div>
+              <span class="journey-date">Aug 2023</span>
+            </div>
+            <p class="journey-desc">Left Egypt on a scholarship to study Informatics at UII &mdash; the decision that put fundamentals before shipping anything.</p>
+          </div>
+
+          <div class="journey-item" data-reveal>
+            <div class="journey-head">
+              <div>
+                <h3>First Lines of Code</h3>
+                <p class="journey-role">Cairo, Egypt</p>
+              </div>
+              <span class="journey-date">2023</span>
+            </div>
+            <p class="journey-desc">CS50 explains what a computer actually does. The first build &mdash; a Python/Tkinter download manager &mdash; loses its source: no git, no backup. <code class="mono">git init</code> has been the first thing typed on every project since.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <hr class="divider" />
+    <section id="tech">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <span class="section-badge glass" set:html={iconChip} />
+          <h2 class="section-title" style="--grad-end:var(--blue)">Tech Arsenal</h2>
+        </div>
+        <div class="section-line"></div>
+        <div class="tech-grid" data-reveal>
+          {techList.map((t) => (
+            <div class="tech-tile glass glass-interactive">
+              <Fragment set:html={brandIcon(t.icon, t.color)} />
+              <span>{t.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
 
     <section id="work">
       <div class="wrap">
         <div class="section-head" data-reveal>
-          <p class="section-eyebrow">Selected Work</p>
-          <h2 class="section-title">Five projects, one instinct: don&rsquo;t claim it, show the receipt.</h2>
+          <span class="section-badge glass" set:html={iconBrackets} />
+          <h2 class="section-title" style="--grad-end:var(--cyan)">Featured Projects</h2>
         </div>
-      </div>
+        <div class="section-line"></div>
 
-      <div class="wrap work-item" id="trippe" style="padding-top:1.4rem; padding-bottom:3rem;">
-        <div class="grid">
-          <div data-reveal>
-            <div class="shots">
-              <div>
-                <PhoneMockup
-                  size="sm"
-                  src="/images/trippe/destination-sao-miguel.jpg"
-                  alt="Trippé destination screen for São Miguel, Azores."
-                />
-                <p class="cap">Destination reveal &mdash; App Store screenshot</p>
+        <div class="project-list">
+          <article class="project-card glass" data-reveal>
+            <div class="project-visual">
+              <PhoneMockup size="sm" src="/images/trippe/destination-sao-miguel.jpg" alt="Trippé destination screen for São Miguel, Azores." />
+              <PhoneMockup size="sm" src="/images/trippe/estimated-spending.jpg" alt="Trippé estimated cost breakdown screen." />
+            </div>
+            <div class="project-body">
+              <div class="project-top">
+                <h3>Trippé</h3>
+                <div class="project-icons">
+                  <Fragment set:html={brandIcon(si.siCloudflare)} />
+                  <Fragment set:html={brandIcon(si.siTypescript)} />
+                  <Fragment set:html={brandIcon(si.siSwift)} />
+                </div>
               </div>
-              <div>
-                <PhoneMockup
-                  size="sm"
-                  src="/images/trippe/estimated-spending.jpg"
-                  alt="Trippé estimated cost breakdown screen, showing flights, stays, food, and activities."
-                />
-                <p class="cap">Cost breakdown &mdash; every line item priced separately</p>
-              </div>
-            </div>
-          </div>
-          <div data-reveal>
-            <p class="section-eyebrow">01 &middot; Trippé</p>
-            <h2 class="section-title" style="margin-bottom:.9rem;">A price that has to cite itself.</h2>
-            <p class="p-lede">Trippé recommends a trip, then prices it against real harvested data before you see it. The backend&rsquo;s pricing table has a hard constraint: <b>a price row without a quoted source is discarded, not stored</b>. I designed and built the Cloudflare Worker backend, the SwiftUI client, and the cost engine between them, alone.</p>
-            <div class="kv-list">
-              <div class="row"><span class="k">Backend</span><span class="v mono">599 commits &middot; TypeScript &middot; one runtime dep (<code style="color:var(--teal)">jose</code>)</span></div>
-              <div class="row"><span class="k">Test coverage</span><span class="v mono">123 test files / 144 source files</span></div>
-              <div class="row"><span class="k">iOS client</span><span class="v mono">250 commits &middot; 47,075 lines, SwiftUI</span></div>
-              <div class="row"><span class="k">On-device AI</span><span class="v mono">Apple Foundation Models, with a kill-switch fallback</span></div>
-            </div>
-            <div class="quote-block">
-              <code>price_observation.source_quote text not null</code><br />
-              An extraction that can&rsquo;t quote its source is discarded &mdash; not stored. &mdash; migration 0006
-            </div>
-            <a href="https://apps.apple.com/app/id6766072256" class="btn btn-ghost" target="_blank" rel="noopener">View on the App Store &nearr;</a>
-          </div>
-        </div>
-      </div>
-
-      <hr class="divider" />
-
-      <div class="wrap" id="roadmap" style="padding-top:3rem; padding-bottom:3rem;">
-        <div class="section-head" data-reveal>
-          <p class="section-eyebrow">02 &middot; Backend Fundamentals Roadmap</p>
-          <h2 class="section-title">Twenty-one months before I shipped anything, on purpose.</h2>
-        </div>
-        <p class="p-lede" data-reveal style="max-width:60ch;">A self-curated backend curriculum: C++, algorithms across six levels, OOP, data structures, C# WinForms, SQL, T-SQL, REST APIs, SOLID, testing &mdash; twenty-five courses, 1,329 solved problems, ending in a capstone.</p>
-
-        <div class="timeline" data-reveal aria-hidden="true">
-          <div class="track"></div>
-          <div class="pt" style="left:30%;"><span class="lbl">75</span><span class="dot"></span><span class="sub">DEC &lsquo;24</span></div>
-          <div class="pt" style="left:55%;"><span class="lbl">79</span><span class="dot"></span><span class="sub">FEB &lsquo;25</span></div>
-          <div class="pt" style="left:84%;"><span class="lbl">174</span><span class="dot"></span><span class="sub">DEC &lsquo;25</span></div>
-        </div>
-        <div class="timeline-range" aria-hidden="true"><span>MAY 2024</span><span>FEB 2026</span></div>
-        <p class="sr-only">Verified commit counts at three points in the roadmap: 75 commits in December 2024, 79 in February 2025, and 174 in December 2025, across a total span from May 2024 to February 2026.</p>
-        <p class="foot" style="font-size:.76rem;color:var(--text-faint);margin:0 0 1.8rem;" data-reveal>Commits per month at three measured points along 669 total &mdash; the only months verified so far, not a full monthly count.</p>
-
-        <div class="rewrite-list" data-reveal>
-          <div class="r"><b>V1</b> Procedural C++, flat-file persistence, single-admin CRUD.</div>
-          <div class="r"><b>V3</b> Adds role-based auth, multi-user CRUD.</div>
-          <div class="r"><b>V4</b> Full OOP rewrite &mdash; <code class="mono" style="color:var(--teal);font-size:.78rem;">clsBankClient</code>, multi-currency exchange, ~6,000 lines.</div>
-        </div>
-        <div class="quote-block" data-reveal>
-          The capstone, <code>DVLD</code>: a driving-license system, C# WinForms + SQL Server, strict 3-tier architecture. 134 files, 28,541 lines. Data access is raw, parameterized ADO.NET &mdash; no stored procedures, by choice.
-        </div>
-        <figure class="diagram-frame" data-reveal>
-          <img
-            src="/images/dvld/db-diagram.png"
-            alt="DVLD database schema diagram: thirteen tables including Licenses, Drivers, Applications, Tests, TestAppointments, People, and Users, with foreign-key relationships drawn between them."
-            loading="lazy"
-          />
-        </figure>
-        <p class="diagram-cap" data-reveal>The actual schema &mdash; thirteen tables, drawn straight from <code class="mono">DVLD-DB Diagram.png</code> in the repo.</p>
-      </div>
-
-      <hr class="divider" />
-
-      <div class="wrap work-item" id="eco" style="padding-top:3rem; padding-bottom:3rem;">
-        <div class="grid">
-          <div data-reveal>
-            <p class="section-eyebrow">03 &middot; ECOdyssey / Sortla</p>
-            <h2 class="section-title" style="margin-bottom:.9rem;">Measuring a team&rsquo;s own work honestly enough to stop trusting it.</h2>
-            <p class="p-lede">My role on a five-person team building a waste-sorting kiosk (on-device YOLOv8, Core ML). I wrote the belief-fusion engine, the Private-Cloud-Compute second-opinion arbiter, and the test harness that graded both approaches against each other.</p>
-            <p class="p-lede">The harness replayed 7 fixed scenarios through the old confidence-vote logic and my belief engine. The old logic was wrong three times. Mine was wrong once. <b>The measurement found a real bug &mdash; it wasn&rsquo;t a demo of a passing test.</b></p>
-          </div>
-          <div data-reveal>
-            <div class="compare">
-              <div class="bar-row"><span class="bar-label">Legacy confidence-vote</span><div class="bar-track"><div class="bar-fill legacy" style="--target-width:43%"></div></div><span class="bar-val">3/7</span></div>
-              <div class="bar-row"><span class="bar-label">Belief engine (mine)</span><div class="bar-track"><div class="bar-fill belief" style="--target-width:14%"></div></div><span class="bar-val">1/7</span></div>
-              <p class="foot">Confidently-wrong verdicts out of 7 fixed fixture scenarios &mdash; BinDecisionBakeOffTests.swift</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <hr class="divider" />
-
-      <div class="wrap work-item" id="stickies" style="padding-top:3rem; padding-bottom:3rem;">
-        <div class="grid">
-          <div data-reveal>
-            <div class="shots">
-              <div>
-                <PhoneMockup
-                  size="sm"
-                  src="/images/stickies/gate.png"
-                  alt="Academy Stickies sign-in gate, a live production screenshot from academy-stickies.pages.dev."
-                />
-                <p class="cap">Sign-in gate &mdash; live screenshot, academy-stickies.pages.dev</p>
+              <p>Trippé recommends a trip, then prices it against real harvested data before you see it. The pricing table has a hard constraint: a price row without a quoted source is discarded, not stored. I designed and built the Cloudflare Worker backend (599 commits, TypeScript, one runtime dependency), the SwiftUI client (250 commits, 47,075 lines), and the cost engine between them &mdash; alone, with 123 test files against 144 source files, and an on-device Apple Foundation Models fallback with a kill-switch.</p>
+              <div class="project-links">
+                <a href="https://apps.apple.com/app/id6766072256" class="btn glass glass-interactive" target="_blank" rel="noopener" set:html={`Live on the App Store${iconExternal}`} />
               </div>
             </div>
-          </div>
-          <div data-reveal>
-            <p class="section-eyebrow">04 &middot; ADA-Stickies</p>
-            <h2 class="section-title" style="margin-bottom:.9rem;">Shipped for people who&rsquo;d notice if it broke.</h2>
-            <p class="p-lede">A private wall of notes for my actual Academy cohort &mdash; magic-link email auth, so nobody needs a password I&rsquo;d have to reset. Live since July 2026, still running.</p>
-            <div class="kv-list">
-              <div class="row"><span class="k">Stack</span><span class="v mono">Cloudflare Pages &middot; Hono &middot; D1 &middot; R2</span></div>
-              <div class="row"><span class="k">Migrations</span><span class="v mono">9 &middot; tested with vitest</span></div>
-              <div class="row"><span class="k">Commits</span><span class="v mono">39 (33 mine) &middot; Jul&ndash;Aug 2026</span></div>
-              <div class="row"><span class="k">Status</span><span class="v mono">Live &middot; invite-only, real cohort</span></div>
-            </div>
-            <div style="display:flex; gap:.9rem; flex-wrap:wrap;">
-              <a href="https://academy-stickies.pages.dev" class="btn btn-ghost" target="_blank" rel="noopener">Open the app &nearr;</a>
-              <a href="https://github.com/mo7morad/Academy-Stickies" class="btn btn-ghost" target="_blank" rel="noopener">View the repo &nearr;</a>
-            </div>
-          </div>
-        </div>
-      </div>
+          </article>
 
-      <hr class="divider" />
+          <article class="project-card glass" data-reveal>
+            <div class="project-visual">
+              <figure class="diagram-frame">
+                <img src="/images/dvld/db-diagram.png" alt="DVLD database schema: thirteen tables including Licenses, Drivers, Applications, Tests, TestAppointments, People, and Users, with foreign-key relationships drawn between them." loading="lazy" />
+              </figure>
+            </div>
+            <div class="project-body">
+              <div class="project-top">
+                <h3>Backend Fundamentals Roadmap</h3>
+                <div class="project-icons">
+                  <Fragment set:html={brandIcon(si.siDotnet)} />
+                  <Fragment set:html={brandIcon(si.siGit)} />
+                </div>
+              </div>
+              <p>Twenty-one months of self-curated fundamentals before I shipped anything: C++, algorithms across six levels, OOP, data structures, C#, SQL, REST APIs, SOLID &mdash; 25 courses, 1,329 solved problems, 669 commits. It ends in DVLD, a driving-license system built on C# WinForms and SQL Server in strict 3-tier architecture: 134 files, 28,541 lines, and data access that's raw, parameterized ADO.NET &mdash; no stored procedures, by choice. The schema above is drawn straight from the repo's own diagram.</p>
+            </div>
+          </article>
 
-      <div class="wrap work-item" id="academy" style="padding-top:3rem; padding-bottom:3rem;">
-        <div class="grid">
-          <div data-reveal>
-            <div class="shots">
-              <div>
-                <PhoneMockup
-                  size="sm"
-                  src="/images/academy/numo-meal-entry.jpg"
-                  alt="Numo meal-entry screen, a real screenshot from the app."
-                />
-                <p class="cap">Numo &mdash; meal entry screen, real screenshot</p>
+          <article class="project-card glass" data-reveal>
+            <div class="project-visual">
+              <div class="compare">
+                <div class="bar-row">
+                  <span class="bar-label">Legacy confidence-vote</span>
+                  <div class="bar-track"><div class="bar-fill legacy" style="--target-width:43%"></div></div>
+                  <span class="bar-val">3 / 7 confidently wrong</span>
+                </div>
+                <div class="bar-row">
+                  <span class="bar-label">Belief engine (mine)</span>
+                  <div class="bar-track"><div class="bar-fill belief" style="--target-width:14%"></div></div>
+                  <span class="bar-val">1 / 7 confidently wrong</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div data-reveal>
-            <p class="section-eyebrow">05 &middot; Apple Developer Academy</p>
-            <h2 class="section-title" style="margin-bottom:.9rem;">Five studio challenges in five weeks.</h2>
-            <p class="p-lede">Before ECOdyssey, the Academy runs five one-week challenges. Numo is the strongest: a hand-rolled Claude vision client that reads a meal photo and returns structured nutrition data &mdash; temperature 0, on purpose, because structured data has to be reproducible, not creative.</p>
-            <div class="kv-list">
-              <div class="row"><span class="k">Client</span><span class="v mono">AnthropicMealAnalysisClient.swift</span></div>
-              <div class="row"><span class="k">Error handling</span><span class="v mono">12-case typed error enum</span></div>
-              <div class="row"><span class="k">Journey repo</span><span class="v mono">239 commits &middot; 118 Swift files</span></div>
+            <div class="project-body">
+              <div class="project-top">
+                <h3>ECOdyssey / Sortla</h3>
+                <div class="project-icons">
+                  <Fragment set:html={brandIcon(si.siSwift)} />
+                  <Fragment set:html={brandIcon(si.siApple, LIGHT)} />
+                </div>
+              </div>
+              <p>My role on a five-person team building a waste-sorting kiosk running on-device YOLOv8 via Core ML. I wrote the belief-fusion engine, the Private-Cloud-Compute second-opinion arbiter, and the test harness that graded both approaches against each other &mdash; replaying 7 fixed scenarios through the old confidence-vote logic and my belief engine. The old logic was wrong three times; mine was wrong once. The measurement found a real bug &mdash; it wasn't a demo of a passing test.</p>
             </div>
-            <div class="quote-block">
-              <code>temperature: 0</code><br />
-              &ldquo;Structured nutrition data must be reproducible and schema-compliant, not creative.&rdquo; &mdash; in-code comment, Numo
+          </article>
+
+          <article class="project-card glass" data-reveal>
+            <div class="project-visual">
+              <PhoneMockup size="sm" src="/images/stickies/gate.png" alt="Academy Stickies sign-in gate, a live production screenshot." />
             </div>
-            <p class="foot" style="margin:-.6rem 0 1.3rem;">Same repo, same five weeks: Distill dropped a planned face-recognition feature after hitting Apple&rsquo;s Photos privacy limits and documented the pivot instead of hiding it; ContactsRemix still keeps both the hardcoded first pass and the data-driven refactor side by side.</p>
-            <a href="https://github.com/mo7morad/My_Apple-Developer-Academy_Journey" class="btn btn-ghost" target="_blank" rel="noopener">View the journey repo &nearr;</a>
-          </div>
+            <div class="project-body">
+              <div class="project-top">
+                <h3>ADA-Stickies</h3>
+                <div class="project-icons">
+                  <Fragment set:html={brandIcon(si.siCloudflare)} />
+                  <Fragment set:html={brandIcon(si.siHono)} />
+                  <Fragment set:html={brandIcon(si.siVitest)} />
+                </div>
+              </div>
+              <p>A private wall of notes for my actual Academy cohort &mdash; magic-link email auth, so nobody needs a password I'd have to reset. Live since July 2026, still running: Cloudflare Pages, Hono, D1, R2, nine migrations tested with Vitest, 39 commits (33 mine).</p>
+              <div class="project-links">
+                <a href="https://academy-stickies.pages.dev" class="btn glass glass-interactive" target="_blank" rel="noopener" set:html={`Open the app${iconExternal}`} />
+                <a href="https://github.com/mo7morad/Academy-Stickies" class="btn glass glass-interactive" target="_blank" rel="noopener" set:html={`${brandIcon(si.siGithub, LIGHT)}Source Code`} />
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card glass" data-reveal>
+            <div class="project-visual">
+              <PhoneMockup size="sm" src="/images/academy/numo-meal-entry.jpg" alt="Numo meal-entry screen, a real screenshot from the app." />
+            </div>
+            <div class="project-body">
+              <div class="project-top">
+                <h3>Apple Developer Academy &mdash; Numo</h3>
+                <div class="project-icons">
+                  <Fragment set:html={brandIcon(si.siSwift)} />
+                  <Fragment set:html={brandIcon(si.siApple, LIGHT)} />
+                </div>
+              </div>
+              <p>Before ECOdyssey, the Academy runs five one-week studio challenges. Numo is the strongest: a hand-rolled Claude vision client that reads a meal photo and returns structured nutrition data at temperature 0, on purpose &mdash; structured data has to be reproducible, not creative. 239 commits, 118 Swift files, a 12-case typed error enum.</p>
+              <div class="project-links">
+                <a href="https://github.com/mo7morad/My_Apple-Developer-Academy_Journey" class="btn glass glass-interactive" target="_blank" rel="noopener" set:html={`${brandIcon(si.siGithub, LIGHT)}View the journey repo`} />
+              </div>
+            </div>
+          </article>
         </div>
       </div>
     </section>
 
-    <div class="aside">
+    <section id="beyond">
       <div class="wrap">
-        <p data-reveal><b>Beyond the code:</b> a repurposed laptop runs headless Debian under my desk &mdash; Nginx, managed entirely over SSH, running Pi-hole for network-wide ad blocking and Immich for self-hosted photo backup instead of a Google or iCloud plan. Same instinct as everything above, aimed at my own life: own the infrastructure instead of renting someone else&rsquo;s.</p>
+        <div class="section-head" data-reveal>
+          <span class="section-badge glass" set:html={iconServer} />
+          <h2 class="section-title" style="--grad-end:var(--blue)">Beyond the Code</h2>
+        </div>
+        <div class="section-line"></div>
+        <p class="section-intro" data-reveal>A repurposed laptop runs headless Debian under my desk, managed entirely over SSH. Same instinct as everything above, aimed at my own life: own the infrastructure instead of renting someone else's.</p>
+        <div class="spec-grid" data-reveal>
+          {specList.map((s) => (
+            <div class="spec-card glass">
+              <span class="spec-icon" set:html={brandIcon(s.icon)} />
+              <h3>{s.title}</h3>
+              <p>{s.desc}</p>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
+
+    <section id="achievements">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <span class="section-badge glass" set:html={iconAward} />
+          <h2 class="section-title" style="--grad-end:var(--cyan)">Certificates &amp; Receipts</h2>
+        </div>
+        <div class="section-line"></div>
+        <p class="section-intro" data-reveal>Six of the twenty-five course completions behind the fundamentals roadmap above &mdash; issued by ProgrammingAdvices, the platform the curriculum was built on.</p>
+        <div class="badge-grid" data-reveal>
+          {badges.map((b) => (
+            <div class="badge-card glass">
+              <img src={b.src} alt={`Certificate of attendance, course ${b.n}: ${b.title}`} loading="lazy" />
+              <div class="badge-cap"><b>{b.n} &middot; {b.title}</b>ProgrammingAdvices &middot; Certificate of Attendance</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="wrap">
+        <div class="cta-block glass" data-reveal>
+          <span class="section-badge glass" style="margin:0 auto 1rem;" set:html={iconRocket} />
+          <h2 class="section-title" style="--grad-end:var(--blue)">Open to What's Next</h2>
+          <p>Backend or AI-product roles, remote or relocation. The Academy runs through December 2026; the UII degree lands August 2027 &mdash; available for conversations now.</p>
+          <a href="mailto:momurad.business@gmail.com" class="btn glass glass-interactive" set:html={`${iconMail}Work With Me`} />
+        </div>
+      </div>
+    </section>
 
     <footer class="site">
       <div class="wrap">
-        <div class="footer-top">
-          <div class="footer-cta">
-            <h3>Open to backend or AI-product roles.</h3>
-            <p>Remote or relocation &middot; Academy ends Dec 2026 &middot; Degree Aug 2027</p>
-          </div>
-          <div class="footer-links">
-            <a href="mailto:momurad.business@gmail.com">momurad.business@gmail.com</a>
-            <a href="https://github.com/mo7morad" target="_blank" rel="noopener">github.com/mo7morad</a>
-            <a href="https://www.linkedin.com/in/momorad" target="_blank" rel="noopener">linkedin.com/in/momorad</a>
-            <a href="https://apps.apple.com/app/id6766072256" target="_blank" rel="noopener">Trippé on the App Store</a>
-          </div>
+        <div class="footer-links" style="flex-direction:row; flex-wrap:wrap; gap:1.6rem; margin-bottom:1.6rem;">
+          <a href="mailto:momurad.business@gmail.com">momurad.business@gmail.com</a>
+          <a href="https://github.com/mo7morad" target="_blank" rel="noopener">github.com/mo7morad</a>
+          <a href="https://www.linkedin.com/in/momorad" target="_blank" rel="noopener">linkedin.com/in/momorad</a>
+          <a href="https://apps.apple.com/app/id6766072256" target="_blank" rel="noopener">Trippé on the App Store</a>
         </div>
         <div class="footer-bottom">
           <span>&copy; Mohamed Morad</span>
@@ -298,16 +366,10 @@ import PhoneMockup from '../components/PhoneMockup.astro';
   </main>
 
   <script>
-    import gsap from 'gsap';
-    import { ScrollTrigger } from 'gsap/ScrollTrigger';
     import Lenis from 'lenis';
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // In-page navigation: plain scrollIntoView, deliberately not routed through
-    // Lenis. Lenis's job here is ambient wheel-scroll smoothing only — link
-    // clicks use the native API directly so they never depend on a third-party
-    // scroll engine's internal state to work.
     document.querySelectorAll('[data-scroll-to]').forEach((a) => {
       a.addEventListener('click', (e) => {
         const id = a.getAttribute('href');
@@ -318,14 +380,23 @@ import PhoneMockup from '../components/PhoneMockup.astro';
       });
     });
 
-    // Section reveals: IntersectionObserver + CSS transitions. No dependency on
-    // GSAP/ScrollTrigger measurement timing, so sections can never get stuck
-    // invisible if a library fails to load or a measurement goes stale.
+    const clockEl = document.getElementById('clock');
+    if (clockEl) {
+      const tick = () => {
+        clockEl.textContent = new Date().toLocaleTimeString('en-GB', {
+          timeZone: 'Asia/Makassar',
+          hour12: false,
+        });
+      };
+      tick();
+      setInterval(tick, 1000);
+    }
+
+    // Reveals default to visible in CSS; JS only opts sections into the
+    // fade-up by adding .io-pending, so a JS failure never hides content.
     if (!reduced && 'IntersectionObserver' in window) {
-      const laterReveals = Array.from(document.querySelectorAll('[data-reveal]')).filter(
-        (el) => !el.closest('.hero')
-      );
-      laterReveals.forEach((el) => el.classList.add('io-pending'));
+      const reveals = Array.from(document.querySelectorAll('[data-reveal]'));
+      reveals.forEach((el) => el.classList.add('io-pending'));
       const revealObserver = new IntersectionObserver(
         (entries, obs) => {
           entries.forEach((entry) => {
@@ -335,9 +406,9 @@ import PhoneMockup from '../components/PhoneMockup.astro';
             }
           });
         },
-        { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+        { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
       );
-      laterReveals.forEach((el) => revealObserver.observe(el));
+      reveals.forEach((el) => revealObserver.observe(el));
 
       const bars = document.querySelectorAll('.bar-fill');
       bars.forEach((el) => el.classList.add('bar-pending'));
@@ -356,39 +427,12 @@ import PhoneMockup from '../components/PhoneMockup.astro';
     }
 
     if (!reduced) {
-      gsap.registerPlugin(ScrollTrigger);
-
       const lenis = new Lenis({ duration: 1.05, smoothWheel: true });
-      lenis.on('scroll', ScrollTrigger.update);
-      gsap.ticker.add((time) => lenis.raf(time * 1000));
-      gsap.ticker.lagSmoothing(0);
-
-      const EASE_OUT = 'cubic-bezier(0.23, 1, 0.32, 1)';
-
-      const words = gsap.utils.toArray('#hero-h1 .word');
-      const heroReveals = Array.from(document.querySelectorAll('[data-reveal]')).filter((el) =>
-        el.closest('.hero')
-      );
-
-      gsap.set(words, { opacity: 0, y: '0.6em' });
-      gsap.set(heroReveals, { opacity: 0, y: 14 });
-      gsap.set('.phone-wrap', { opacity: 0, x: 24, y: 0 });
-
-      const tl = gsap.timeline({ defaults: { ease: EASE_OUT } });
-      tl.to(words, { opacity: 1, y: 0, duration: 0.6, stagger: 0.045 })
-        .to(heroReveals, { opacity: 1, y: 0, duration: 0.55, stagger: 0.08 }, '-=0.25')
-        .to('.phone-wrap', { opacity: 1, x: 0, duration: 0.7 }, '-=0.5');
-
-      // Phone parallax is the one justified scrubbed sequence — a missed frame
-      // here just means the phone doesn't drift, never a hidden section.
-      gsap.to('.phone-wrap .phone', {
-        y: -22,
-        ease: 'none',
-        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.5 },
-      });
-      const refresh = () => ScrollTrigger.refresh();
-      window.addEventListener('load', refresh);
-      if (document.fonts?.ready) document.fonts.ready.then(refresh);
+      const raf = (time: number) => {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      };
+      requestAnimationFrame(raf);
     }
   </script>
 </Layout>
