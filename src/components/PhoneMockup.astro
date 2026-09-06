@@ -1,0 +1,15 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  size?: 'lg' | 'sm';
+}
+const { src, alt, size = 'lg' } = Astro.props;
+---
+
+<div class={size === 'sm' ? 'phone sm' : 'phone'}>
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <img {src} {alt} loading="lazy" />
+  </div>
+</div>
