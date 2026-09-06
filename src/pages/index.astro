@@ -11,8 +11,8 @@ import PhoneMockup from '../components/PhoneMockup.astro';
     <div class="wrap nav-inner">
       <a href="#top" class="brand" data-scroll-to>MORAD<span>.</span></a>
       <nav class="nav-links">
+        <a href="#about" class="textlink hide-mobile" data-scroll-to>About</a>
         <a href="#work" class="textlink hide-mobile" data-scroll-to>Work</a>
-        <a href="#record" class="textlink hide-mobile" data-scroll-to>Record</a>
         <a href="mailto:momurad.business@gmail.com" class="btn btn-ghost">Email</a>
       </nav>
     </div>
@@ -52,15 +52,56 @@ import PhoneMockup from '../components/PhoneMockup.astro';
 
     <hr class="divider" />
 
+    <section id="about">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <p class="section-eyebrow">About</p>
+          <h2 class="section-title">Bali, by way of Cairo.</h2>
+        </div>
+        <div class="about-grid">
+          <div data-reveal>
+            <p class="p-lede">Egyptian, in Bali since 2023 on an Informatics scholarship. Backend-first: on Tripp&eacute; I wrote the Cloudflare Worker backend, the SwiftUI client, and the cost engine myself, because the alternative was hiring someone I couldn&rsquo;t afford or shipping half a product. I don&rsquo;t trust a number until I can see where it came from &mdash; including the ones my own code produces.</p>
+            <div class="arc-list">
+              <div class="a"><b>2023</b><span>CS50 in Cairo explains what a computer actually does. First build &mdash; a Python/tkinter download manager &mdash; loses its source: no git, no backup. <code class="mono">git init</code> has been the first thing I type ever since.</span></div>
+              <div class="a"><b>AUG 2023</b><span>Leave Egypt on a scholarship &mdash; Informatics at UII, Indonesia.</span></div>
+              <div class="a"><b>MAY 2024&ndash;FEB 2026</b><span>Twenty-one months of self-curated backend fundamentals: 25 courses, 1,329 problems, 669 commits, ending in DVLD.</span></div>
+              <div class="a"><b>MAR 2026</b><span>Apple Developer Academy, Bali &mdash; first Egyptian in the cohort, ~220 places from 5,000+ applicants.</span></div>
+              <div class="a"><b>SEP 2026</b><span>Tripp&eacute; goes live on the App Store &mdash; backend, iOS app, and cost engine, alone.</span></div>
+              <div class="a"><b>DEC 2026 &rarr; AUG 2027</b><span>Academy ends, then the degree lands. Open to remote work or relocation now.</span></div>
+            </div>
+          </div>
+          <div data-reveal>
+            <div class="stack-groups">
+              <div class="grp">
+                <p class="lbl">Backend</p>
+                <div class="chips"><span class="chip">TypeScript</span><span class="chip">Cloudflare Workers</span><span class="chip">Node.js</span><span class="chip">Postgres / Supabase</span><span class="chip">C#</span><span class="chip">ADO.NET</span><span class="chip">SQL Server</span></div>
+              </div>
+              <div class="grp">
+                <p class="lbl">iOS</p>
+                <div class="chips"><span class="chip">Swift</span><span class="chip">SwiftUI</span><span class="chip">SwiftData</span><span class="chip">Core ML</span><span class="chip">App Intents</span></div>
+              </div>
+              <div class="grp">
+                <p class="lbl">Systems</p>
+                <div class="chips"><span class="chip">Debian</span><span class="chip">Nginx</span><span class="chip">SSH</span><span class="chip">Git</span></div>
+              </div>
+            </div>
+            <p class="foot" style="margin-top:1.1rem;">Every item here is proven on a project on this page, not a wishlist.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
     <section id="work">
       <div class="wrap">
         <div class="section-head" data-reveal>
           <p class="section-eyebrow">Selected Work</p>
-          <h2 class="section-title">Three projects, one instinct: don&rsquo;t claim it, show the receipt.</h2>
+          <h2 class="section-title">Five projects, one instinct: don&rsquo;t claim it, show the receipt.</h2>
         </div>
       </div>
 
-      <div class="wrap" id="trippe" style="padding:1.4rem 0 3rem;">
+      <div class="wrap work-item" id="trippe" style="padding-top:1.4rem; padding-bottom:3rem;">
         <div class="grid">
           <div data-reveal>
             <div class="shots">
@@ -103,7 +144,7 @@ import PhoneMockup from '../components/PhoneMockup.astro';
 
       <hr class="divider" />
 
-      <div class="wrap" id="roadmap" style="padding:3rem 0;">
+      <div class="wrap" id="roadmap" style="padding-top:3rem; padding-bottom:3rem;">
         <div class="section-head" data-reveal>
           <p class="section-eyebrow">02 &middot; Backend Fundamentals Roadmap</p>
           <h2 class="section-title">Twenty-one months before I shipped anything, on purpose.</h2>
@@ -128,11 +169,19 @@ import PhoneMockup from '../components/PhoneMockup.astro';
         <div class="quote-block" data-reveal>
           The capstone, <code>DVLD</code>: a driving-license system, C# WinForms + SQL Server, strict 3-tier architecture. 134 files, 28,541 lines. Data access is raw, parameterized ADO.NET &mdash; no stored procedures, by choice.
         </div>
+        <figure class="diagram-frame" data-reveal>
+          <img
+            src="/images/dvld/db-diagram.png"
+            alt="DVLD database schema diagram: thirteen tables including Licenses, Drivers, Applications, Tests, TestAppointments, People, and Users, with foreign-key relationships drawn between them."
+            loading="lazy"
+          />
+        </figure>
+        <p class="diagram-cap" data-reveal>The actual schema &mdash; thirteen tables, drawn straight from <code class="mono">DVLD-DB Diagram.png</code> in the repo.</p>
       </div>
 
       <hr class="divider" />
 
-      <div class="wrap" id="eco" style="padding:3rem 0;">
+      <div class="wrap work-item" id="eco" style="padding-top:3rem; padding-bottom:3rem;">
         <div class="grid">
           <div data-reveal>
             <p class="section-eyebrow">03 &middot; ECOdyssey / Sortla</p>
@@ -146,6 +195,75 @@ import PhoneMockup from '../components/PhoneMockup.astro';
               <div class="bar-row"><span class="bar-label">Belief engine (mine)</span><div class="bar-track"><div class="bar-fill belief" style="--target-width:14%"></div></div><span class="bar-val">1/7</span></div>
               <p class="foot">Confidently-wrong verdicts out of 7 fixed fixture scenarios &mdash; BinDecisionBakeOffTests.swift</p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="wrap work-item" id="stickies" style="padding-top:3rem; padding-bottom:3rem;">
+        <div class="grid">
+          <div data-reveal>
+            <div class="shots">
+              <div>
+                <PhoneMockup
+                  size="sm"
+                  src="/images/stickies/gate.png"
+                  alt="Academy Stickies sign-in gate, a live production screenshot from academy-stickies.pages.dev."
+                />
+                <p class="cap">Sign-in gate &mdash; live screenshot, academy-stickies.pages.dev</p>
+              </div>
+            </div>
+          </div>
+          <div data-reveal>
+            <p class="section-eyebrow">04 &middot; ADA-Stickies</p>
+            <h2 class="section-title" style="margin-bottom:.9rem;">Shipped for people who&rsquo;d notice if it broke.</h2>
+            <p class="p-lede">A private wall of notes for my actual Academy cohort &mdash; magic-link email auth, so nobody needs a password I&rsquo;d have to reset. Live since July 2026, still running.</p>
+            <div class="kv-list">
+              <div class="row"><span class="k">Stack</span><span class="v mono">Cloudflare Pages &middot; Hono &middot; D1 &middot; R2</span></div>
+              <div class="row"><span class="k">Migrations</span><span class="v mono">9 &middot; tested with vitest</span></div>
+              <div class="row"><span class="k">Commits</span><span class="v mono">39 (33 mine) &middot; Jul&ndash;Aug 2026</span></div>
+              <div class="row"><span class="k">Status</span><span class="v mono">Live &middot; invite-only, real cohort</span></div>
+            </div>
+            <div style="display:flex; gap:.9rem; flex-wrap:wrap;">
+              <a href="https://academy-stickies.pages.dev" class="btn btn-ghost" target="_blank" rel="noopener">Open the app &nearr;</a>
+              <a href="https://github.com/mo7morad/Academy-Stickies" class="btn btn-ghost" target="_blank" rel="noopener">View the repo &nearr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="wrap work-item" id="academy" style="padding-top:3rem; padding-bottom:3rem;">
+        <div class="grid">
+          <div data-reveal>
+            <div class="shots">
+              <div>
+                <PhoneMockup
+                  size="sm"
+                  src="/images/academy/numo-meal-entry.jpg"
+                  alt="Numo meal-entry screen, a real screenshot from the app."
+                />
+                <p class="cap">Numo &mdash; meal entry screen, real screenshot</p>
+              </div>
+            </div>
+          </div>
+          <div data-reveal>
+            <p class="section-eyebrow">05 &middot; Apple Developer Academy</p>
+            <h2 class="section-title" style="margin-bottom:.9rem;">Five studio challenges in five weeks.</h2>
+            <p class="p-lede">Before ECOdyssey, the Academy runs five one-week challenges. Numo is the strongest: a hand-rolled Claude vision client that reads a meal photo and returns structured nutrition data &mdash; temperature 0, on purpose, because structured data has to be reproducible, not creative.</p>
+            <div class="kv-list">
+              <div class="row"><span class="k">Client</span><span class="v mono">AnthropicMealAnalysisClient.swift</span></div>
+              <div class="row"><span class="k">Error handling</span><span class="v mono">12-case typed error enum</span></div>
+              <div class="row"><span class="k">Journey repo</span><span class="v mono">239 commits &middot; 118 Swift files</span></div>
+            </div>
+            <div class="quote-block">
+              <code>temperature: 0</code><br />
+              &ldquo;Structured nutrition data must be reproducible and schema-compliant, not creative.&rdquo; &mdash; in-code comment, Numo
+            </div>
+            <p class="foot" style="margin:-.6rem 0 1.3rem;">Same repo, same five weeks: Distill dropped a planned face-recognition feature after hitting Apple&rsquo;s Photos privacy limits and documented the pivot instead of hiding it; ContactsRemix still keeps both the hardcoded first pass and the data-driven refactor side by side.</p>
+            <a href="https://github.com/mo7morad/My_Apple-Developer-Academy_Journey" class="btn btn-ghost" target="_blank" rel="noopener">View the journey repo &nearr;</a>
           </div>
         </div>
       </div>
