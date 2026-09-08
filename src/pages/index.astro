@@ -3,8 +3,14 @@ import Layout from '../layouts/Layout.astro';
 import PhoneMockup from '../components/PhoneMockup.astro';
 import * as si from 'simple-icons';
 
-function brandIcon(icon: { hex: string; path: string; title: string }, color?: string) {
-  return `<svg role="img" aria-label="${icon.title}" viewBox="0 0 24 24" fill="${color ?? `#${icon.hex}`}" xmlns="http://www.w3.org/2000/svg"><path d="${icon.path}"/></svg>`;
+// Decorative by default. Every call site on this page either sits directly
+// beside visible text saying the same word (.tile "TypeScript TypeScript",
+// .pill, .rack li) or lives inside an anchor that already carries an
+// aria-label — so a named mark made a screen reader announce all sixteen
+// stack technologies twice. Pass `label` only where nothing visible names it.
+function brandIcon(icon: { hex: string; path: string; title: string }, color?: string, label?: string) {
+  const a = label ? `role="img" aria-label="${label}"` : 'aria-hidden="true" focusable="false"';
+  return `<svg ${a} viewBox="0 0 24 24" fill="${color ?? `#${icon.hex}`}" xmlns="http://www.w3.org/2000/svg"><path d="${icon.path}"/></svg>`;
 }
 
 // Brand marks whose official color is near-black and would vanish on this ground.
@@ -12,8 +18,11 @@ const LIGHT = '#e5e7eb';
 
 const EMAIL = 'momurad.business@gmail.com';
 
+// Same reasoning as brandIcon: every line glyph on this page is paired with a
+// visible label or sits inside a labelled control, so none of them should be
+// announced on their own.
 const line = (d: string) =>
-  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
 
 const iconTerminal = line('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/>');
 const iconDatabase = line('<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>');
@@ -32,7 +41,7 @@ const iconAward = line('<circle cx="12" cy="8" r="6"/><path d="M8.2 13.2 7 22l5-
 const iconChip = line('<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>');
 const iconBrackets = line('<path d="m8 6-6 6 6 6M16 6l6 6-6 6"/>');
 const iconMailOpen = line('<path d="M3 9.5 12 4l9 5.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="m3 9.5 9 6 9-6"/>');
-const iconLinkedin = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="22" height="22" rx="4" fill="#0A66C2"/><path fill="#fff" d="M7.4 9.7h2.55v7.9H7.4zm1.28-1.1a1.48 1.48 0 1 1 0-2.96 1.48 1.48 0 0 1 0 2.96zm3.1 1.1h2.44v1.08h.03c.34-.64 1.17-1.32 2.41-1.32 2.58 0 3.06 1.7 3.06 3.9v4.24h-2.55v-3.76c0-.9-.02-2.05-1.25-2.05-1.25 0-1.44.98-1.44 1.98v3.83h-2.55z"/></svg>`;
+const iconLinkedin = `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="22" height="22" rx="4" fill="#0A66C2"/><path fill="#fff" d="M7.4 9.7h2.55v7.9H7.4zm1.28-1.1a1.48 1.48 0 1 1 0-2.96 1.48 1.48 0 0 1 0 2.96zm3.1 1.1h2.44v1.08h.03c.34-.64 1.17-1.32 2.41-1.32 2.58 0 3.06 1.7 3.06 3.9v4.24h-2.55v-3.76c0-.9-.02-2.05-1.25-2.05-1.25 0-1.44.98-1.44 1.98v3.83h-2.55z"/></svg>`;
 
 // Every tile: a real simple-icons mark, used exactly once, naming something
 // that appears in a shipped repo.
@@ -85,12 +94,12 @@ const homelab = [
 // Dates are the ones printed on the scans themselves, not the order they were
 // added here — the tile makes a claim, the scan behind it is the source.
 const certificates = [
-  { src: '/images/certificates/cert-10.png', n: '10', title: 'Object-Oriented Programming', date: 'Dec 2024' },
-  { src: '/images/certificates/cert-18.png', n: '18', title: 'C# & SQL Connectivity', date: 'Apr 2025' },
-  { src: '/images/certificates/cert-19.png', n: '19', title: 'DVLD Capstone Project', date: 'Jun 2025' },
-  { src: '/images/certificates/cert-21.png', n: '21', title: 'T-SQL', date: 'Aug 2025' },
-  { src: '/images/certificates/cert-23.png', n: '23', title: 'Algorithms — Level 6', date: 'Feb 2026' },
-  { src: '/images/certificates/cert-25.png', n: '25', title: 'SOLID Principles', date: 'Oct 2025' },
+  { src: '/images/certificates/cert-10.webp', n: '10', title: 'Object-Oriented Programming', date: 'Dec 2024' },
+  { src: '/images/certificates/cert-18.webp', n: '18', title: 'C# & SQL Connectivity', date: 'Apr 2025' },
+  { src: '/images/certificates/cert-19.webp', n: '19', title: 'DVLD Capstone Project', date: 'Jun 2025' },
+  { src: '/images/certificates/cert-21.webp', n: '21', title: 'T-SQL', date: 'Aug 2025' },
+  { src: '/images/certificates/cert-23.webp', n: '23', title: 'Algorithms — Level 6', date: 'Feb 2026' },
+  { src: '/images/certificates/cert-25.webp', n: '25', title: 'SOLID Principles', date: 'Oct 2025' },
 ];
 
 // One source for both places a contact method appears: the always-visible
@@ -148,7 +157,8 @@ const navLinks = [
 
 <Layout
   title="Mohamed Morad — Backend Engineer"
-  description="Backend engineer at the Apple Developer Academy, Bali. I build systems that refuse to state what they cannot prove — starting with Trippé, whose backend discards any price it cannot trace to a quoted source."
+  description="Backend engineer at the Apple Developer Academy, Bali. I build systems that refuse to state what they cannot prove — starting with Trippé, on the App Store."
+  ogDescription="Backend engineer at the Apple Developer Academy, Bali. I build systems that refuse to state what they cannot prove — starting with Trippé, whose backend discards any price it cannot trace to a quoted source."
 >
   <a href="#top" class="skip-link">Skip to content</a>
 
@@ -167,8 +177,13 @@ const navLinks = [
 
   <header class="nav glass">
     <div class="wrap nav-inner">
-      <a href="#top" class="brand" data-scroll-to>
-        <img src="/images/profile-avatar.jpg" alt="" width="26" height="26" />
+      {/* The name lives on the anchor, not on the span. `.brand span` is
+          display:none from 820px down while `.brand` itself only hides at
+          560px, so in that 260px band — a landscape tablet, a half-width
+          laptop window — the link was visible, focusable, and announced as
+          "link" with no destination: its only content was an alt="" image. */}
+      <a href="#top" class="brand" aria-label="Mohamed Morad — back to top" data-scroll-to>
+        <img src="/images/profile-avatar.webp" alt="" width="26" height="26" />
         <span>morad</span>
       </a>
       <nav class="nav-links" aria-label="Sections">
@@ -180,12 +195,18 @@ const navLinks = [
     </div>
   </header>
 
-  <main id="top">
+  {/* tabindex="-1" so the skip link moves real focus into the landmark and a
+      screen reader announces "main" on arrival, rather than leaving the virtual
+      cursor where it was. Paired with main:focus{outline:none} in the CSS. */}
+  <main id="top" tabindex="-1">
     <section class="hero">
       <div class="wrap hero-grid">
         <div class="hero-photo-col" data-intro-reveal>
           <div class="hero-photo">
-            <img src="/images/profile-avatar.jpg" alt="Mohamed Morad" width="168" height="168" />
+            {/* The only eager image on the page and the one competing for LCP
+                on desktop, where it measured within 2.4% of the hero
+                paragraph. Everything else is loading="lazy". */}
+            <img src="/images/profile-avatar.webp" alt="Mohamed Morad" width="168" height="168" fetchpriority="high" />
           </div>
           <p class="hero-loc"><Fragment set:html={iconPin} />Bali, Indonesia</p>
           <div class="hero-social">
@@ -197,12 +218,22 @@ const navLinks = [
         </div>
         <div>
           <h1 class="hero-name" data-intro-reveal>Mohamed Morad</h1>
-          <p class="hero-role" data-intro-reveal>Backend Engineer</p>
-          <p class="hero-role" data-intro-reveal>C# / .NET &middot; TypeScript &middot; SQL &middot; Cloudflare Workers</p>
-          <p class="hero-bio" data-intro-reveal>I build backend systems and AI-powered products with a bias toward correctness.</p>
-          <p class="hero-bio" data-intro-reveal>My clearest example is Trippé, a travel app whose backend refuses to show a price it cannot trace to a source.</p>
-          <p class="hero-bio" data-intro-reveal>I built the backend, iOS client, and cost engine myself.</p>
-          <p class="hero-role" data-intro-reveal>I build systems that know when not to guess.</p>
+          {/* Title and stack share one line: the title is what a hiring manager
+              scans for, the stack is its tail, and on one line the stack is
+              never read as list item one. */}
+          <p class="hero-role" data-intro-reveal><b>Backend Engineer</b> &middot; C# / .NET &middot; TypeScript &middot; SQL &middot; Cloudflare Workers</p>
+          {/* The page's actual claim, in the page's actual words. It used to be
+              last, at --fs-callout in --text-dim — one step SMALLER and no
+              brighter than the three paragraphs that evidence it — and it was
+              also worded differently from the line the intro overlay types and
+              from the share preview. Three renderings of one idea, and the two
+              that agreed were the two a visitor saw least. */}
+          <p class="hero-thesis" data-intro-reveal>I build systems that refuse to state what they cannot prove.</p>
+          {/* Headless on purpose — "I build" opened three of the four blocks
+              here, and this one sits two lines under a thesis that already
+              says it. */}
+          <p class="hero-bio" data-intro-reveal>Backend systems and AI-powered products, built with a bias toward correctness.</p>
+          <p class="hero-bio" data-intro-reveal>The clearest example is Trippé, a travel app on the App Store: its backend refuses to show a price it cannot trace to a source. I built that backend, the iOS client, and the cost engine myself.</p>
           <div class="hero-cta" data-intro-reveal>
             {/* Stays an anchor, not a button: with no JS this is still a
                 working mailto. The script intercepts the click and opens the
@@ -222,7 +253,7 @@ const navLinks = [
           <h2 class="section-title" style="--grad-end:var(--cyan)">Experience &amp; Journey</h2>
         </div>
 
-        <ol class="exp">
+        <ol class="exp" role="list">
           <li class="exp-item" data-reveal>
             <span class="exp-marker" aria-hidden="true"></span>
             <div class="exp-head">
@@ -308,7 +339,7 @@ const navLinks = [
           <span class="section-badge" set:html={iconChip} />
           <h2 class="section-title" style="--grad-end:var(--blue)">My Tech Stack</h2>
         </div>
-        <p class="section-intro" data-reveal>Tools that I truely understand and work with.</p>
+        <p class="section-intro" data-reveal>Tools I work in, not a list of everything I have touched.</p>
         {stackGroups.map((g) => (
           <div class="stack-group" data-reveal>
             <h3 class="subhead"><span class="subhead-icon" set:html={g.icon} />{g.label}</h3>
@@ -331,13 +362,13 @@ const navLinks = [
           <span class="section-badge" set:html={iconBrackets} />
           <h2 class="section-title" style="--grad-end:var(--cyan)">Selected Work</h2>
         </div>
-        <p class="section-intro" data-reveal>A few things I&rsquo;ve actually shipped, built, or tested seriously.</p>
+        <p class="section-intro" data-reveal>Six projects. Three are running in production; every figure below is counted from the repository it describes.</p>
 
         <div class="project-list">
           <article class="project-card glass glass-interactive" data-reveal>
             <div class="project-visual">
-              <PhoneMockup size="sm" src="/images/trippe/destination-sao-miguel.jpg" alt="Trippé destination screen for São Miguel, Azores." />
-              <PhoneMockup size="sm" src="/images/trippe/estimated-spending.jpg" alt="Trippé estimated cost breakdown screen." />
+              <PhoneMockup size="sm" src="/images/trippe/destination-sao-miguel.webp" alt="Trippé destination screen for São Miguel, Azores." />
+              <PhoneMockup size="sm" src="/images/trippe/estimated-spending.webp" alt="Trippé estimated cost breakdown screen." />
             </div>
             <div class="project-body">
               <h3>Trippé</h3>
@@ -345,7 +376,7 @@ const navLinks = [
               <p>A travel app that recommends destinations and builds a realistic trip cost from sourced data.</p>
               <p>The important constraint is simple: a price without a traceable source never reaches the user.</p>
               <p>I designed and built the Cloudflare Worker backend, SwiftUI client, and cost engine, including the data pipeline, streaming recommendation flow, and AI integration.</p>
-              <ul class="facts">
+              <ul class="facts" role="list">
                 <li><b>599</b> backend commits</li>
                 <li><b>250</b> iOS commits</li>
                 <li><b>123</b> backend test files</li>
@@ -364,7 +395,7 @@ const navLinks = [
           <article class="project-card glass glass-interactive" data-reveal>
             <div class="project-visual">
               <figure class="diagram-frame">
-                <img src="/images/dvld/db-diagram.png" alt="The DVLD database schema diagram: tables for People, Users, Drivers, Applications, Licenses, Tests and TestAppointments among others, with foreign-key relationships drawn between them." loading="lazy" />
+                <img src="/images/dvld/db-diagram.webp" width="1600" height="1160" alt="The DVLD database schema diagram: tables for People, Users, Drivers, Applications, Licenses, Tests and TestAppointments among others, with foreign-key relationships drawn between them." loading="lazy" />
               </figure>
             </div>
             <div class="project-body">
@@ -373,7 +404,7 @@ const navLinks = [
               <p>The capstone of my 21-month backend curriculum.</p>
               <p>A three-tier desktop system built with C# WinForms and SQL Server. I implemented the data-access layer with parameterised ADO.NET rather than an ORM so database interaction stayed explicit and inspectable.</p>
               <p>It was the largest system I had built at the time.</p>
-              <ul class="facts">
+              <ul class="facts" role="list">
                 <li><b>28,541</b> lines</li>
                 <li><b>134</b> files</li>
                 <li><b>25</b> foreign-key constraints</li>
@@ -405,8 +436,7 @@ const navLinks = [
               <p class="project-meta">5-person team &middot; My role: belief engine, PCC judge &amp; evaluation</p>
               <p>A waste-sorting system using on-device YOLOv8 through Core ML.</p>
               <p>I built the belief engine that turns noisy frame-by-frame detections into stable decisions, added a Private Cloud Compute second-opinion path, and built the evaluation harness used to compare the new approach with the existing one.</p>
-              <p>Across seven fixed scenarios, the old approach produced 3 confidently wrong decisions. Mine produced 1.</p>
-              <p>That test found a real bug. That was the point.</p>
+              <p>The harness found a real bug. That was the point.</p>
               <div class="project-stack">
                 <span class="pill"><Fragment set:html={brandIcon(si.siSwift)} />Swift</span>
                 <span class="pill"><Fragment set:html={brandIcon(si.siApple, LIGHT)} />Core ML</span>
@@ -416,7 +446,7 @@ const navLinks = [
 
           <article class="project-card glass glass-interactive" data-reveal>
             <div class="project-visual">
-              <PhoneMockup size="sm" src="/images/stickies/gate.png" alt="Academy Stickies sign-in gate, a live production screenshot." />
+              <PhoneMockup size="sm" src="/images/stickies/gate.webp" alt="Academy Stickies sign-in gate, a live production screenshot." />
             </div>
             <div class="project-body">
               <h3>Academy Stickies</h3>
@@ -438,7 +468,7 @@ const navLinks = [
 
           <article class="project-card glass glass-interactive" data-reveal>
             <div class="project-visual">
-              <PhoneMockup size="sm" src="/images/academy/numo-meal-entry.jpg" alt="Numo meal-entry screen, a real screenshot from the app." />
+              <PhoneMockup size="sm" src="/images/academy/numo-meal-entry.webp" alt="Numo meal-entry screen, a real screenshot from the app." />
             </div>
             <div class="project-body">
               <h3>Numo</h3>
@@ -457,7 +487,7 @@ const navLinks = [
 
           <article class="project-card glass glass-interactive" data-reveal>
             <div class="project-visual">
-              <ul class="rack">
+              <ul class="rack" role="list">
                 {homelab.map((s) => (
                   <li style={`--brand:#${s.icon.hex}`}>
                     <span class="rack-icon"><Fragment set:html={brandIcon(s.icon)} /></span>
@@ -470,7 +500,7 @@ const navLinks = [
             <div class="project-body">
               <h3>Homelab</h3>
               <p class="project-meta">Solo &middot; Self-hosted infrastructure &middot; Live</p>
-              <p>A repurposed laptop running Debian headlessly over SSH, with NGINX as a reverse proxy, Pi-hole for network-wide DNS filtering, and Immich for self-hosted photo storage.</p>
+              <p>Four services I run and maintain myself, on hardware I own.</p>
               <p>Small infrastructure, same instinct: understand what you&rsquo;re running before you trust it.</p>
               <div class="project-stack">
                 <span class="pill"><Fragment set:html={brandIcon(si.siDebian)} />Debian</span>
@@ -487,14 +517,14 @@ const navLinks = [
         <div class="cta glass" data-reveal>
           <span class="section-badge" set:html={iconMailOpen} />
           <h2 class="section-title" style="--grad-end:var(--blue)">Looking for the next system to build.</h2>
-          <p>I&rsquo;m looking for backend, platform, or AI-product engineering roles.</p>
-          <p>I&rsquo;m open to remote work or relocation. I&rsquo;m currently at the Apple Developer Academy in Bali, which ends in December 2026, and I complete my Informatics degree in August 2027.</p>
-          <p>I&rsquo;m available for conversations now.</p>
+          <p>Backend, platform, or AI-product engineering &mdash; remote or relocation.</p>
+          {/* The &nbsp; hold each month to its year across a line break. */}
+          <p>The Apple Developer Academy in Bali runs to December&nbsp;2026 and my Informatics degree finishes in August&nbsp;2027. Conversations are open now.</p>
           {/* The directory itself, not a button that leads to one — this is the
               destination, so the four ways to reach me are spelled out rather
               than folded behind a control. The sheet the hero button opens
               renders the same array. */}
-          <ul class="clinks">
+          <ul class="clinks" role="list">
             {contactMethods.map((m) => (
               <li class:list={['clink-row', { 'is-primary': m.key === 'email' }]}>
                 <a
@@ -514,10 +544,18 @@ const navLinks = [
                     for email it is an actual control, because forcing a mail
                     client open is the thing people don't want. */}
                 {!m.external && (
-                  <button type="button" class="clink-copy copy-email" data-copy={EMAIL}>
-                    <span class="copy-icon" aria-hidden="true" set:html={`${iconCopy}${iconCheck}`} />
-                    <span class="copy-label vis-hidden" aria-live="polite">Copy address</span>
-                  </button>
+                  <Fragment>
+                    <button type="button" class="clink-copy copy-email" data-copy={EMAIL} aria-label="Copy email address">
+                      <span class="copy-icon" aria-hidden="true" set:html={`${iconCopy}${iconCheck}`} />
+                    </button>
+                    {/* The status is a SIBLING of the button, not its content. Inside it, this
+                        node was the button's only name source (.copy-icon is aria-hidden), so
+                        the accessible name flipped to "Copied" for 1800ms — anyone tabbing to
+                        it in that window heard "Copied, button" and no statement of what it
+                        does. Splitting them also avoids the name-change vs live-region
+                        double-announcement that varies across NVDA/JAWS/VoiceOver. */}
+                    <span class="copy-label vis-hidden" role="status"></span>
+                  </Fragment>
                 )}
               </li>
             ))}
@@ -526,18 +564,25 @@ const navLinks = [
       </div>
     </section>
 
-    <footer class="site">
-      <div class="wrap">
-        {/* The four links moved up into the contact card, where they are the
-            content rather than an afterthought. Repeating them here would make
-            the same four destinations appear twice within one screen. */}
-        <div class="footer-bottom">
-          <span>&copy; {new Date().getFullYear()} Mohamed Morad</span>
-          <span>Every figure on this site is derived from the repository it describes, not typed by hand.</span>
-        </div>
-      </div>
-    </footer>
   </main>
+
+  {/* Outside <main> on purpose. A <footer> that descends from main/article/
+      aside/section maps to `generic`, not `contentinfo` — so nested inside
+      <main id="top"> this page exposed no contentinfo landmark at all, and the
+      thesis line below sat in an unlabelled div that landmark navigation
+      (VoiceOver rotor, NVDA's D key) could not reach. axe doesn't flag it,
+      because the content technically is inside main. */}
+  <footer class="site">
+    <div class="wrap">
+      {/* The four links moved up into the contact card, where they are the
+          content rather than an afterthought. Repeating them here would make
+          the same four destinations appear twice within one screen. */}
+      <div class="footer-bottom">
+        <span>&copy; {new Date().getFullYear()} Mohamed Morad</span>
+        <span>Every project figure here is counted from the repository it describes, not typed by hand.</span>
+      </div>
+    </div>
+  </footer>
 
   {/* Hover preview. Decorative and pointer-transparent: everything in it is
       reachable through the tile's own button and the viewer below, so it is
@@ -568,7 +613,7 @@ const navLinks = [
         {/* No src until opened — an empty src="" resolves to the page URL and
             makes the browser fetch the document as an image. */}
         <img id="certview-img" alt="" width="800" height="565" />
-        <figcaption class="certview-cap">
+        <figcaption class="certview-cap" role="status">
           <b id="certview-n" class="num"></b>
           <span id="certview-title"></span>
           <span id="certview-date" class="cap-date num"></span>
@@ -596,7 +641,7 @@ const navLinks = [
         <p>Any of these reach me. Email is the one I answer fastest.</p>
       </div>
       <button type="button" class="csheet-x" aria-label="Close" data-csheet-dismiss><Fragment set:html={iconClose} /></button>
-      <ul class="csheet-list">
+      <ul class="csheet-list" role="list">
         {contactMethods.map((m) => (
           <li class:list={['clink-row', { 'is-primary': m.key === 'email' }]}>
             <a
@@ -612,10 +657,18 @@ const navLinks = [
               {m.external && <span class="clink-go" aria-hidden="true" set:html={iconExternal} />}
             </a>
             {!m.external && (
-              <button type="button" class="clink-copy copy-email" data-copy={EMAIL}>
-                <span class="copy-icon" aria-hidden="true" set:html={`${iconCopy}${iconCheck}`} />
-                <span class="copy-label vis-hidden" aria-live="polite">Copy address</span>
-              </button>
+              <Fragment>
+                <button type="button" class="clink-copy copy-email" data-copy={EMAIL} aria-label="Copy email address">
+                  <span class="copy-icon" aria-hidden="true" set:html={`${iconCopy}${iconCheck}`} />
+                </button>
+                {/* The status is a SIBLING of the button, not its content. Inside it, this
+                    node was the button's only name source (.copy-icon is aria-hidden), so
+                    the accessible name flipped to "Copied" for 1800ms — anyone tabbing to
+                    it in that window heard "Copied, button" and no statement of what it
+                    does. Splitting them also avoids the name-change vs live-region
+                    double-announcement that varies across NVDA/JAWS/VoiceOver. */}
+                <span class="copy-label vis-hidden" role="status"></span>
+              </Fragment>
             )}
           </li>
         ))}
@@ -630,25 +683,27 @@ const navLinks = [
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const fineHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-    // Plays once per tab, never under reduced motion. [data-intro-reveal] is
-    // visible by default in CSS, so a JS failure can't leave the hero blank.
+    // Plays once per tab, never under reduced motion. The decision itself is
+    // made by the inline head script before first paint — this script only
+    // carries it out, because by the time a module runs the hero has long since
+    // been painted and hiding it here is what made the page visibly un-paint
+    // itself on a slow connection.
+    const root = document.documentElement;
     const introEl = document.getElementById('intro');
     if (introEl) {
       const introTargets = Array.from(document.querySelectorAll<HTMLElement>('[data-intro-reveal]'));
-      let alreadySeen = true;
+      // Read the answer off <html> rather than re-deriving it: re-reading
+      // sessionStorage here could disagree with what the page already painted.
+      const playing = root.classList.contains('intro-play');
       try {
-        alreadySeen = sessionStorage.getItem('introSeen') === '1';
-        if (!alreadySeen) sessionStorage.setItem('introSeen', '1');
+        if (playing) sessionStorage.setItem('introSeen', '1');
       } catch {
-        alreadySeen = true;
+        /* private mode — the intro simply replays next load */
       }
 
-      if (reduced || alreadySeen) {
+      if (!playing) {
         introEl.remove();
       } else {
-        introTargets.forEach((el) => el.classList.add('intro-pending'));
-        introEl.classList.add('is-active');
-
         const textEl = introEl.querySelector('.intro-text') as HTMLElement | null;
         const line = 'refuses to state what it cannot prove';
         let i = 0;
@@ -659,9 +714,14 @@ const navLinks = [
           revealed = true;
           introEl.classList.add('is-leaving');
           introTargets.forEach((el, idx) => {
-            setTimeout(() => el.classList.remove('intro-pending'), idx * 80);
+            setTimeout(() => el.classList.add('intro-shown'), idx * 80);
           });
-          setTimeout(() => introEl.remove(), 700);
+          setTimeout(() => {
+            introEl.remove();
+            // Must come off, or the :root.intro-play rule keeps hiding any
+            // [data-intro-reveal] that never received .intro-shown.
+            root.classList.remove('intro-play');
+          }, 700);
         };
         // Hard ceiling so a stalled type loop can never leave the overlay stuck.
         const safety = setTimeout(reveal, 4000);
@@ -730,13 +790,29 @@ const navLinks = [
       // One loop drives both: the dot at 0.4 stays under the hand, the glow at
       // 0.09 arrives a beat later, so the light reads as trailing the pointer.
       const tick = () => {
-        cx += (mx - cx) * 0.4;
-        cy += (my - cy) * 0.4;
-        dot.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%)`;
+        // Both lerps converge asymptotically and never arrive, so without a
+        // floor this wrote two transforms every frame forever on any pointer
+        // device — including while the pointer sat still. Below a third of a
+        // pixel nothing is visible, so snap and skip the writes.
+        const dDot = Math.abs(mx - cx) + Math.abs(my - cy);
+        if (dDot > 0.3) {
+          cx += (mx - cx) * 0.4;
+          cy += (my - cy) * 0.4;
+          dot.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%)`;
+        } else {
+          cx = mx;
+          cy = my;
+        }
         if (glow) {
-          gx += (mx - gx) * 0.09;
-          gy += (my - gy) * 0.09;
-          glow.style.transform = `translate3d(${gx}px, ${gy}px, 0) translate(-50%, -50%)`;
+          const dGlow = Math.abs(mx - gx) + Math.abs(my - gy);
+          if (dGlow > 0.3) {
+            gx += (mx - gx) * 0.09;
+            gy += (my - gy) * 0.09;
+            glow.style.transform = `translate3d(${gx}px, ${gy}px, 0) translate(-50%, -50%)`;
+          } else {
+            gx = mx;
+            gy = my;
+          }
         }
         requestAnimationFrame(tick);
       };
@@ -791,22 +867,26 @@ const navLinks = [
 
     // Copy the address instead of forcing a mail client to open.
     document.querySelectorAll<HTMLButtonElement>('.copy-email').forEach((btn) => {
-      const label = btn.querySelector('.copy-label') as HTMLElement;
-      const original = label.textContent ?? '';
+      // A sibling now, not a child: as the button's own content it was the only
+      // source of its accessible name, so the name became "Copied" for 1800ms.
+      const label = btn.parentElement?.querySelector('.copy-label') as HTMLElement | null;
       let resetTimer: number | undefined;
       btn.addEventListener('click', async () => {
         try {
           await navigator.clipboard.writeText(btn.dataset.copy ?? '');
-          btn.classList.add('is-copied');
-          label.textContent = 'Copied';
         } catch {
-          label.textContent = original;
+          // Nothing announced and no cyan: the unchanged button is the honest
+          // signal that the copy did not happen.
           return;
         }
+        btn.classList.add('is-copied');
+        if (label) label.textContent = 'Copied';
         window.clearTimeout(resetTimer);
         resetTimer = window.setTimeout(() => {
           btn.classList.remove('is-copied');
-          label.textContent = original;
+          // Back to empty, not back to a label — the status node only ever
+          // holds a status.
+          if (label) label.textContent = '';
         }, 1800);
       });
     });
@@ -906,6 +986,13 @@ const navLinks = [
         opener = trigger;
         const pop = wantsPopover();
         sheet.classList.toggle('is-popover', pop);
+        // Only the compact presentation is actually modal: the sheet path below
+        // stops Lenis and locks body scroll, the popover path deliberately does
+        // neither. Hardcoding aria-modal="true" told assistive tech the rest of
+        // the page was inert while it was still scrolling. (The Tab trap and the
+        // light-dismiss scrim work in both, so this is a state mismatch rather
+        // than an exposure hole — but it is the kind AT acts on.)
+        sheet.setAttribute('aria-modal', pop ? 'false' : 'true');
         sheet.hidden = false;
         if (pop) {
           // Measured after unhiding — offsetWidth needs the panel laid out.
@@ -1149,16 +1236,19 @@ const navLinks = [
         { passive: true }
       );
 
-      certTiles.forEach((tile) => {
-        // :focus-visible, not plain focus — the viewer returns focus to the tile
-        // on close, and a mouse-driven close shouldn't pop the preview back up.
-        tile.addEventListener('focus', () => {
-          if (!tile.matches(':focus-visible')) return;
-          window.clearTimeout(enterTimer);
-          show(tile);
-        });
-        tile.addEventListener('blur', hide);
-      });
+      // Deliberately NOT opened on focus. Measured at 1280x720, the panel covered
+      // 100% of the focused tile for certificates 18 and 19 and 55% for 23 and 25
+      // — a WCAG 2.2 SC 2.4.11 failure — and `.is-covered` then dropped that tile
+      // to opacity .42 and hid its caption, erasing the last evidence of where
+      // focus was. It also flickered: tabbing a tile into view fires the scroll
+      // listener below, which hides the panel again.
+      //
+      // No replacement is needed. The preview is pointer-only by design (see the
+      // comment above), and Enter on the tile already opens the full viewer at
+      // native 800px — the better path anyway, since that is where the printed
+      // course line is legible. Keeping this pointer-only also means .is-covered
+      // can only ever fire under a pointer, which is the one place dimming the
+      // source tile is the right behaviour.
 
       // Dismissible by Escape, and gone before the viewer's scrim lands on top
       // of it or the page moves out from under it.

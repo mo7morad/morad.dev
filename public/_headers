@@ -1,0 +1,16 @@
+# Cloudflare Pages reads this from dist/, and Astro copies public/ verbatim.
+
+# Astro content-hashes everything under /_astro/, so the filename changes
+# whenever the bytes do. Safe to cache forever.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Deliberately short. These filenames are NOT hashed — og.png in particular is
+# the one file most likely to be replaced in place, and a long TTL would keep
+# serving the old card long after it changed.
+/images/*
+  Cache-Control: public, max-age=86400
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

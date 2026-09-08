@@ -32,6 +32,9 @@ img{display:block; max-width:100%;}
 .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;}
 .num{font-variant-numeric:tabular-nums;}
 :focus-visible{outline:2px solid var(--blue); outline-offset:3px; border-radius:4px;}
+/* <main> takes tabindex="-1" so the skip link moves real focus into the
+   landmark; it should not draw a focus ring for a target the user chose. */
+main:focus, main:focus-visible{outline:none;}
 
 .skip-link{
   position:fixed; top:12px; left:50%; transform:translate(-50%,-160%); z-index:700;
@@ -47,7 +50,9 @@ img{display:block; max-width:100%;}
   align-items:center; justify-content:center; background:var(--bg);
   opacity:1; transition:opacity 560ms var(--ease-out);
 }
-.intro.is-active{display:flex;}
+/* Gated by a class the head script sets before first paint, not by one the
+   module script adds after the hero has already rendered. */
+:root.intro-play .intro{display:flex;}
 .intro.is-leaving{opacity:0;}
 .intro-line{font-size:var(--fs-subhead); color:var(--text); display:flex; align-items:center; margin:0;}
 .intro-caret{
@@ -56,13 +61,27 @@ img{display:block; max-width:100%;}
 }
 @keyframes intro-blink{ 50%{ opacity:0; } }
 
-/* Opted into by JS only just before the overlay clears, so the hero is never
-   left hidden if the script fails. */
 [data-intro-reveal]{
   opacity:1; transform:none;
   transition:opacity 620ms var(--ease-out), transform 620ms var(--ease-out);
 }
-[data-intro-reveal].intro-pending{opacity:0; transform:translateY(14px);}
+/* Hidden from the very first paint when the intro is playing, rather than
+   painted and then hidden by a late script. JS adds .intro-shown per element to
+   run the stagger, then drops .intro-play from <html> once the overlay is gone.
+   The animation is the failsafe: this design gives up the old "visible by
+   default so a JS failure can't blank the hero" property, so it has to buy it
+   back. If the module script never runs, nothing ever gets .intro-shown and at
+   5s the keyframe forces the hero visible and the overlay out of the way —
+   with no JS at all. Under a normal load JS finishes ~2s and the rule stops
+   matching long before the delay elapses. Reduced motion never reaches here:
+   the head script declines to set .intro-play at all. */
+:root.intro-play [data-intro-reveal]:not(.intro-shown){
+  opacity:0; transform:translateY(14px);
+  animation:intro-failsafe 1ms linear 5s forwards;
+}
+@keyframes intro-failsafe{ to{ opacity:1; transform:none; } }
+:root.intro-play .intro{animation:intro-failsafe-hide 1ms linear 5s forwards;}
+@keyframes intro-failsafe-hide{ to{ opacity:0; visibility:hidden; pointer-events:none; } }
 
 /* ---------- ambient background (what the glass blurs) ---------- */
 .ambient{position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none;}
@@ -113,6 +132,20 @@ img{display:block; max-width:100%;}
 }
 .cursor.is-active .cursor-dot-shape{transform:scale(1.7); background:rgba(180,215,255,.55);}
 html.has-custom-cursor, html.has-custom-cursor *{cursor:none !important;}
+/* The dot stays everywhere it reads as the feature — links, buttons, cards,
+   images, whitespace — but selectable prose gets its I-beam back. The cost was
+   concentrated in one place: the email address at .clink-detail, on a page whose
+   whole purpose is being contacted, gave no affordance that it could be selected.
+   There is a copy button beside it, but someone who misses an icon-only control
+   just tries to drag-select. (0,2,0) beats the (0,1,1) rule above, so source
+   order isn't load-bearing here — it sits below anyway to keep the intent
+   readable. */
+html.has-custom-cursor .clink-detail,
+html.has-custom-cursor .hero-bio,
+html.has-custom-cursor .hero-thesis,
+html.has-custom-cursor .exp-item p,
+html.has-custom-cursor .project-body > p,
+html.has-custom-cursor code.mono{cursor:text !important;}
 @media (hover:none), (pointer:coarse){ .cursor{display:none;} }
 
 /* ---------- liquid glass material ---------- */
@@ -229,6 +262,11 @@ header.nav.is-compact:hover .nav-inner{height:56px; padding-left:.9rem; padding-
 
 /* ---------- hero ---------- */
 .hero{padding:2.4rem 0 3.4rem;}
+/* On a 390x844 phone the CTA pair measured top 752 / bottom 796 — entirely
+   below Mobile Safari's ~744px usable area, so neither button existed until you
+   scrolled. The hero rewrite brought it to 706/750; reclaiming this padding
+   lands the whole pair above the fold instead of clipping its last 6px. */
+@media (max-width:480px){ .hero{padding:1.6rem 0 2.6rem;} }
 .hero-grid{display:grid; grid-template-columns:200px 1fr; gap:3rem; align-items:start;}
 @media (max-width:760px){ .hero-grid{grid-template-columns:1fr; gap:1.8rem;} }
 .hero-photo-col{display:flex; flex-direction:column; align-items:flex-start; gap:1rem;}
@@ -255,8 +293,19 @@ header.nav.is-compact:hover .nav-inner{height:56px; padding-left:.9rem; padding-
 .hero-social svg{width:19px; height:19px;}
 
 .hero-name{font-size:clamp(var(--fs-largetitle),4.4vw,2.75rem); line-height:1.1; font-weight:700; letter-spacing:-.022em; margin:0 0 .35rem;}
-.hero-role{font-size:var(--fs-callout); color:var(--text-dim); margin:0 0 1.1rem;}
-.hero-bio{font-size:var(--fs-body); line-height:1.6; color:var(--text-dim); max-width:56ch; margin:0 0 1.6rem;}
+/* balance kills the `Cloudflare / Workers` orphan this line broke into at 390
+   (it measured [42, 7]); it now splits [31, 37]. */
+.hero-role{font-size:var(--fs-callout); color:var(--text-dim); margin:0 0 1rem; max-width:52ch; text-wrap:balance;}
+.hero-role b{color:var(--text); font-weight:600;}
+/* Outranks the prose that evidences it, which is the whole point: one step up
+   the scale, full-strength text, and a measure tight enough to hold two
+   balanced lines at every width rather than one long one. */
+.hero-thesis{
+  font-size:var(--fs-title3); line-height:1.35; font-weight:600; letter-spacing:-.012em;
+  color:var(--text); margin:0 0 1.2rem; max-width:34ch; text-wrap:balance;
+}
+.hero-bio{font-size:var(--fs-body); line-height:1.6; color:var(--text-dim); max-width:56ch; margin:0 0 1rem; text-wrap:pretty;}
+.hero-bio:last-of-type{margin-bottom:1.6rem;}
 .hero-cta{display:flex; flex-wrap:wrap; gap:.7rem;}
 
 /* ---------- section shell ----------
@@ -272,11 +321,19 @@ section{padding:3.6rem 0; scroll-margin-top:84px;}
 .section-badge svg{width:18px; height:18px;}
 h2.section-title{
   font-size:clamp(1.5rem,2.4vw,var(--fs-title1)); font-weight:700; letter-spacing:-.014em; line-height:1.2; margin:0;
+  /* At 390 the contact heading broke [28, 9], leaving "to build." alone. */
+  text-wrap:balance;
   background:linear-gradient(90deg,#fff,var(--blue-soft) 55%,var(--grad-end,var(--cyan)));
   -webkit-background-clip:text; background-clip:text; color:transparent;
 }
 @media (forced-colors:active){
   h2.section-title{background:none; color:CanvasText; -webkit-text-fill-color:CanvasText;}
+  /* Forced colors drops gradients and box-shadows, which is every cue these
+     three used: the travelled rail, the "you are here" edge, and the active nav
+     item (whose only remaining signal was #fff against link text that all
+     collapses to LinkText). */
+  .exp::after, .exp-item::before{background:Highlight; forced-color-adjust:none;}
+  .nav-link.is-active{outline:1px solid Highlight; outline-offset:2px;}
 }
 .section-intro{font-size:var(--fs-subhead); line-height:1.6; color:var(--text-dim); max-width:62ch; margin:0 0 2rem;}
 .subhead{
@@ -398,7 +455,11 @@ h2.section-title{
 .exp-item.is-current .exp-date{color:var(--blue-soft);}
 .exp-head h3{font-size:var(--fs-headline); font-weight:600; margin:0; color:var(--text);}
 .exp-role{font-size:var(--fs-footnote); color:var(--blue); margin:.15rem 0 0;}
-.exp-item > p{font-size:var(--fs-subhead); line-height:1.62; color:var(--text-dim); margin:.7rem 0 0;}
+/* --fs-body, not --fs-subhead: at 15px inside the 660px measure these
+   paragraphs ran to 96 characters a line with three widows under 25%. At 17px
+   it is 86 max and zero widows, measured at 1440 and 1024. The 660px cap is
+   deliberately left alone — this is a type-size fix, not a measure fix. */
+.exp-item > p{font-size:var(--fs-body); line-height:1.6; color:var(--text-dim); margin:.7rem 0 0; text-wrap:pretty;}
 /* Blue also labels the non-interactive role line, so the underline is what
    separates "link" from "accent" — it has to be readable on its own. */
 .exp-item a{color:var(--blue); text-decoration:none; border-bottom:1px solid rgba(142,197,255,.45); transition:border-color 200ms ease;}
@@ -858,7 +919,7 @@ h2.section-title{
 /* ---------- contact + footer ---------- */
 .cta{border-radius:var(--r-xl); padding:2.8rem 2rem; text-align:center; display:grid; justify-items:center;}
 .cta .section-badge{margin-bottom:1rem;}
-.cta p{font-size:var(--fs-subhead); color:var(--text-dim); max-width:50ch; margin:.9rem 0 1.6rem; line-height:1.6;}
+.cta p{font-size:var(--fs-subhead); color:var(--text-dim); max-width:50ch; margin:.9rem 0 1.6rem; line-height:1.6; text-wrap:pretty;}
 
 /* ---------- contact rows ----------
    One grouped inset list, iOS-style, rather than four floating chips: the
@@ -1070,5 +1131,5 @@ footer.site{padding:1rem 0 2.8rem; background:var(--bg); position:relative;}
 }
 
 @media (prefers-reduced-motion:reduce){
-  *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
+  *, *::before, *::after{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
 }

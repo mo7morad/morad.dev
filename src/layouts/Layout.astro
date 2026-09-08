@@ -4,28 +4,89 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description: string;
+  /* Search and social want different lengths. Google cuts a snippet around 155
+     characters and rewrites it from page content anyway; Slack and LinkedIn
+     render og:description close to verbatim, so the longer version is an asset
+     there. Defaults to `description` so a caller that doesn't care still gets
+     something coherent in both places. */
+  ogDescription?: string;
 }
-const { title, description } = Astro.props;
+const { title, description, ogDescription = description } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/images/og.png', Astro.site);
+/* Describes what the card actually renders, so the alt is true of the image
+   rather than a restatement of the page description. */
+const ogImageAlt =
+  'Mohamed Morad — Backend Engineer. TypeScript, Cloudflare Workers, Swift. “I build systems that refuse to state what they cannot prove.”';
+
+/* A stable @id, so the app below can point at this person rather than the two
+   entities floating unconnected in the same document. */
+const personId = new URL('#person', Astro.site).href;
 
 const person = {
-  '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': personId,
   name: 'Mohamed Morad',
   url: Astro.site?.href,
   image: ogImage.href,
   jobTitle: 'Backend Engineer',
+  description:
+    'Backend engineer building backend systems and AI-powered products with a bias toward correctness.',
   email: 'mailto:momurad.business@gmail.com',
   address: { '@type': 'PostalAddress', addressLocality: 'Bali', addressCountry: 'ID' },
-  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Universitas Islam Indonesia' },
-  sameAs: [
-    'https://github.com/mo7morad',
-    'https://www.linkedin.com/in/momorad',
-    'https://apps.apple.com/app/id6766072256',
+  /* NOT alumniOf. He completes the Informatics degree in August 2027 and the
+     Academy ends December 2026 — both affiliations are current, and `alumniOf`
+     would publish a machine-readable "graduated" claim that the page's own copy
+     contradicts. On a site whose thesis is that it refuses to state what it
+     cannot prove, the structured data has to hold to the same standard. */
+  affiliation: [
+    { '@type': 'EducationalOrganization', name: 'Apple Developer Academy' },
+    { '@type': 'CollegeOrUniversity', name: 'Universitas Islam Indonesia' },
   ],
+  /* Drawn only from the Stack section and the project cards — nothing here is
+     a skill the page doesn't already show a shipped repo for. */
+  knowsAbout: [
+    'Backend engineering',
+    'TypeScript',
+    'C#',
+    '.NET',
+    'Swift',
+    'C++',
+    'SQL',
+    'T-SQL',
+    'PostgreSQL',
+    'Cloudflare Workers',
+    'Node.js',
+    'REST API design',
+    'Database design',
+    'Software testing',
+  ],
+  /* sameAs means "another URL that identifies THIS SAME entity", which is what
+     Google uses to reconcile the morad.dev person with the github.com/mo7morad
+     and linkedin.com/in/momorad people into one. The App Store URL identifies
+     Trippé, not him — it lives on the SoftwareApplication node below, linked
+     back here by author. */
+  sameAs: ['https://github.com/mo7morad', 'https://www.linkedin.com/in/momorad'],
 };
+
+const trippe = {
+  '@type': 'SoftwareApplication',
+  '@id': new URL('#trippe', Astro.site).href,
+  name: 'Trippé',
+  url: 'https://apps.apple.com/app/id6766072256',
+  applicationCategory: 'TravelApplication',
+  operatingSystem: 'iOS',
+  author: { '@id': personId },
+  description:
+    'A travel app that recommends destinations and builds a realistic trip cost from sourced data.',
+  /* No offers, no aggregateRating, no downloadCount — the page substantiates
+     none of them, so neither does the markup. */
+};
+
+/* One @graph rather than two loose script blocks: emitted separately, the app
+   and the person are two unconnected entities and the authorship is lost. */
+const jsonLd = { '@context': 'https://schema.org', '@graph': [person, trippe] };
 ---
 
 <!doctype html>
@@ -33,22 +94,63 @@ const person = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* Decides the intro BEFORE first paint. The module script that used to add
+        `intro-pending`/`is-active` runs long after the hero has painted, so on
+        Slow 4G the browser showed a fully readable hero at ~1.06s and then took
+        it away from ~1.89s to ~4.0s — the visitor watched the page un-paint
+        itself while reading it.
+
+        This can only set a flag on <html>: it runs before <body> exists, so
+        querying [data-intro-reveal] here would match nothing. CSS does the
+        hiding. ~100 bytes inline, so it is a parse, not a fetch. */}
+    <script is:inline>
+      try {
+        if (
+          sessionStorage.getItem('introSeen') !== '1' &&
+          !matchMedia('(prefers-reduced-motion: reduce)').matches
+        ) document.documentElement.classList.add('intro-play');
+      } catch {}
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" content="#050506" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="author" content="Mohamed Morad" />
 
+    {/* og:image:* must sit immediately after og:image — some parsers bind the
+        sub-properties to whichever og:image precedes them. Width and height are
+        the ones that actually cost a share: without them an unfurler has to
+        fetch and measure the file before choosing a layout, and on a first
+        uncached scrape several fall back to a thumbnail or drop the image. */}
     <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="Mohamed Morad" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="profile:first_name" content="Mohamed" />
+    <meta property="profile:last_name" content="Morad" />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={ogDescription} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:description" content={ogDescription} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+    {/* No twitter:site / twitter:creator: there is no X handle anywhere in this
+        repo, and a tag pointing at nothing is worse than an absent one. The
+        rest of the twitter:* tags stay — Slack, Discord and iMessage read them
+        as Open Graph fallbacks regardless of X. */}
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {/* Declared explicitly: browsers and Google's favicon crawler both probe
+        /favicon.ico at the root anyway, so this is cheap insurance rather than
+        a fix for something broken. */}
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -56,7 +158,7 @@ const person = {
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <meta name="generator" content={Astro.generator} />
-    <script type="application/ld+json" set:html={JSON.stringify(person)} is:inline />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
   </head>
   <body>
     <slot />
