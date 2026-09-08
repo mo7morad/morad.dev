@@ -1,9 +1,17 @@
 :root{
-  --bg:#050506; --border:rgba(120,160,255,.14);
+  --bg:#050506; --surface:#0b0d10; --surface-2:#0e1116; --border:rgba(120,160,255,.14);
   --text:#f5f6f8; --text-dim:#a7afba; --text-faint:#8f97a2;
-  --blue:#8ec5ff; --blue-soft:#c8e0ff; --cyan:#67e8f9; --badge-bg:#0d1e30;
-  --glass-bg:rgba(255,255,255,.055); --glass-bg-strong:rgba(255,255,255,.1);
-  --glass-border:rgba(255,255,255,.14); --glass-highlight:rgba(255,255,255,.18);
+  --blue:#8ec5ff; --blue-soft:#c8e0ff; --cyan:#67e8f9; --badge-bg:#071726;
+  /* CLASSIC MATERIAL. The variable names are deliberately unchanged from the
+     glass build so that every downstream rule — and index.astro, which is
+     byte-identical between the two branches — needs no edit at all. They just
+     resolve to an opaque panel and a blue hairline instead of a translucent
+     sheet over a blurred backdrop.
+     NOTE: the original pre-glass branch used --text-faint:#5c6470, which is
+     3.45:1 on this ground and fails WCAG AA for body text. It is NOT inherited;
+     #8f97a2 (6.60:1 on --surface) is carried over from the accessible build. */
+  --glass-bg:var(--surface); --glass-bg-strong:var(--surface-2);
+  --glass-border:var(--border); --glass-highlight:transparent;
 
   /* Apple HIG type scale (San Francisco point sizes, 1pt ≈ 1px on web) */
   --fs-caption2:.6875rem; --fs-caption1:.75rem; --fs-footnote:.8125rem;
@@ -12,7 +20,7 @@
   --fs-title1:1.75rem; --fs-largetitle:2.125rem;
 
   /* continuous-corner-style radii */
-  --r-sm:10px; --r-md:14px; --r-lg:20px; --r-xl:26px; --r-pill:999px;
+  --r-sm:8px; --r-md:11px; --r-lg:14px; --r-xl:16px; --r-pill:6px;
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -22,7 +30,7 @@
 html{scroll-behavior:auto;}
 body{
   margin:0; background:var(--bg); color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter',system-ui,sans-serif;
+  font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   font-size:var(--fs-body); line-height:1.47; -webkit-font-smoothing:antialiased;
   position:relative; isolation:isolate;
 }
@@ -84,20 +92,25 @@ main:focus, main:focus-visible{outline:none;}
 @keyframes intro-failsafe-hide{ to{ opacity:0; visibility:hidden; pointer-events:none; } }
 
 /* ---------- ambient background (what the glass blurs) ---------- */
-.ambient{position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none;}
+/* Hidden in the classic build: the blobs existed to give backdrop-filter
+   something to refract, and with opaque panels they only muddy a flat ground.
+   .cursor-glow is a child, so the trailing light goes with them — its whole
+   payoff was being picked up through the panels' blur. The cursor DOT stays. */
+.ambient{display:none;}
+.ambient-unused{position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none;}
 .ambient span{position:absolute; border-radius:50%; filter:blur(80px);}
 .ambient .b1{width:520px; height:520px; top:-160px; left:-120px; background:radial-gradient(circle,rgba(94,160,255,.24),transparent 70%);}
 .ambient .b2{width:460px; height:460px; top:-100px; right:-140px; background:radial-gradient(circle,rgba(103,232,249,.17),transparent 70%);}
 .ambient .b3{width:560px; height:560px; bottom:-220px; left:8%; background:radial-gradient(circle,rgba(140,120,255,.09),transparent 70%);}
 .ambient .b4{width:480px; height:480px; bottom:-180px; right:4%; background:radial-gradient(circle,rgba(94,160,255,.1),transparent 70%);}
 
-/* A circle of light trailing the pointer. It belongs to the ambient layer, not
-   to .cursor — .cursor sits at z-index 600, above everything, where an additive
-   glow would blow the white certificate scans and the light rack chips out to
-   paper. Down here at -1 it paints above the body background but behind every
-   opaque surface, and the nav and cards pick it up through their backdrop-filter,
-   which is the whole payoff. Lerped slower than the dot (0.09 vs 0.4) so it
-   lags and settles instead of tracking rigidly. */
+/* INERT IN THE CLASSIC BUILD — its parent .ambient is display:none above, so
+   none of this paints. Kept rather than deleted so the two branches differ by
+   material only and this file stays diffable against the glass build.
+   Why it does not belong here: the glow's entire payoff was the nav and cards
+   picking it up through their backdrop-filter. With opaque panels there is
+   nothing to refract it, and a light source with no surface to catch it just
+   washes the flat ground. The cursor DOT is unaffected and still ships. */
 .ambient .cursor-glow{
   width:340px; height:340px; top:0; left:0; opacity:0;
   background:radial-gradient(circle,rgba(140,190,255,.5),rgba(103,232,249,.16) 38%,transparent 70%);
@@ -149,22 +162,19 @@ html.has-custom-cursor code.mono{cursor:text !important;}
 @media (hover:none), (pointer:coarse){ .cursor{display:none;} }
 
 /* ---------- liquid glass material ---------- */
+/* An opaque panel with a hairline, not a translucent sheet. No backdrop-filter
+   anywhere in this build. */
 .glass{
-  position:relative; background:var(--glass-bg);
-  -webkit-backdrop-filter:blur(24px) saturate(160%); backdrop-filter:blur(24px) saturate(160%);
-  border:1px solid var(--glass-border);
-  box-shadow:0 1px 0 rgba(255,255,255,.07) inset, 0 10px 34px -12px rgba(0,0,0,.55);
+  position:relative; background:var(--surface);
+  border:1px solid var(--border);
 }
-.glass::before{
-  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-  background:linear-gradient(135deg, var(--glass-highlight), rgba(255,255,255,0) 42%);
-  mix-blend-mode:overlay;
-}
+/* The specular sheen is the signature of the glass build; classic has none. */
+.glass::before{content:none;}
 .glass-interactive{transition:transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out), border-color 220ms ease, background 220ms ease;}
 .glass-interactive:hover,
 .glass-interactive:focus-within{
-  background:var(--glass-bg-strong); border-color:rgba(255,255,255,.22);
-  transform:translateY(-2px); box-shadow:0 1px 0 rgba(255,255,255,.09) inset, 0 16px 40px -14px rgba(0,0,0,.6);
+  background:var(--surface-2); border-color:rgba(120,160,255,.4);
+  transform:translateY(-2px);
 }
 .glass-interactive:active{transform:translateY(0) scale(.98); transition-duration:120ms;}
 
@@ -174,16 +184,22 @@ html.has-custom-cursor code.mono{cursor:text !important;}
 /* ---------- nav (floating glass bar) ----------
    Compact is a layout morph, never transform:scale — scaling softens the text
    and the 1px border, which reads as zoomed rather than shrunk. */
+/* Classic: edge-to-edge, seated at the top, separated by a rule rather than by
+   floating. The width morph is gone with the pill, but .is-compact still earns
+   its keep as a height change — the JS is untouched and identical to the glass
+   branch. The nav still passes over bright certificate scans, so it keeps its
+   own near-opaque tint; that legibility job does not go away just because the
+   blur did. */
 header.nav{
-  position:sticky; top:12px; z-index:40; width:calc(100% - 1.6rem); max-width:640px;
-  margin:0 auto; border-radius:var(--r-lg);
-  /* The nav passes over arbitrary content, including bright certificate images,
-     so it carries its own dark tint under the blur. */
-  background:rgba(8,9,12,.82) !important;
-  transition:max-width 380ms var(--ease-out), background 320ms ease;
+  position:sticky; top:0; z-index:40; width:100%; max-width:none;
+  margin:0; border-radius:0; border:none; border-bottom:1px solid var(--border);
+  background:rgba(5,5,6,.92) !important;
+  transition:background 320ms ease;
 }
-header.nav.is-compact{max-width:540px; background:rgba(6,7,9,.94) !important;}
-header.nav.is-compact:hover{max-width:640px; background:rgba(8,9,12,.82) !important;}
+header.nav.is-compact{background:rgba(5,5,6,.97) !important;}
+header.nav.is-compact:hover{background:rgba(5,5,6,.92) !important;}
+/* The bar is full-bleed; its contents still line up with .wrap. */
+.nav-inner{max-width:1040px; margin:0 auto;}
 .nav-inner{
   display:grid; grid-template-columns:auto 1fr; align-items:center; height:56px;
   padding-left:.9rem; padding-right:.9rem; gap:1rem;
@@ -237,7 +253,10 @@ header.nav.is-compact:hover .nav-inner{height:56px; padding-left:.9rem; padding-
   border:none; background:none; font-family:inherit; cursor:pointer;
 }
 .btn svg{width:16px; height:16px; flex-shrink:0;}
-.btn-primary:hover{color:#fff;}
+/* Classic's primary is an outlined button, the pre-glass idiom. .btn is
+   declared after .glass, so the glass panel never reached these anyway. */
+.btn-primary{border:1px solid rgba(120,160,255,.35); background:rgba(120,160,255,.06);}
+.btn-primary:hover{color:#fff; background:rgba(120,160,255,.12); border-color:rgba(120,160,255,.6);}
 .btn-quiet{
   color:var(--text-dim); border:1px solid var(--border); background:rgba(255,255,255,.02);
   transition:color 200ms ease, border-color 200ms ease, background 200ms ease, transform 160ms var(--ease-out);
@@ -292,7 +311,7 @@ header.nav.is-compact:hover .nav-inner{height:56px; padding-left:.9rem; padding-
 .hero-social a:active{transform:translateY(0) scale(.9);}
 .hero-social svg{width:19px; height:19px;}
 
-.hero-name{font-size:clamp(var(--fs-largetitle),4.4vw,2.75rem); line-height:1.1; font-weight:700; letter-spacing:-.022em; margin:0 0 .35rem;}
+.hero-name{font-size:clamp(var(--fs-largetitle),4.4vw,2.75rem); line-height:1.1; font-weight:800; letter-spacing:-.022em; margin:0 0 .35rem;}
 /* balance kills the `Cloudflare / Workers` orphan this line broke into at 390
    (it measured [42, 7]); it now splits [31, 37]. */
 .hero-role{font-size:var(--fs-callout); color:var(--text-dim); margin:0 0 1rem; max-width:52ch; text-wrap:balance;}
@@ -320,7 +339,7 @@ section{padding:3.6rem 0; scroll-margin-top:84px;}
 }
 .section-badge svg{width:18px; height:18px;}
 h2.section-title{
-  font-size:clamp(1.5rem,2.4vw,var(--fs-title1)); font-weight:700; letter-spacing:-.014em; line-height:1.2; margin:0;
+  font-size:clamp(1.5rem,2.4vw,var(--fs-title1)); font-weight:800; letter-spacing:-.014em; line-height:1.2; margin:0;
   /* At 390 the contact heading broke [28, 9], leaving "to build." alone. */
   text-wrap:balance;
   background:linear-gradient(90deg,#fff,var(--blue-soft) 55%,var(--grad-end,var(--cyan)));
@@ -378,12 +397,12 @@ h2.section-title{
 .exp-item{
   position:relative; max-width:calc(660px + 2.6rem + 2px);
   padding:1.05rem 1.3rem 1.15rem; margin-bottom:1rem;
-  border-radius:var(--r-md); background:rgba(255,255,255,.035);
+  border-radius:var(--r-md); background:var(--surface);
   border:1px solid var(--glass-border);
   transition:border-color 260ms ease, background 260ms ease;
 }
 .exp-item:last-child{margin-bottom:0;}
-.exp-item:hover{border-color:rgba(255,255,255,.2); background:rgba(255,255,255,.052);}
+.exp-item:hover{border-color:rgba(120,160,255,.34); background:var(--surface-2);}
 /* Pointer spotlight, same --mx/--my pair the work cards use, at half their
    radius and a third of their alpha. Deliberately NOT clipped with
    overflow:hidden — .exp-marker lives at left:-1.9rem, outside the card, so a
@@ -437,7 +456,7 @@ h2.section-title{
 .exp-item:hover .exp-marker{border-color:var(--blue);}
 /* The card the reader is level with. Declared after :first-child so the
    travelling state wins on the top entry too. */
-.exp-item.is-current{border-color:rgba(142,197,255,.32); background:rgba(255,255,255,.055);}
+.exp-item.is-current{border-color:rgba(142,197,255,.42); background:var(--surface-2);}
 .exp-item.is-current .exp-marker{
   background:var(--blue); border-color:var(--blue);
   box-shadow:0 0 0 5px rgba(142,197,255,.15); transform:scale(1.2);
@@ -482,8 +501,8 @@ h2.section-title{
    Enter/Space for free. */
 .cert{
   display:block; width:100%; margin:0; padding:0; text-align:left; font:inherit; color:inherit;
-  border-radius:var(--r-md); overflow:hidden; background:rgba(255,255,255,.035);
-  border:1px solid var(--glass-border); cursor:pointer;
+  border-radius:var(--r-md); overflow:hidden; background:var(--surface);
+  border:1px solid var(--border); cursor:pointer;
   transition:border-color 260ms ease, transform 260ms var(--ease-out), background 260ms ease;
 }
 .cert-shot{display:block; position:relative; overflow:hidden;}
@@ -499,7 +518,7 @@ h2.section-title{
 }
 /* The scan pushes in toward the reader and takes its colour back — the tile is
    saying "there is more of this to see" rather than just lighting up. */
-.cert:hover, .cert:focus-visible{border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.055); transform:translateY(-2px);}
+.cert:hover, .cert:focus-visible{border-color:rgba(120,160,255,.45); background:var(--surface-2); transform:translateY(-2px);}
 .cert:hover img, .cert:focus-visible img{filter:saturate(1) brightness(1); transform:scale(1.045);}
 .cert:active{transform:translateY(0) scale(.99); transition-duration:120ms;}
 /* Expand affordance, top-right of the scan. Hidden until hover/focus so the
@@ -507,8 +526,7 @@ h2.section-title{
 .cert-zoom{
   position:absolute; top:.5rem; right:.5rem; width:28px; height:28px; border-radius:8px;
   display:flex; align-items:center; justify-content:center;
-  background:rgba(8,10,14,.66); border:1px solid var(--glass-border); color:var(--blue);
-  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  background:#080a0e; border:1px solid var(--border); color:var(--blue);
   opacity:0; transform:scale(.84); pointer-events:none;
   transition:opacity 240ms var(--ease-out), transform 240ms var(--ease-spring);
 }
@@ -520,10 +538,9 @@ h2.section-title{
 .cert-seal{
   position:absolute; top:.5rem; left:.5rem; display:inline-flex; align-items:center; gap:.34rem;
   padding:.32rem .55rem .32rem .44rem; border-radius:var(--r-pill);
-  background:rgba(8,10,14,.74); border:1px solid rgba(255,255,255,.16);
+  background:#080a0e; border:1px solid rgba(120,160,255,.3);
   color:var(--blue-soft); font-size:var(--fs-caption2); font-weight:600;
   letter-spacing:.05em; text-transform:uppercase; line-height:1;
-  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
   transition:border-color 260ms ease, color 260ms ease, opacity 200ms ease;
 }
 .cert-seal svg{width:13px; height:13px; flex-shrink:0;}
@@ -600,7 +617,7 @@ h2.section-title{
    straight through them — the same reason header.nav carries its own tint. */
 .certpop-frame{
   position:relative;
-  border-radius:var(--r-lg); overflow:hidden; background:rgba(10,12,16,.96);
+  border-radius:var(--r-lg); overflow:hidden; background:#0b0d10;
   border:1px solid hsl(var(--cert-hue) 88% 74% / .32);
   box-shadow:0 1px 0 rgba(255,255,255,.1) inset,
              0 40px 90px -26px rgba(0,0,0,.88),
@@ -653,7 +670,7 @@ h2.section-title{
 }
 .certpop-cap{
   display:flex; align-items:baseline; gap:.6rem; padding:.65rem .95rem .75rem;
-  font-size:var(--fs-footnote); color:var(--text); background:rgba(255,255,255,.05);
+  font-size:var(--fs-footnote); color:var(--text); background:var(--surface-2);
   border-top:1px solid rgba(255,255,255,.08);
   transition:opacity 240ms var(--ease-out), transform 380ms var(--ease-out);
 }
@@ -693,7 +710,7 @@ h2.section-title{
    so without it the closed dialog stays laid out — invisible at opacity 0 but
    covering the viewport and swallowing every click on the page. */
 .certview[hidden]{display:none;}
-.certview-scrim{position:absolute; inset:0; background:rgba(3,4,6,.82); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); opacity:0; transition:opacity 260ms var(--ease-out);}
+.certview-scrim{position:absolute; inset:0; background:rgba(3,4,6,.94);opacity:0; transition:opacity 260ms var(--ease-out);}
 /* Capped at the scans' native 800px — wider only upscales and softens the
    printed course line, which is the whole reason for opening it. */
 .certview-panel{position:relative; width:min(800px,100%); opacity:0; transform:scale(.965) translateY(8px); transition:opacity 300ms var(--ease-out), transform 300ms var(--ease-out);}
@@ -731,8 +748,7 @@ h2.section-title{
 .certview-count{margin-left:auto; color:var(--text-faint); font-size:var(--fs-caption2); font-variant-numeric:tabular-nums;}
 .certview-btn{
   position:absolute; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-  background:rgba(12,14,20,.8); border:1px solid var(--glass-border); color:var(--text); cursor:pointer;
-  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  background:#0c0e14; border:1px solid var(--border); color:var(--text); cursor:pointer;
   transition:background 200ms ease, border-color 200ms ease, transform 200ms var(--ease-out);
 }
 .certview-btn svg{width:18px; height:18px;}
@@ -767,8 +783,8 @@ h2.section-title{
 @media (max-width:420px){ .stack-grid{grid-template-columns:repeat(2,1fr);} }
 .tile{
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.55rem;
-  padding:1rem .5rem; border-radius:var(--r-md); background:rgba(255,255,255,.035);
-  border:1px solid var(--glass-border); position:relative; overflow:hidden;
+  padding:1rem .5rem; border-radius:var(--r-md); background:var(--surface);
+  border:1px solid var(--border); position:relative; overflow:hidden;
   transition:border-color 260ms ease, background 260ms ease, transform 260ms var(--ease-out);
 }
 /* The tint is the tile's own brand color, so each one lights up in its own hue. */
@@ -777,7 +793,7 @@ h2.section-title{
   background:radial-gradient(90% 90% at 50% 0%,var(--brand),transparent 70%);
   transition:opacity 300ms ease;
 }
-.tile:hover{transform:translateY(-2px); border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.06);}
+.tile:hover{transform:translateY(-2px); border-color:rgba(120,160,255,.45); background:var(--surface-2);}
 .tile:hover::after{opacity:.13;}
 .tile svg{width:26px; height:26px; position:relative; z-index:1; transition:transform 300ms var(--ease-spring);}
 .tile:hover svg{transform:scale(1.08);}
@@ -839,7 +855,7 @@ h2.section-title{
 }
 .project-card:active{transform:translateY(-4px) scale(.995);}
 .project-visual{
-  background:radial-gradient(120% 140% at 20% 15%,rgba(120,160,255,.16),transparent 60%);
+  background:radial-gradient(120% 140% at 20% 15%,rgba(120,160,255,.16),transparent 60%), var(--surface-2);
   display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; padding:2rem 1.2rem; min-height:220px;
   transition:filter 500ms var(--ease-out);
 }
@@ -899,7 +915,7 @@ h2.section-title{
 .rack li{
   display:grid; grid-template-columns:30px 1fr; column-gap:.7rem; align-items:center;
   padding:.6rem .8rem; border-radius:var(--r-sm);
-  background:rgba(255,255,255,.035); border:1px solid var(--glass-border);
+  background:var(--surface-2); border:1px solid var(--border);
 }
 /* Brand marks are drawn for a light ground — Debian's #A81D33 and Pi-hole's
    #96060C are near-black on this page's navy badge. A light chip keeps each logo
@@ -917,7 +933,8 @@ h2.section-title{
 .rack-note{font-size:var(--fs-caption2); color:var(--text-faint); line-height:1.35;}
 
 /* ---------- contact + footer ---------- */
-.cta{border-radius:var(--r-xl); padding:2.8rem 2rem; text-align:center; display:grid; justify-items:center;}
+.cta{border-radius:var(--r-xl); padding:2.8rem 2rem; text-align:center; display:grid; justify-items:center;
+  background:radial-gradient(120% 160% at 50% 0%,rgba(120,160,255,.08),transparent 60%), var(--surface);}
 .cta .section-badge{margin-bottom:1rem;}
 .cta p{font-size:var(--fs-subhead); color:var(--text-dim); max-width:50ch; margin:.9rem 0 1.6rem; line-height:1.6; text-wrap:pretty;}
 
@@ -1054,16 +1071,14 @@ h2.section-title{
    pointer events" — it is invisible in a screenshot. */
 .csheet[hidden]{display:none !important;}
 .csheet-scrim{
-  position:absolute; inset:0; background:rgba(3,4,6,.62);
-  -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px);
+  position:absolute; inset:0; background:rgba(3,4,6,.78);
   opacity:0; transition:opacity 300ms var(--ease-out);
 }
 .csheet.is-open .csheet-scrim{opacity:1;}
 .csheet-panel{
   position:relative; width:min(430px,100%); padding:.45rem .9rem .9rem;
-  border-radius:var(--r-xl); border:1px solid var(--glass-border);
-  background:rgba(14,17,23,.84);
-  -webkit-backdrop-filter:blur(30px) saturate(180%); backdrop-filter:blur(30px) saturate(180%);
+  border-radius:var(--r-xl); border:1px solid var(--border);
+  background:#0e1117;
   box-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 26px 64px -20px rgba(0,0,0,.85);
   transform:translateY(calc(100% + 1rem));
   transition:transform 440ms var(--ease-out);
@@ -1101,7 +1116,7 @@ h2.section-title{
    rather than modal — no dim, no blur; the scrim layer stays only to catch the
    click that light-dismisses it. */
 .csheet.is-popover{display:block; padding:0;}
-.csheet.is-popover .csheet-scrim{background:transparent; -webkit-backdrop-filter:none; backdrop-filter:none;}
+.csheet.is-popover .csheet-scrim{background:transparent;}
 .csheet.is-popover .csheet-panel{
   /* 380, not 340: at 340 the text column came out ~174px against a 26-character
      address that needs ~180, so the one row whose value has to be readable was
