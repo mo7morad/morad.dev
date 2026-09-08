@@ -7,11 +7,14 @@
 // width/height attributes silently killed aspect-ratio and cropped every
 // certificate). Read the CSS and you will not find them. Run this instead.
 //
-//   npm run dev            # port 4322 — the LIVE server
-//   npx playwright install chromium   # once
+//   npm run dev                        # port 4322 — the LIVE server
+//   npm i -D playwright                 # once; not a dependency of the site
+//   npx playwright install chromium     # once
 //   node scripts/verify.mjs
 //
-// Playwright is intentionally not a dependency of this site; run it with npx.
+// Playwright is deliberately NOT in package.json — nothing here ships to the
+// browser, and a 100MB dev dependency for a static single-page site should be
+// an explicit choice. Install it when you want to run the suite.
 // NEVER point this at port 4331 — that is `astro preview` serving a frozen
 // dist/ and it has reproduced already-fixed bugs. The guard below checks.
 //
