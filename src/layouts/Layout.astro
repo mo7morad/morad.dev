@@ -6,6 +6,26 @@ interface Props {
   description: string;
 }
 const { title, description } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/images/og.png', Astro.site);
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Mohamed Morad',
+  url: Astro.site?.href,
+  image: ogImage.href,
+  jobTitle: 'Backend Engineer',
+  email: 'mailto:momurad.business@gmail.com',
+  address: { '@type': 'PostalAddress', addressLocality: 'Bali', addressCountry: 'ID' },
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Universitas Islam Indonesia' },
+  sameAs: [
+    'https://github.com/mo7morad',
+    'https://www.linkedin.com/in/momorad',
+    'https://apps.apple.com/app/id6766072256',
+  ],
+};
 ---
 
 <!doctype html>
@@ -13,14 +33,30 @@ const { title, description } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#050506" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <script type="application/ld+json" set:html={JSON.stringify(person)} is:inline />
   </head>
   <body>
     <slot />

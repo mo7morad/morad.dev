@@ -7,368 +7,695 @@ function brandIcon(icon: { hex: string; path: string; title: string }, color?: s
   return `<svg role="img" aria-label="${icon.title}" viewBox="0 0 24 24" fill="${color ?? `#${icon.hex}`}" xmlns="http://www.w3.org/2000/svg"><path d="${icon.path}"/></svg>`;
 }
 
-const LIGHT = '#e5e7eb'; // override for brand marks whose official color is near-black/invisible on this dark ground
+// Brand marks whose official color is near-black and would vanish on this ground.
+const LIGHT = '#e5e7eb';
 
-const techList = [
-  { icon: si.siTypescript, label: 'TypeScript' },
-  { icon: si.siNodedotjs, label: 'Node.js' },
-  { icon: si.siCloudflare, label: 'Cloudflare' },
-  { icon: si.siPostgresql, label: 'PostgreSQL' },
-  { icon: si.siSupabase, label: 'Supabase' },
-  { icon: si.siDotnet, label: '.NET' },
-  { icon: si.siSwift, label: 'Swift' },
-  { icon: si.siApple, label: 'Apple', color: LIGHT },
-  { icon: si.siGit, label: 'Git' },
-  { icon: si.siGithub, label: 'GitHub', color: LIGHT },
-  { icon: si.siHono, label: 'Hono' },
-  { icon: si.siVitest, label: 'Vitest' },
-  { icon: si.siDebian, label: 'Debian' },
-  { icon: si.siNginx, label: 'NGINX' },
-  { icon: si.siAstro, label: 'Astro' },
-];
+const EMAIL = 'momurad.business@gmail.com';
 
-const specList = [
-  { icon: si.siDebian, title: 'Headless Server', desc: 'A repurposed laptop, wiped and running headless Debian under my desk — driven entirely over SSH, no monitor, ever.' },
-  { icon: si.siNginx, title: 'Reverse Proxy', desc: "Fronts every self-hosted service, TLS-terminated and configured by hand — not a managed dashboard." },
-  { icon: si.siPihole, title: 'Network-Wide Ad Block', desc: 'DNS-level blocking for every device on the network, not just one browser.' },
-  { icon: si.siImmich, title: 'Self-Hosted Photos', desc: 'Replaces a Google Photos or iCloud subscription with a photo library I actually control.' },
-];
+const line = (d: string) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
 
-const badges = [
-  { src: '/images/certificates/cert-01.png', n: '01', title: 'Foundations — Level 1' },
-  { src: '/images/certificates/cert-10.png', n: '10', title: 'Object-Oriented Programming' },
-  { src: '/images/certificates/cert-14.png', n: '14', title: 'C# — Level 1' },
-  { src: '/images/certificates/cert-19.png', n: '19', title: 'Full Real Project — DVLD Capstone' },
-  { src: '/images/certificates/cert-23.png', n: '23', title: 'Algorithms — Level 6' },
-  { src: '/images/certificates/cert-25.png', n: '25', title: 'SOLID Principles' },
-];
-
-const iconPin = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-7.58 7-13a7 7 0 1 0-14 0c0 5.42 7 13 7 13Z"/><circle cx="12" cy="9" r="2.5"/></svg>`;
-const iconMail = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>`;
-const iconExternal = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>`;
+const iconTerminal = line('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/>');
+const iconDatabase = line('<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>');
+const iconWrench = line('<path d="M14.7 6.3a4 4 0 0 0 5 5L15 16l-4-4Z"/><path d="m11 12-7 7a1.8 1.8 0 0 0 2.5 2.5l7-7"/>');
+const iconPin = line('<path d="M12 22s7-7.58 7-13a7 7 0 1 0-14 0c0 5.42 7 13 7 13Z"/><circle cx="12" cy="9" r="2.5"/>');
+const iconMail = line('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>');
+const iconCopy = line('<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>');
+const iconCheck = line('<path d="m5 13 4 4L19 7"/>');
+const iconExternal = line('<path d="M7 17 17 7M9 7h8v8"/>');
+const iconExpand = line('<path d="M15 3h6v6M21 3l-7 7M9 21H3v-6M3 21l7-7"/>');
+const iconChevronL = line('<path d="m15 18-6-6 6-6"/>');
+const iconChevronR = line('<path d="m9 6 6 6-6 6"/>');
+const iconClose = line('<path d="M18 6 6 18M6 6l12 12"/>');
+const iconBriefcase = line('<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/>');
+const iconAward = line('<circle cx="12" cy="8" r="6"/><path d="M8.2 13.2 7 22l5-2.9 5 2.9-1.2-8.8"/>');
+const iconChip = line('<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>');
+const iconBrackets = line('<path d="m8 6-6 6 6 6M16 6l6 6-6 6"/>');
+const iconMailOpen = line('<path d="M3 9.5 12 4l9 5.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="m3 9.5 9 6 9-6"/>');
 const iconLinkedin = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="22" height="22" rx="4" fill="#0A66C2"/><path fill="#fff" d="M7.4 9.7h2.55v7.9H7.4zm1.28-1.1a1.48 1.48 0 1 1 0-2.96 1.48 1.48 0 0 1 0 2.96zm3.1 1.1h2.44v1.08h.03c.34-.64 1.17-1.32 2.41-1.32 2.58 0 3.06 1.7 3.06 3.9v4.24h-2.55v-3.76c0-.9-.02-2.05-1.25-2.05-1.25 0-1.44.98-1.44 1.98v3.83h-2.55z"/></svg>`;
-const iconBriefcase = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg>`;
-const iconChip = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>`;
-const iconBrackets = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></svg>`;
-const iconServer = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>`;
-const iconAward = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M9 14.5 7 22l5-3 5 3-2-7.5"/></svg>`;
-const iconRocket = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15s-1-5 4-9c4-3 9-3 9-3s0 5-3 9c-4 5-9 4-9 4Z"/><path d="m9 15-4 4M5 19l-.5.5"/><circle cx="14.5" cy="8.5" r="1.7"/></svg>`;
+
+// Every tile: a real simple-icons mark, used exactly once, naming something
+// that appears in a shipped repo.
+const stackGroups = [
+  {
+    label: 'Languages',
+    icon: iconTerminal,
+    items: [
+      { icon: si.siTypescript, label: 'TypeScript' },
+      { icon: si.siSwift, label: 'Swift' },
+      { icon: si.siDotnet, label: 'C# / .NET' },
+      { icon: si.siCplusplus, label: 'C++' },
+    ],
+  },
+  {
+    label: 'Backend & Data',
+    icon: iconDatabase,
+    items: [
+      { icon: si.siCloudflareworkers, label: 'Workers' },
+      { icon: si.siNodedotjs, label: 'Node.js' },
+      { icon: si.siHono, label: 'Hono' },
+      { icon: si.siPostgresql, label: 'PostgreSQL' },
+      { icon: si.siSupabase, label: 'Supabase' },
+      { icon: si.siSqlite, label: 'SQLite / D1' },
+    ],
+  },
+  {
+    label: 'Tooling & Infrastructure',
+    icon: iconWrench,
+    items: [
+      { icon: si.siGit, label: 'Git' },
+      { icon: si.siGithub, label: 'GitHub', color: LIGHT },
+      { icon: si.siVitest, label: 'Vitest' },
+      { icon: si.siXcode, label: 'Xcode' },
+      { icon: si.siDebian, label: 'Debian' },
+      { icon: si.siNginx, label: 'NGINX' },
+    ],
+  },
+];
+
+// Real brand marks, not generic line icons — these are the services themselves,
+// and a laptop/shield/funnel glyph named none of them.
+const homelab = [
+  { icon: si.siDebian, title: 'Headless Debian', note: 'Repurposed laptop, driven over SSH' },
+  { icon: si.siNginx, title: 'NGINX reverse proxy', note: 'TLS terminated and configured by hand' },
+  { icon: si.siPihole, title: 'Pi-hole DNS', note: 'Filtering for every device, not one browser' },
+  { icon: si.siImmich, title: 'Immich photo library', note: 'Photos on disks I actually hold' },
+];
+
+// Dates are the ones printed on the scans themselves, not the order they were
+// added here — the tile makes a claim, the scan behind it is the source.
+const certificates = [
+  { src: '/images/certificates/cert-10.png', n: '10', title: 'Object-Oriented Programming', date: 'Dec 2024' },
+  { src: '/images/certificates/cert-18.png', n: '18', title: 'C# & SQL Connectivity', date: 'Apr 2025' },
+  { src: '/images/certificates/cert-19.png', n: '19', title: 'DVLD Capstone Project', date: 'Jun 2025' },
+  { src: '/images/certificates/cert-21.png', n: '21', title: 'T-SQL', date: 'Aug 2025' },
+  { src: '/images/certificates/cert-23.png', n: '23', title: 'Algorithms — Level 6', date: 'Feb 2026' },
+  { src: '/images/certificates/cert-25.png', n: '25', title: 'SOLID Principles', date: 'Oct 2025' },
+];
+
+// One source for both places a contact method appears: the always-visible
+// directory in the contact card, and the sheet the "Contact me" button opens.
+// Two hand-written lists drift; two renderings of one array can't.
+const contactMethods = [
+  {
+    key: 'email',
+    label: 'Email',
+    detail: EMAIL,
+    href: `mailto:${EMAIL}`,
+    icon: iconMail,
+    external: false,
+  },
+  {
+    key: 'github',
+    label: 'GitHub',
+    detail: '@mo7morad',
+    href: 'https://github.com/mo7morad',
+    // #181717 is near-black on this ground — the same reason the GitHub stack
+    // tile is forced to LIGHT.
+    icon: brandIcon(si.siGithub, LIGHT),
+    external: true,
+  },
+  {
+    key: 'linkedin',
+    label: 'LinkedIn',
+    detail: 'in/momorad',
+    href: 'https://www.linkedin.com/in/momorad',
+    // simple-icons v16 dropped siLinkedin; this is the hand-authored mark.
+    icon: iconLinkedin,
+    external: true,
+  },
+  {
+    key: 'appstore',
+    label: 'Trippé',
+    detail: 'Live on the App Store',
+    href: 'https://apps.apple.com/app/id6766072256',
+    icon: brandIcon(si.siAppstore),
+    external: true,
+  },
+];
+
+// Authored in document order on purpose: the nav carries a travelling dot, and a
+// position indicator over a list that doesn't match the page order runs backwards
+// as you scroll.
+const navLinks = [
+  { label: 'About', href: '#top', spy: '.hero' },
+  { label: 'Experience', href: '#experience' },
+  { label: 'Stack', href: '#stack' },
+  { label: 'Work', href: '#projects' },
+  { label: 'Contact', href: '#contact' },
+];
 ---
 
 <Layout
-  title="Mohamed Morad"
-  description="Backend engineer, Apple Developer Academy Bali. Trippé — a travel app whose backend refuses to state a price it cannot trace to a quoted source."
+  title="Mohamed Morad — Backend Engineer"
+  description="Backend engineer at the Apple Developer Academy, Bali. I build systems that refuse to state what they cannot prove — starting with Trippé, whose backend discards any price it cannot trace to a quoted source."
 >
+  <a href="#top" class="skip-link">Skip to content</a>
+
+  <div id="intro" class="intro" aria-hidden="true">
+    <p class="intro-line mono"><span class="intro-text"></span><span class="intro-caret"></span></p>
+  </div>
+
   <div class="ambient" aria-hidden="true">
     <span class="b1"></span><span class="b2"></span><span class="b3"></span><span class="b4"></span>
+    <span class="cursor-glow"></span>
+  </div>
+
+  <div class="cursor" aria-hidden="true">
+    <span class="cursor-dot"><span class="cursor-dot-shape"></span></span>
   </div>
 
   <header class="nav glass">
     <div class="wrap nav-inner">
       <a href="#top" class="brand" data-scroll-to>
-        <img src="/images/profile-avatar.jpg" alt="" />
+        <img src="/images/profile-avatar.jpg" alt="" width="26" height="26" />
         <span>morad</span>
       </a>
-      <span id="clock" class="num"></span>
+      <nav class="nav-links" aria-label="Sections">
+        <span class="nav-indicator" aria-hidden="true"></span>
+        {navLinks.map((l) => (
+          <a href={l.href} class="nav-link" data-scroll-to data-spy={l.spy ?? l.href}>{l.label}</a>
+        ))}
+      </nav>
     </div>
   </header>
 
   <main id="top">
     <section class="hero">
-      <div class="wrap hero-grid" data-reveal>
-        <div class="hero-photo-col">
+      <div class="wrap hero-grid">
+        <div class="hero-photo-col" data-intro-reveal>
           <div class="hero-photo">
-            <img src="/images/profile-avatar.jpg" alt="Mohamed Morad" />
+            <img src="/images/profile-avatar.jpg" alt="Mohamed Morad" width="168" height="168" />
           </div>
           <p class="hero-loc"><Fragment set:html={iconPin} />Bali, Indonesia</p>
           <div class="hero-social">
             <a href="https://github.com/mo7morad" target="_blank" rel="noopener" aria-label="GitHub" set:html={brandIcon(si.siGithub, LIGHT)} />
             <a href="https://www.linkedin.com/in/momorad" target="_blank" rel="noopener" aria-label="LinkedIn" set:html={iconLinkedin} />
             <a href="https://apps.apple.com/app/id6766072256" target="_blank" rel="noopener" aria-label="Trippé on the App Store" set:html={brandIcon(si.siAppstore)} />
-            <a href="mailto:momurad.business@gmail.com" aria-label="Email" set:html={iconMail} />
+            <a href={`mailto:${EMAIL}`} aria-label="Email" set:html={iconMail} />
           </div>
         </div>
         <div>
-          <h1 class="hero-name">Mohamed Morad</h1>
-          <p class="hero-role">Backend Engineer &middot; TypeScript &middot; Cloudflare Workers &middot; SwiftUI</p>
-          <p class="hero-bio">I spent twenty-one months on fundamentals before I shipped anything. Then I built Trippé &mdash; a travel app whose backend refuses to state a price it cannot trace to a quoted source. Backend, iOS client, cost engine: I wrote all three, alone.</p>
-          <a href="mailto:momurad.business@gmail.com" class="btn glass glass-interactive" set:html={`${iconMail}Work With Me`} />
-        </div>
-      </div>
-    </section>
-
-    <section id="journey">
-      <div class="wrap">
-        <div class="section-head" data-reveal>
-          <span class="section-badge glass" set:html={iconBriefcase} />
-          <h2 class="section-title" style="--grad-end:var(--cyan)">Professional Journey</h2>
-        </div>
-        <div class="section-line"></div>
-
-        <div class="journey-list">
-          <div class="journey-item" data-reveal>
-            <div class="journey-head">
-              <div>
-                <h3>Apple Developer Academy, Bali</h3>
-                <p class="journey-role">iOS &amp; Backend Engineer &middot; Cohort 2026</p>
-              </div>
-              <span class="journey-date">Mar 2026 &ndash; Present</span>
-            </div>
-            <p class="journey-desc">First Egyptian in the cohort, ~220 places from 5,000+ applicants. Built Trippé end to end and shipped it to the App Store in September 2026. The Academy runs through December 2026; the UII degree lands August 2027 &mdash; open to remote work or relocation now.</p>
-            <ul>
-              <li>Trippé: the pricing table rejects any row without a quoted source &mdash; a database constraint, not a suggestion</li>
-              <li>ECOdyssey: wrote the belief-fusion engine for a waste-sorting kiosk; a 7-scenario test harness caught the legacy logic failing 3/7, mine failing 1/7</li>
-              <li>ADA-Stickies: a magic-link note wall for the actual cohort, live since July 2026, still running</li>
-              <li>Numo: a one-week studio build reading meal photos through Apple's on-device models at temperature 0, for reproducible structured output</li>
-            </ul>
-          </div>
-
-          <div class="journey-item" data-reveal>
-            <div class="journey-head">
-              <div>
-                <h3>Backend Fundamentals Roadmap</h3>
-                <p class="journey-role">Self-Directed Curriculum</p>
-              </div>
-              <span class="journey-date">May 2024 &ndash; Feb 2026</span>
-            </div>
-            <p class="journey-desc">Twenty-one months of fundamentals before shipping anything real: C++, algorithms across six levels, OOP, data structures, C#, SQL and T-SQL, REST APIs, SOLID &mdash; 25 courses, 1,329 solved problems, 669 commits.</p>
-            <ul>
-              <li>A banking-system project rewritten four times, ending in full OOP with multi-currency exchange (~6,000 lines)</li>
-              <li>Capstone: DVLD, a C# WinForms + SQL Server driving-license system &mdash; 134 files, 28,541 lines, strict 3-tier architecture, raw parameterized ADO.NET by choice</li>
-            </ul>
-          </div>
-
-          <div class="journey-item" data-reveal>
-            <div class="journey-head">
-              <div>
-                <h3>Scholarship to Indonesia</h3>
-                <p class="journey-role">Informatics, Universitas Islam Indonesia</p>
-              </div>
-              <span class="journey-date">Aug 2023</span>
-            </div>
-            <p class="journey-desc">Left Egypt on a scholarship to study Informatics at UII &mdash; the decision that put fundamentals before shipping anything.</p>
-          </div>
-
-          <div class="journey-item" data-reveal>
-            <div class="journey-head">
-              <div>
-                <h3>First Lines of Code</h3>
-                <p class="journey-role">Cairo, Egypt</p>
-              </div>
-              <span class="journey-date">2023</span>
-            </div>
-            <p class="journey-desc">CS50 explains what a computer actually does. The first build &mdash; a Python/Tkinter download manager &mdash; loses its source: no git, no backup. <code class="mono">git init</code> has been the first thing typed on every project since.</p>
+          <h1 class="hero-name" data-intro-reveal>Mohamed Morad</h1>
+          <p class="hero-role" data-intro-reveal>Backend Engineer</p>
+          <p class="hero-role" data-intro-reveal>C# / .NET &middot; TypeScript &middot; SQL &middot; Cloudflare Workers</p>
+          <p class="hero-bio" data-intro-reveal>I build backend systems and AI-powered products with a bias toward correctness.</p>
+          <p class="hero-bio" data-intro-reveal>My clearest example is Trippé, a travel app whose backend refuses to show a price it cannot trace to a source.</p>
+          <p class="hero-bio" data-intro-reveal>I built the backend, iOS client, and cost engine myself.</p>
+          <p class="hero-role" data-intro-reveal>I build systems that know when not to guess.</p>
+          <div class="hero-cta" data-intro-reveal>
+            {/* Stays an anchor, not a button: with no JS this is still a
+                working mailto. The script intercepts the click and opens the
+                sheet instead, and only then adds the popup ARIA — so the
+                attributes never promise a dialog that can't open. */}
+            <a href={`mailto:${EMAIL}`} class="btn btn-primary glass glass-interactive" data-contact-open set:html={`${iconMail}Contact me`} />
+            <a href="#projects" class="btn btn-quiet" data-scroll-to>View my work</a>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="tech">
+    <section id="experience">
       <div class="wrap">
         <div class="section-head" data-reveal>
-          <span class="section-badge glass" set:html={iconChip} />
-          <h2 class="section-title" style="--grad-end:var(--blue)">Tech Arsenal</h2>
+          <span class="section-badge" set:html={iconBriefcase} />
+          <h2 class="section-title" style="--grad-end:var(--cyan)">Experience &amp; Journey</h2>
         </div>
-        <div class="section-line"></div>
-        <div class="tech-grid" data-reveal>
-          {techList.map((t) => (
-            <div class="tech-tile glass glass-interactive">
-              <Fragment set:html={brandIcon(t.icon, t.color)} />
-              <span>{t.label}</span>
+
+        <ol class="exp">
+          <li class="exp-item" data-reveal>
+            <span class="exp-marker" aria-hidden="true"></span>
+            <div class="exp-head">
+              <p class="exp-date">Mar 2026 &ndash; Present</p>
+              <h3>Apple Developer Academy, Bali</h3>
+              <p class="exp-role">iOS &amp; Backend Engineer &middot; Cohort 2026</p>
             </div>
-          ))}
+            <p>A challenge-based engineering program where I build and ship products in short development cycles, from prototype to production.</p>
+            <p>I&rsquo;ve worked across backend systems, iOS, on-device AI, testing, and product delivery. Trippé, Numo, Sortla, and Academy Stickies all came from this period.</p>
+            <p class="exp-role">220 places &middot; 5,000+ applicants &middot; first Egyptian in the cohort</p>
+          </li>
+
+          <li class="exp-item" data-reveal>
+            <span class="exp-marker" aria-hidden="true"></span>
+            <div class="exp-head">
+              <p class="exp-date">May 2024 &ndash; Feb 2026</p>
+              <h3>Backend Fundamentals Roadmap</h3>
+              <p class="exp-role">Self-directed curriculum</p>
+            </div>
+            <p>Twenty-one months spent building the fundamentals before worrying about frameworks.</p>
+            <p>25 courses &middot; 1,329 solved problems &middot; 18 projects &middot; 669 commits</p>
+            <p>C++, algorithms, OOP, data structures, C#, SQL, T-SQL, REST APIs, SOLID, testing, and database design.</p>
+            <p>The curriculum ended with DVLD, a 28,541-line three-tier C# and SQL Server system.</p>
+          </li>
+
+          <li class="exp-item" data-reveal>
+            <span class="exp-marker" aria-hidden="true"></span>
+            <div class="exp-head">
+              <p class="exp-date">Aug 2023</p>
+              <h3>Universitas Islam Indonesia</h3>
+                <p class="exp-role">B.Sc. Informatics (Computer Science)</p>
+            </div>
+              <p>Studying Informatics in Indonesia on scholarship while building and shipping software alongside the degree.</p>
+          </li>
+
+          <li class="exp-item" data-reveal>
+            <span class="exp-marker" aria-hidden="true"></span>
+            <div class="exp-head">
+              <p class="exp-date">2023</p>
+              <h3>First lines of code</h3>
+              <p class="exp-role">Egypt</p>
+            </div>
+            <p>CS50 was my starting point.</p>
+            <p>My first project was a Python/Tkinter download manager. I lost the source because I had no Git and no backup.</p>
+            <p><code class="mono">git init</code> has been the first command on every project since.</p>
+          </li>
+        </ol>
+
+        <div class="certs" data-reveal>
+          <h3 class="subhead"><span class="subhead-icon" set:html={iconAward} />Certified coursework</h3>
+          <p class="subhead-note">Six of the 25 certificates I earned across the ProgrammingAdvices backend curriculum &mdash; open any one to read the scan.</p>
+          <div class="cert-grid">
+            {certificates.map((c, i) => (
+              <button
+                type="button"
+                class="cert"
+                data-cert={i}
+                data-src={c.src}
+                data-n={c.n}
+                data-title={c.title}
+                data-date={c.date}
+                aria-label={`View certificate ${c.n}, ${c.title}, ${c.date}, full size`}
+              >
+                <span class="cert-shot">
+                  <img src={c.src} alt="" loading="lazy" width="800" height="565" />
+                  <span class="cert-seal" aria-hidden="true"><Fragment set:html={iconAward} />Certificate <b class="num">{c.n}</b></span>
+                  <span class="cert-zoom" aria-hidden="true"><Fragment set:html={iconExpand} /></span>
+                </span>
+                <span class="cert-cap">
+                  <span class="cert-title">{c.title}</span>
+                  <span class="cert-date num">{c.date}</span>
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="work">
+    <section id="stack">
       <div class="wrap">
         <div class="section-head" data-reveal>
-          <span class="section-badge glass" set:html={iconBrackets} />
-          <h2 class="section-title" style="--grad-end:var(--cyan)">Featured Projects</h2>
+          <span class="section-badge" set:html={iconChip} />
+          <h2 class="section-title" style="--grad-end:var(--blue)">My Tech Stack</h2>
         </div>
-        <div class="section-line"></div>
+        <p class="section-intro" data-reveal>Tools that I truely understand and work with.</p>
+        {stackGroups.map((g) => (
+          <div class="stack-group" data-reveal>
+            <h3 class="subhead"><span class="subhead-icon" set:html={g.icon} />{g.label}</h3>
+            <div class="stack-grid">
+              {g.items.map((t) => (
+                <div class="tile" style={`--brand:#${t.icon.hex}`}>
+                  <Fragment set:html={brandIcon(t.icon, t.color)} />
+                  <span>{t.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="wrap">
+        <div class="section-head" data-reveal>
+          <span class="section-badge" set:html={iconBrackets} />
+          <h2 class="section-title" style="--grad-end:var(--cyan)">Selected Work</h2>
+        </div>
+        <p class="section-intro" data-reveal>A few things I&rsquo;ve actually shipped, built, or tested seriously.</p>
 
         <div class="project-list">
-          <article class="project-card glass" data-reveal>
+          <article class="project-card glass glass-interactive" data-reveal>
             <div class="project-visual">
               <PhoneMockup size="sm" src="/images/trippe/destination-sao-miguel.jpg" alt="Trippé destination screen for São Miguel, Azores." />
               <PhoneMockup size="sm" src="/images/trippe/estimated-spending.jpg" alt="Trippé estimated cost breakdown screen." />
             </div>
             <div class="project-body">
-              <div class="project-top">
-                <h3>Trippé</h3>
-                <div class="project-icons">
-                  <Fragment set:html={brandIcon(si.siCloudflare)} />
-                  <Fragment set:html={brandIcon(si.siTypescript)} />
-                  <Fragment set:html={brandIcon(si.siSwift)} />
-                </div>
+              <h3>Trippé</h3>
+              <p class="project-meta">Solo &middot; Backend, iOS &amp; cost engine &middot; App Store</p>
+              <p>A travel app that recommends destinations and builds a realistic trip cost from sourced data.</p>
+              <p>The important constraint is simple: a price without a traceable source never reaches the user.</p>
+              <p>I designed and built the Cloudflare Worker backend, SwiftUI client, and cost engine, including the data pipeline, streaming recommendation flow, and AI integration.</p>
+              <ul class="facts">
+                <li><b>599</b> backend commits</li>
+                <li><b>250</b> iOS commits</li>
+                <li><b>123</b> backend test files</li>
+              </ul>
+              <div class="project-stack">
+                <span class="pill"><Fragment set:html={brandIcon(si.siCloudflare)} />Cloudflare</span>
+                <span class="pill"><Fragment set:html={brandIcon(si.siTypescript)} />TypeScript</span>
+                <span class="pill"><Fragment set:html={brandIcon(si.siSwift)} />Swift</span>
               </div>
-              <p>Trippé recommends a trip, then prices it against real harvested data before you see it. The pricing table has a hard constraint: a price row without a quoted source is discarded, not stored. I designed and built the Cloudflare Worker backend (599 commits, TypeScript, one runtime dependency), the SwiftUI client (250 commits, 47,075 lines), and the cost engine between them &mdash; alone, with 123 test files against 144 source files, and an on-device Apple Foundation Models fallback with a kill-switch.</p>
               <div class="project-links">
-                <a href="https://apps.apple.com/app/id6766072256" class="btn glass glass-interactive" target="_blank" rel="noopener" set:html={`Live on the App Store${iconExternal}`} />
+                <a href="https://apps.apple.com/app/id6766072256" class="btn btn-primary glass glass-interactive" target="_blank" rel="noopener" set:html={`View on the App Store${iconExternal}`} />
               </div>
             </div>
           </article>
 
-          <article class="project-card glass" data-reveal>
+          <article class="project-card glass glass-interactive" data-reveal>
             <div class="project-visual">
               <figure class="diagram-frame">
-                <img src="/images/dvld/db-diagram.png" alt="DVLD database schema: thirteen tables including Licenses, Drivers, Applications, Tests, TestAppointments, People, and Users, with foreign-key relationships drawn between them." loading="lazy" />
+                <img src="/images/dvld/db-diagram.png" alt="The DVLD database schema diagram: tables for People, Users, Drivers, Applications, Licenses, Tests and TestAppointments among others, with foreign-key relationships drawn between them." loading="lazy" />
               </figure>
             </div>
             <div class="project-body">
-              <div class="project-top">
-                <h3>Backend Fundamentals Roadmap</h3>
-                <div class="project-icons">
-                  <Fragment set:html={brandIcon(si.siDotnet)} />
-                  <Fragment set:html={brandIcon(si.siGit)} />
-                </div>
+              <h3>DVLD &mdash; Driving License System</h3>
+              <p class="project-meta">Solo &middot; C# / .NET &middot; SQL Server</p>
+              <p>The capstone of my 21-month backend curriculum.</p>
+              <p>A three-tier desktop system built with C# WinForms and SQL Server. I implemented the data-access layer with parameterised ADO.NET rather than an ORM so database interaction stayed explicit and inspectable.</p>
+              <p>It was the largest system I had built at the time.</p>
+              <ul class="facts">
+                <li><b>28,541</b> lines</li>
+                <li><b>134</b> files</li>
+                <li><b>25</b> foreign-key constraints</li>
+              </ul>
+              <div class="project-stack">
+                <span class="pill"><Fragment set:html={brandIcon(si.siDotnet)} />C# / .NET</span>
+                <span class="pill"><Fragment set:html={brandIcon(si.siGit)} />Git</span>
               </div>
-              <p>Twenty-one months of self-curated fundamentals before I shipped anything: C++, algorithms across six levels, OOP, data structures, C#, SQL, REST APIs, SOLID &mdash; 25 courses, 1,329 solved problems, 669 commits. It ends in DVLD, a driving-license system built on C# WinForms and SQL Server in strict 3-tier architecture: 134 files, 28,541 lines, and data access that's raw, parameterized ADO.NET &mdash; no stored procedures, by choice. The schema above is drawn straight from the repo's own diagram.</p>
             </div>
           </article>
 
-          <article class="project-card glass" data-reveal>
+          <article class="project-card glass glass-interactive" data-reveal>
             <div class="project-visual">
               <div class="compare">
+                <p class="compare-title">Seven fixed scenarios, replayed through both</p>
                 <div class="bar-row">
-                  <span class="bar-label">Legacy confidence-vote</span>
+                  <span class="bar-label">Legacy confidence vote<b>3 / 7</b></span>
                   <div class="bar-track"><div class="bar-fill legacy" style="--target-width:43%"></div></div>
-                  <span class="bar-val">3 / 7 confidently wrong</span>
                 </div>
                 <div class="bar-row">
-                  <span class="bar-label">Belief engine (mine)</span>
+                  <span class="bar-label">Belief engine (mine)<b>1 / 7</b></span>
                   <div class="bar-track"><div class="bar-fill belief" style="--target-width:14%"></div></div>
-                  <span class="bar-val">1 / 7 confidently wrong</span>
                 </div>
+                <p class="compare-note">Lower is better &mdash; confidently wrong calls</p>
               </div>
             </div>
             <div class="project-body">
-              <div class="project-top">
-                <h3>ECOdyssey / Sortla</h3>
-                <div class="project-icons">
-                  <Fragment set:html={brandIcon(si.siSwift)} />
-                  <Fragment set:html={brandIcon(si.siApple, LIGHT)} />
-                </div>
+              <h3>Sortla</h3>
+              <p class="project-meta">5-person team &middot; My role: belief engine, PCC judge &amp; evaluation</p>
+              <p>A waste-sorting system using on-device YOLOv8 through Core ML.</p>
+              <p>I built the belief engine that turns noisy frame-by-frame detections into stable decisions, added a Private Cloud Compute second-opinion path, and built the evaluation harness used to compare the new approach with the existing one.</p>
+              <p>Across seven fixed scenarios, the old approach produced 3 confidently wrong decisions. Mine produced 1.</p>
+              <p>That test found a real bug. That was the point.</p>
+              <div class="project-stack">
+                <span class="pill"><Fragment set:html={brandIcon(si.siSwift)} />Swift</span>
+                <span class="pill"><Fragment set:html={brandIcon(si.siApple, LIGHT)} />Core ML</span>
               </div>
-              <p>My role on a five-person team building a waste-sorting kiosk running on-device YOLOv8 via Core ML. I wrote the belief-fusion engine, the Private-Cloud-Compute second-opinion arbiter, and the test harness that graded both approaches against each other &mdash; replaying 7 fixed scenarios through the old confidence-vote logic and my belief engine. The old logic was wrong three times; mine was wrong once. The measurement found a real bug &mdash; it wasn't a demo of a passing test.</p>
             </div>
           </article>
 
-          <article class="project-card glass" data-reveal>
+          <article class="project-card glass glass-interactive" data-reveal>
             <div class="project-visual">
               <PhoneMockup size="sm" src="/images/stickies/gate.png" alt="Academy Stickies sign-in gate, a live production screenshot." />
             </div>
             <div class="project-body">
-              <div class="project-top">
-                <h3>ADA-Stickies</h3>
-                <div class="project-icons">
-                  <Fragment set:html={brandIcon(si.siCloudflare)} />
-                  <Fragment set:html={brandIcon(si.siHono)} />
-                  <Fragment set:html={brandIcon(si.siVitest)} />
-                </div>
+              <h3>Academy Stickies</h3>
+              <p class="project-meta">Solo &middot; Full-stack &middot; Live</p>
+              <p>A private note wall I built for my Academy cohort and still run today.</p>
+              <p>I built the full stack, including magic-link authentication, storage, migrations, and tests.</p>
+              <p>Nine database migrations were written and tested rather than assumed.</p>
+              <div class="project-stack">
+                <span class="pill"><Fragment set:html={brandIcon(si.siCloudflare)} />Pages, D1 &amp; R2</span>
+                <span class="pill"><Fragment set:html={brandIcon(si.siHono)} />Hono</span>
+                <span class="pill"><Fragment set:html={brandIcon(si.siVitest)} />Vitest</span>
               </div>
-              <p>A private wall of notes for my actual Academy cohort &mdash; magic-link email auth, so nobody needs a password I'd have to reset. Live since July 2026, still running: Cloudflare Pages, Hono, D1, R2, nine migrations tested with Vitest, 39 commits (33 mine).</p>
               <div class="project-links">
-                <a href="https://academy-stickies.pages.dev" class="btn glass glass-interactive" target="_blank" rel="noopener" set:html={`Open the app${iconExternal}`} />
-                <a href="https://github.com/mo7morad/Academy-Stickies" class="btn glass glass-interactive" target="_blank" rel="noopener" set:html={`${brandIcon(si.siGithub, LIGHT)}Source Code`} />
+                <a href="https://academy-stickies.pages.dev" class="btn btn-primary glass glass-interactive" target="_blank" rel="noopener" set:html={`Open app${iconExternal}`} />
+                <a href="https://github.com/mo7morad/Academy-Stickies" class="btn btn-quiet" target="_blank" rel="noopener" set:html={`${brandIcon(si.siGithub, LIGHT)}GitHub`} />
               </div>
             </div>
           </article>
 
-          <article class="project-card glass" data-reveal>
+          <article class="project-card glass glass-interactive" data-reveal>
             <div class="project-visual">
               <PhoneMockup size="sm" src="/images/academy/numo-meal-entry.jpg" alt="Numo meal-entry screen, a real screenshot from the app." />
             </div>
             <div class="project-body">
-              <div class="project-top">
-                <h3>Apple Developer Academy &mdash; Numo</h3>
-                <div class="project-icons">
-                  <Fragment set:html={brandIcon(si.siSwift)} />
-                  <Fragment set:html={brandIcon(si.siApple, LIGHT)} />
-                </div>
+              <h3>Numo</h3>
+              <p class="project-meta">Solo &middot; One-week Academy challenge &middot; Swift / iOS</p>
+              <p>A meal-analysis app that turns a food photo into structured nutrition data.</p>
+              <p>I built the vision client around structured output and explicit failure handling, so the app can distinguish between malformed responses, refusals, authentication errors, rate limits, and other failure cases instead of treating everything as &ldquo;AI failed.&rdquo;</p>
+              <div class="project-stack">
+                <span class="pill"><Fragment set:html={brandIcon(si.siSwift)} />Swift</span>
+                <span class="pill"><Fragment set:html={brandIcon(si.siApple, LIGHT)} />iOS</span>
               </div>
-              <p>Before ECOdyssey, the Academy runs five one-week studio challenges. Numo is the strongest: a hand-rolled Claude vision client that reads a meal photo and returns structured nutrition data at temperature 0, on purpose &mdash; structured data has to be reproducible, not creative. 239 commits, 118 Swift files, a 12-case typed error enum.</p>
               <div class="project-links">
-                <a href="https://github.com/mo7morad/My_Apple-Developer-Academy_Journey" class="btn glass glass-interactive" target="_blank" rel="noopener" set:html={`${brandIcon(si.siGithub, LIGHT)}View the journey repo`} />
+                <a href="https://github.com/mo7morad/My_Apple-Developer-Academy_Journey" class="btn btn-quiet" target="_blank" rel="noopener" set:html={`${brandIcon(si.siGithub, LIGHT)}Academy source`} />
               </div>
             </div>
           </article>
-        </div>
-      </div>
-    </section>
 
-    <section id="beyond">
-      <div class="wrap">
-        <div class="section-head" data-reveal>
-          <span class="section-badge glass" set:html={iconServer} />
-          <h2 class="section-title" style="--grad-end:var(--blue)">Beyond the Code</h2>
-        </div>
-        <div class="section-line"></div>
-        <p class="section-intro" data-reveal>A repurposed laptop runs headless Debian under my desk, managed entirely over SSH. Same instinct as everything above, aimed at my own life: own the infrastructure instead of renting someone else's.</p>
-        <div class="spec-grid" data-reveal>
-          {specList.map((s) => (
-            <div class="spec-card glass">
-              <span class="spec-icon" set:html={brandIcon(s.icon)} />
-              <h3>{s.title}</h3>
-              <p>{s.desc}</p>
+          <article class="project-card glass glass-interactive" data-reveal>
+            <div class="project-visual">
+              <ul class="rack">
+                {homelab.map((s) => (
+                  <li style={`--brand:#${s.icon.hex}`}>
+                    <span class="rack-icon"><Fragment set:html={brandIcon(s.icon)} /></span>
+                    <b>{s.title}</b>
+                    <span class="rack-note">{s.note}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section id="achievements">
-      <div class="wrap">
-        <div class="section-head" data-reveal>
-          <span class="section-badge glass" set:html={iconAward} />
-          <h2 class="section-title" style="--grad-end:var(--cyan)">Certificates &amp; Receipts</h2>
-        </div>
-        <div class="section-line"></div>
-        <p class="section-intro" data-reveal>Six of the twenty-five course completions behind the fundamentals roadmap above &mdash; issued by ProgrammingAdvices, the platform the curriculum was built on.</p>
-        <div class="badge-grid" data-reveal>
-          {badges.map((b) => (
-            <div class="badge-card glass">
-              <img src={b.src} alt={`Certificate of attendance, course ${b.n}: ${b.title}`} loading="lazy" />
-              <div class="badge-cap"><b>{b.n} &middot; {b.title}</b>ProgrammingAdvices &middot; Certificate of Attendance</div>
+            <div class="project-body">
+              <h3>Homelab</h3>
+              <p class="project-meta">Solo &middot; Self-hosted infrastructure &middot; Live</p>
+              <p>A repurposed laptop running Debian headlessly over SSH, with NGINX as a reverse proxy, Pi-hole for network-wide DNS filtering, and Immich for self-hosted photo storage.</p>
+              <p>Small infrastructure, same instinct: understand what you&rsquo;re running before you trust it.</p>
+              <div class="project-stack">
+                <span class="pill"><Fragment set:html={brandIcon(si.siDebian)} />Debian</span>
+                <span class="pill"><Fragment set:html={brandIcon(si.siNginx)} />NGINX</span>
+              </div>
             </div>
-          ))}
+          </article>
         </div>
       </div>
     </section>
 
     <section id="contact">
       <div class="wrap">
-        <div class="cta-block glass" data-reveal>
-          <span class="section-badge glass" style="margin:0 auto 1rem;" set:html={iconRocket} />
-          <h2 class="section-title" style="--grad-end:var(--blue)">Open to What's Next</h2>
-          <p>Backend or AI-product roles, remote or relocation. The Academy runs through December 2026; the UII degree lands August 2027 &mdash; available for conversations now.</p>
-          <a href="mailto:momurad.business@gmail.com" class="btn glass glass-interactive" set:html={`${iconMail}Work With Me`} />
+        <div class="cta glass" data-reveal>
+          <span class="section-badge" set:html={iconMailOpen} />
+          <h2 class="section-title" style="--grad-end:var(--blue)">Looking for the next system to build.</h2>
+          <p>I&rsquo;m looking for backend, platform, or AI-product engineering roles.</p>
+          <p>I&rsquo;m open to remote work or relocation. I&rsquo;m currently at the Apple Developer Academy in Bali, which ends in December 2026, and I complete my Informatics degree in August 2027.</p>
+          <p>I&rsquo;m available for conversations now.</p>
+          {/* The directory itself, not a button that leads to one — this is the
+              destination, so the four ways to reach me are spelled out rather
+              than folded behind a control. The sheet the hero button opens
+              renders the same array. */}
+          <ul class="clinks">
+            {contactMethods.map((m) => (
+              <li class:list={['clink-row', { 'is-primary': m.key === 'email' }]}>
+                <a
+                  class="clink"
+                  href={m.href}
+                  {...(m.external ? { target: '_blank', rel: 'noopener' } : {})}
+                >
+                  <span class="clink-icon" aria-hidden="true" set:html={m.icon} />
+                  <span class="clink-text">
+                    <span class="clink-label">{m.label}</span>
+                    <span class="clink-detail">{m.detail}</span>
+                  </span>
+                  {m.external && <span class="clink-go" aria-hidden="true" set:html={iconExternal} />}
+                </a>
+                {/* Every row ends in exactly one trailing glyph. For the three
+                    external rows it is an affordance (this opens elsewhere);
+                    for email it is an actual control, because forcing a mail
+                    client open is the thing people don't want. */}
+                {!m.external && (
+                  <button type="button" class="clink-copy copy-email" data-copy={EMAIL}>
+                    <span class="copy-icon" aria-hidden="true" set:html={`${iconCopy}${iconCheck}`} />
+                    <span class="copy-label vis-hidden" aria-live="polite">Copy address</span>
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
 
     <footer class="site">
       <div class="wrap">
-        <div class="footer-links" style="flex-direction:row; flex-wrap:wrap; gap:1.6rem; margin-bottom:1.6rem;">
-          <a href="mailto:momurad.business@gmail.com">momurad.business@gmail.com</a>
-          <a href="https://github.com/mo7morad" target="_blank" rel="noopener">github.com/mo7morad</a>
-          <a href="https://www.linkedin.com/in/momorad" target="_blank" rel="noopener">linkedin.com/in/momorad</a>
-          <a href="https://apps.apple.com/app/id6766072256" target="_blank" rel="noopener">Trippé on the App Store</a>
-        </div>
+        {/* The four links moved up into the contact card, where they are the
+            content rather than an afterthought. Repeating them here would make
+            the same four destinations appear twice within one screen. */}
         <div class="footer-bottom">
-          <span>&copy; Mohamed Morad</span>
-          <span>Figures on this page are drawn from git history and file counts across the repositories they describe.</span>
+          <span>&copy; {new Date().getFullYear()} Mohamed Morad</span>
+          <span>Every figure on this site is derived from the repository it describes, not typed by hand.</span>
         </div>
       </div>
     </footer>
   </main>
 
+  {/* Hover preview. Decorative and pointer-transparent: everything in it is
+      reachable through the tile's own button and the viewer below, so it is
+      hidden from assistive tech rather than announced twice. No src until a
+      tile is hovered — an empty src="" refetches the document as an image. */}
+  <div id="certpop" class="certpop" aria-hidden="true" hidden>
+    <div class="certpop-frame">
+      {/* Every scan is the same template — same header, same name, same layout,
+          one course line different — so the number is the only thing that
+          actually distinguishes them. At caption size it was too small to
+          register while the panel was gliding; up here it is the one element
+          that visibly changes on a swap. */}
+      <span id="certpop-badge" class="certpop-badge num" aria-hidden="true"></span>
+      <img id="certpop-img" class="certpop-img" alt="" />
+      <div class="certpop-cap">
+        <b id="certpop-n" class="num"></b>
+        <span id="certpop-title"></span>
+        <span id="certpop-date" class="cap-date num"></span>
+        <span class="certpop-hint">Click to open full size</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="certview" class="certview" role="dialog" aria-modal="true" aria-label="Certificate viewer" hidden>
+    <div class="certview-scrim" data-certview-dismiss></div>
+    <div class="certview-panel">
+      <figure class="certview-fig">
+        {/* No src until opened — an empty src="" resolves to the page URL and
+            makes the browser fetch the document as an image. */}
+        <img id="certview-img" alt="" width="800" height="565" />
+        <figcaption class="certview-cap">
+          <b id="certview-n" class="num"></b>
+          <span id="certview-title"></span>
+          <span id="certview-date" class="cap-date num"></span>
+          <span class="certview-count"><span id="certview-pos"></span> of {certificates.length}</span>
+        </figcaption>
+      </figure>
+      <button type="button" class="certview-btn certview-prev" aria-label="Previous certificate"><Fragment set:html={iconChevronL} /></button>
+      <button type="button" class="certview-btn certview-next" aria-label="Next certificate"><Fragment set:html={iconChevronR} /></button>
+      <button type="button" class="certview-btn certview-close" aria-label="Close" data-certview-dismiss><Fragment set:html={iconClose} /></button>
+    </div>
+  </div>
+
+  {/* Two presentations of one dialog, the way Apple splits regular and compact
+      width: a pull-down popover anchored under the button on a pointer device,
+      a bottom sheet with a grabber and a Cancel bar on a phone. Same markup,
+      same rows as the contact card — only the placement and the dismiss
+      control change. JS sets .is-sheet; the CSS defaults to the sheet so a
+      script that never measures still renders something coherent. */}
+  <div id="contactsheet" class="csheet" role="dialog" aria-modal="true" aria-labelledby="csheet-title" hidden>
+    <div class="csheet-scrim" data-csheet-dismiss></div>
+    <div class="csheet-panel">
+      <span class="csheet-grabber" aria-hidden="true"></span>
+      <div class="csheet-head">
+        <h2 id="csheet-title">Get in touch</h2>
+        <p>Any of these reach me. Email is the one I answer fastest.</p>
+      </div>
+      <button type="button" class="csheet-x" aria-label="Close" data-csheet-dismiss><Fragment set:html={iconClose} /></button>
+      <ul class="csheet-list">
+        {contactMethods.map((m) => (
+          <li class:list={['clink-row', { 'is-primary': m.key === 'email' }]}>
+            <a
+              class="clink"
+              href={m.href}
+              {...(m.external ? { target: '_blank', rel: 'noopener' } : {})}
+            >
+              <span class="clink-icon" aria-hidden="true" set:html={m.icon} />
+              <span class="clink-text">
+                <span class="clink-label">{m.label}</span>
+                <span class="clink-detail">{m.detail}</span>
+              </span>
+              {m.external && <span class="clink-go" aria-hidden="true" set:html={iconExternal} />}
+            </a>
+            {!m.external && (
+              <button type="button" class="clink-copy copy-email" data-copy={EMAIL}>
+                <span class="copy-icon" aria-hidden="true" set:html={`${iconCopy}${iconCheck}`} />
+                <span class="copy-label vis-hidden" aria-live="polite">Copy address</span>
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      <button type="button" class="csheet-cancel" data-csheet-dismiss>Cancel</button>
+    </div>
+  </div>
+
   <script>
     import Lenis from 'lenis';
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fineHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    // Plays once per tab, never under reduced motion. [data-intro-reveal] is
+    // visible by default in CSS, so a JS failure can't leave the hero blank.
+    const introEl = document.getElementById('intro');
+    if (introEl) {
+      const introTargets = Array.from(document.querySelectorAll<HTMLElement>('[data-intro-reveal]'));
+      let alreadySeen = true;
+      try {
+        alreadySeen = sessionStorage.getItem('introSeen') === '1';
+        if (!alreadySeen) sessionStorage.setItem('introSeen', '1');
+      } catch {
+        alreadySeen = true;
+      }
+
+      if (reduced || alreadySeen) {
+        introEl.remove();
+      } else {
+        introTargets.forEach((el) => el.classList.add('intro-pending'));
+        introEl.classList.add('is-active');
+
+        const textEl = introEl.querySelector('.intro-text') as HTMLElement | null;
+        const line = 'refuses to state what it cannot prove';
+        let i = 0;
+        let revealed = false;
+
+        const reveal = () => {
+          if (revealed) return;
+          revealed = true;
+          introEl.classList.add('is-leaving');
+          introTargets.forEach((el, idx) => {
+            setTimeout(() => el.classList.remove('intro-pending'), idx * 80);
+          });
+          setTimeout(() => introEl.remove(), 700);
+        };
+        // Hard ceiling so a stalled type loop can never leave the overlay stuck.
+        const safety = setTimeout(reveal, 4000);
+        const skip = () => {
+          clearTimeout(safety);
+          reveal();
+        };
+        introEl.addEventListener('click', skip, { once: true });
+        window.addEventListener('keydown', skip, { once: true });
+
+        const type = () => {
+          if (textEl && i <= line.length) {
+            textEl.textContent = line.slice(0, i);
+            i++;
+            setTimeout(type, 32);
+          } else {
+            clearTimeout(safety);
+            setTimeout(reveal, 350);
+          }
+        };
+        setTimeout(type, 260);
+      }
+    }
+
+    // Hoisted so anchor clicks ride the same rAF loop as wheel scroll.
+    let lenis: any = null;
+    if (!reduced) {
+      lenis = new Lenis({ duration: 1.05, smoothWheel: true });
+      const raf = (time: number) => {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      };
+      requestAnimationFrame(raf);
+    }
 
     document.querySelectorAll('[data-scroll-to]').forEach((a) => {
       a.addEventListener('click', (e) => {
@@ -376,24 +703,710 @@ const iconRocket = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
         const target = id && document.querySelector(id);
         if (!target) return;
         e.preventDefault();
-        target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+        // Both paths take the nav offset from the section's own scroll-margin-top:
+        // Lenis honours it, and scrollIntoView applies it natively. Passing an
+        // explicit offset here as well stacked the two and landed every target
+        // 168px down — past the scroll-spy's 110px scan line, so clicking a link
+        // scrolled correctly but left the *previous* link lit.
+        if (lenis) {
+          lenis.scrollTo(target as HTMLElement);
+        } else {
+          target.scrollIntoView({ behavior: 'auto', block: 'start' });
+        }
       });
     });
 
-    const clockEl = document.getElementById('clock');
-    if (clockEl) {
+    // Hover state is read off the live event target with .closest() rather than
+    // enter/leave listeners, so a nested link inside a card can't drop it.
+    const cursorEl = document.querySelector('.cursor') as HTMLElement | null;
+    if (cursorEl && fineHover && !reduced) {
+      document.documentElement.classList.add('has-custom-cursor');
+      const dot = cursorEl.querySelector('.cursor-dot') as HTMLElement;
+      // The glow is a sibling of the ambient blobs, not a child of .cursor, so it
+      // renders behind the page's content instead of on top of it.
+      const glow = document.querySelector('.cursor-glow') as HTMLElement | null;
+      let mx = 0, my = 0, cx = 0, cy = 0, gx = 0, gy = 0, primed = false;
+
+      // One loop drives both: the dot at 0.4 stays under the hand, the glow at
+      // 0.09 arrives a beat later, so the light reads as trailing the pointer.
       const tick = () => {
-        clockEl.textContent = new Date().toLocaleTimeString('en-GB', {
-          timeZone: 'Asia/Makassar',
-          hour12: false,
-        });
+        cx += (mx - cx) * 0.4;
+        cy += (my - cy) * 0.4;
+        dot.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%)`;
+        if (glow) {
+          gx += (mx - gx) * 0.09;
+          gy += (my - gy) * 0.09;
+          glow.style.transform = `translate3d(${gx}px, ${gy}px, 0) translate(-50%, -50%)`;
+        }
+        requestAnimationFrame(tick);
       };
-      tick();
-      setInterval(tick, 1000);
+      requestAnimationFrame(tick);
+
+      window.addEventListener(
+        'mousemove',
+        (e) => {
+          mx = e.clientX;
+          my = e.clientY;
+          if (!primed) {
+            // Land both on the first real position instead of sliding in from
+            // the top-left corner of the viewport.
+            cx = gx = mx;
+            cy = gy = my;
+            primed = true;
+          }
+          cursorEl.classList.add('is-visible');
+          glow?.classList.add('is-visible');
+          const overTarget = (e.target as HTMLElement)?.closest?.('a, button, .glass-interactive, .tile');
+          cursorEl.classList.toggle('is-active', !!overTarget);
+        },
+        { passive: true }
+      );
+      document.documentElement.addEventListener('mouseleave', () => {
+        cursorEl.classList.remove('is-visible');
+        glow?.classList.remove('is-visible');
+      });
     }
 
-    // Reveals default to visible in CSS; JS only opts sections into the
-    // fade-up by adding .io-pending, so a JS failure never hides content.
+    // One listener shape for every surface that lights under the pointer. The
+    // experience entries are in the list too — they use the same --mx/--my pair,
+    // just at a smaller radius and a lower alpha, because an entry is read, not
+    // clicked, and shouldn't advertise itself as hard as a project card.
+    if (fineHover && !reduced) {
+      document.querySelectorAll<HTMLElement>('.project-card, .exp-item').forEach((card) => {
+        let cardRaf: number | null = null;
+        let mx = 0, my = 0;
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          mx = e.clientX - rect.left;
+          my = e.clientY - rect.top;
+          if (cardRaf) return;
+          cardRaf = requestAnimationFrame(() => {
+            card.style.setProperty('--mx', `${mx}px`);
+            card.style.setProperty('--my', `${my}px`);
+            cardRaf = null;
+          });
+        });
+      });
+    }
+
+    // Copy the address instead of forcing a mail client to open.
+    document.querySelectorAll<HTMLButtonElement>('.copy-email').forEach((btn) => {
+      const label = btn.querySelector('.copy-label') as HTMLElement;
+      const original = label.textContent ?? '';
+      let resetTimer: number | undefined;
+      btn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(btn.dataset.copy ?? '');
+          btn.classList.add('is-copied');
+          label.textContent = 'Copied';
+        } catch {
+          label.textContent = original;
+          return;
+        }
+        window.clearTimeout(resetTimer);
+        resetTimer = window.setTimeout(() => {
+          btn.classList.remove('is-copied');
+          label.textContent = original;
+        }, 1800);
+      });
+    });
+
+    // Contact sheet: one dialog, two presentations, chosen the way Apple splits
+    // regular from compact width — an anchored pull-down popover on a pointer
+    // device, a bottom action sheet on a phone. The trigger stays a mailto
+    // anchor in the markup, so this is pure enhancement: no script, no
+    // interception, and the button still opens a mail client.
+    const sheet = document.getElementById('contactsheet');
+    const contactTriggers = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-contact-open]'));
+    if (sheet && contactTriggers.length) {
+      const panel = sheet.querySelector('.csheet-panel') as HTMLElement;
+      const wantsPopover = () =>
+        window.matchMedia('(min-width:641px) and (hover:hover) and (pointer:fine)').matches;
+      let opener: HTMLElement | null = null;
+      let closeTimer: number | undefined;
+      let trackRaf = 0;
+      let lastAnchor = '';
+
+      // Recomputed per use: which controls exist depends on the presentation —
+      // Cancel is display:none in the popover, the close X is display:none in
+      // the sheet, and offsetParent is null for both when they are.
+      const focusables = () =>
+        Array.from(panel.querySelectorAll<HTMLElement>('a[href], button')).filter(
+          (el) => el.offsetParent !== null,
+        );
+
+      const close = () => {
+        // Guarded on is-open, not on hidden: hidden only becomes true 300ms
+        // later in finish(), and place() calls close() from inside the rAF
+        // tracker when the anchor scrolls away. Without this the tracker
+        // re-entered close() every frame of that 300ms and queued a finish()
+        // per frame — each one able to fire later and unlock body scroll behind
+        // whatever had been opened since.
+        if (sheet.hidden || !sheet.classList.contains('is-open')) return;
+        sheet.classList.remove('is-open');
+        if (trackRaf) { cancelAnimationFrame(trackRaf); trackRaf = 0; }
+        opener?.setAttribute('aria-expanded', 'false');
+        window.clearTimeout(closeTimer);
+        const finish = () => {
+          sheet.hidden = true;
+          document.body.style.overflow = '';
+          lenis?.start();
+          opener?.focus({ preventScroll: true });
+          opener = null;
+        };
+        if (reduced) finish();
+        else closeTimer = window.setTimeout(finish, 300);
+      };
+
+      const place = () => {
+        if (!opener || !sheet.classList.contains('is-popover')) return;
+        const r = opener.getBoundingClientRect();
+        // An anchored popover with its anchor scrolled off screen is just a
+        // panel floating in the corner. Dismiss rather than drift.
+        if (r.bottom < 0 || r.top > window.innerHeight) { close(); return; }
+        // Nothing moved — skip the writes rather than dirty layout every frame.
+        const anchor = `${r.top}|${r.left}|${r.width}|${window.innerHeight}`;
+        if (anchor === lastAnchor) return;
+        lastAnchor = anchor;
+        const margin = 12;
+        const pw = panel.offsetWidth;
+        const ph = panel.offsetHeight;
+        const left = Math.min(
+          Math.max(r.left + r.width / 2 - pw / 2, margin),
+          window.innerWidth - pw - margin,
+        );
+        // Flip above the button when there isn't room below, and move the
+        // growth origin to the edge nearest the button so the animation still
+        // reads as coming out of it.
+        const below = r.bottom + 10;
+        const flip = below + ph > window.innerHeight - margin && r.top - ph - 10 > margin;
+        panel.style.left = `${left}px`;
+        panel.style.top = `${flip ? r.top - ph - 10 : below}px`;
+        panel.style.setProperty('--pop-ox', `${r.left + r.width / 2 - left}px`);
+        panel.style.setProperty('--pop-oy', flip ? '100%' : '0');
+      };
+
+      // A scroll listener is not enough to keep a popover on its anchor. The
+      // sticky nav is in flow, so it compacts 56px -> 46px and shifts the hero
+      // button 10px without any scroll event at all — and it expands again just
+      // from the pointer passing over it. Watching the trigger's own rect each
+      // frame catches every cause; place() no-ops unless something moved, and
+      // the loop only runs while the popover is open.
+      const track = () => {
+        if (sheet.hidden || !sheet.classList.contains('is-open') || !sheet.classList.contains('is-popover')) {
+          trackRaf = 0;
+          return;
+        }
+        place();
+        trackRaf = requestAnimationFrame(track);
+      };
+
+      const open = (trigger: HTMLElement) => {
+        window.clearTimeout(closeTimer);
+        opener = trigger;
+        const pop = wantsPopover();
+        sheet.classList.toggle('is-popover', pop);
+        sheet.hidden = false;
+        if (pop) {
+          // Measured after unhiding — offsetWidth needs the panel laid out.
+          // Synchronous, so the panel is never painted at a stale position.
+          lastAnchor = '';
+          place();
+        } else {
+          // Modal at compact width, so the page can't scroll behind the scrim.
+          lenis?.stop();
+          document.body.style.overflow = 'hidden';
+        }
+        trigger.setAttribute('aria-expanded', 'true');
+        // The tracker starts inside this frame, not before it: it bails unless
+        // is-open is already set, and two rAFs queued in the same tick run in
+        // the order queued.
+        requestAnimationFrame(() => {
+          sheet.classList.add('is-open');
+          if (pop && !trackRaf) trackRaf = requestAnimationFrame(track);
+        });
+        focusables()[0]?.focus({ preventScroll: true });
+      };
+
+      contactTriggers.forEach((t) => {
+        // Added here, not in the markup: until this line runs the anchor really
+        // is just a mailto, and claiming a dialog it can't open would be a lie.
+        t.setAttribute('aria-haspopup', 'dialog');
+        t.setAttribute('aria-expanded', 'false');
+        t.setAttribute('aria-controls', 'contactsheet');
+        t.addEventListener('click', (e) => { e.preventDefault(); open(t); });
+      });
+
+      sheet.querySelectorAll('[data-csheet-dismiss]').forEach((el) => el.addEventListener('click', close));
+      // Following a link is a dismissal. Without this a mailto or a new tab
+      // leaves the panel sitting open behind whatever just happened.
+      panel.querySelectorAll('a[href]').forEach((a) => a.addEventListener('click', () => close()));
+
+      document.addEventListener('keydown', (e) => {
+        if (sheet.hidden) return;
+        if (e.key === 'Escape') { e.preventDefault(); close(); }
+        else if (e.key === 'Tab') {
+          const f = focusables();
+          if (!f.length) return;
+          const at = f.indexOf(document.activeElement as HTMLElement);
+          e.preventDefault();
+          f[(at + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        if (sheet.hidden) return;
+        // A phone firing resize for the URL bar shouldn't dismiss anything —
+        // only a genuine change of presentation is worth closing for.
+        if (wantsPopover() !== sheet.classList.contains('is-popover')) close();
+        else place();
+      });
+    }
+
+    // Travelling marker on the experience rail: the dot tracks whichever card the
+    // reader is level with, and the rail fills in behind it. Purely additive —
+    // with no JS the rail is still drawn and every card still reads.
+    const expList = document.querySelector<HTMLElement>('.exp');
+    const expItems = Array.from(document.querySelectorAll<HTMLElement>('.exp-item'));
+    if (expList && expItems.length) {
+      let expRaf: number | null = null;
+      const updateExpProgress = () => {
+        const listRect = expList.getBoundingClientRect();
+        // Ignore the section entirely while it is off-screen.
+        if (listRect.bottom < 0 || listRect.top > window.innerHeight) return;
+        // Reference line sits high — roughly a card's height below the nav — so
+        // the first card is current on arrival and each one then holds the state
+        // for about its own height of scrolling. At mid-viewport two cards are
+        // always past the line at once and the first could never win.
+        const scanY = Math.max(140, window.innerHeight * 0.28);
+        let current = 0;
+        expItems.forEach((li, i) => {
+          if (li.getBoundingClientRect().top <= scanY) current = i;
+        });
+        expItems.forEach((li, i) => li.classList.toggle('is-current', i === current));
+
+        const marker = expItems[current].querySelector('.exp-marker') as HTMLElement;
+        const mRect = marker.getBoundingClientRect();
+        // Rail starts .62rem below the list top; fill to the active dot's centre.
+        const railTop = listRect.top + 0.62 * 16;
+        expList.style.setProperty('--exp-progress', `${Math.max(0, mRect.top + mRect.height / 2 - railTop)}px`);
+      };
+      const onExpScroll = () => {
+        if (expRaf) return;
+        expRaf = requestAnimationFrame(() => {
+          updateExpProgress();
+          expRaf = null;
+        });
+      };
+      window.addEventListener('scroll', onExpScroll, { passive: true });
+      window.addEventListener('resize', onExpScroll);
+      updateExpProgress();
+    }
+
+    // Certificate hover preview. The scan lifts out of its own tile at roughly
+    // twice grid size while the pointer rests on it. Pointer-only by design: the
+    // click viewer below is the path that works on touch, and it is still the
+    // only place the scan reaches its native 800px.
+    // All six scans are one template — same header, same name, same layout, one
+    // course line different — so replacing the src in place changes almost no
+    // pixels and the eye reads it as the same certificate. Every surface that
+    // can change which scan it holds therefore also changes an accent hue, and
+    // stages the change as a beat rather than a substitution. Kept inside the
+    // blue-to-violet range the ambient blobs already work in.
+    const CERT_HUES = [190, 205, 219, 234, 249, 264];
+    const wait = (ms: number) => new Promise((r) => window.setTimeout(r, ms));
+
+    const certPop = document.getElementById('certpop');
+    const certGrid = document.querySelector<HTMLElement>('.cert-grid');
+    const certTiles = Array.from(document.querySelectorAll<HTMLButtonElement>('.cert'));
+    if (certPop && certGrid && certTiles.length && fineHover) {
+      const popImg = document.getElementById('certpop-img') as HTMLImageElement;
+      const popN = document.getElementById('certpop-n') as HTMLElement;
+      const popTitle = document.getElementById('certpop-title') as HTMLElement;
+      const popDate = document.getElementById('certpop-date') as HTMLElement;
+      const popBadge = document.getElementById('certpop-badge') as HTMLElement;
+      let swapGen = 0;
+      let shown: HTMLButtonElement | null = null;
+      let target: HTMLButtonElement | null = null;
+      let enterTimer: number | undefined;
+      let hideTimer: number | undefined;
+
+      // Above the tile by preference, below when there isn't room, pinned into
+      // the viewport when neither side has any. The growth origin follows the
+      // choice, so the scan always appears to come out of its own thumbnail.
+      const place = (tile: HTMLElement) => {
+        const r = tile.getBoundingClientRect();
+        const w = certPop.offsetWidth;
+        const h = certPop.offsetHeight;
+        const M = 14;
+        const left = Math.max(M, Math.min(r.left + r.width / 2 - w / 2, window.innerWidth - w - M));
+        let top = r.top - h - 12;
+        let originY = 'bottom';
+        if (top < M) {
+          top = r.bottom + 12;
+          originY = 'top';
+          if (top + h > window.innerHeight - M) {
+            top = Math.max(M, (window.innerHeight - h) / 2);
+            originY = 'center';
+          }
+        }
+        // `translate`, not left/top — it is the one the .is-open rule can glide.
+        certPop.style.translate = `${left}px ${top}px`;
+        // Origin points back at the tile in all three cases, so the scan always
+        // reads as growing out of its own thumbnail even when it lands centred.
+        certPop.style.transformOrigin = `${r.left + r.width / 2 - left}px ${originY}`;
+        tile.classList.toggle('is-covered', top < r.bottom && top + h > r.top);
+      };
+
+      // Everything that identifies which certificate the panel is holding, moved
+      // in one go so the hue, the badge and the caption never disagree.
+      const dress = (tile: HTMLButtonElement) => {
+        const hue = CERT_HUES[Number(tile.dataset.cert) % CERT_HUES.length];
+        certPop.style.setProperty('--cert-hue', String(hue));
+        tile.style.setProperty('--cert-hue', String(hue));
+        popImg.src = tile.dataset.src ?? '';
+        popBadge.textContent = tile.dataset.n ?? '';
+        popN.textContent = tile.dataset.n ?? '';
+        popTitle.textContent = tile.dataset.title ?? '';
+        popDate.textContent = tile.dataset.date ?? '';
+      };
+
+      const show = (tile: HTMLButtonElement) => {
+        window.clearTimeout(hideTimer);
+        // A swap is the pointer moving between tiles while the panel is already
+        // up — the case the open animation can't cover, because .is-open never
+        // leaves. A first open still runs the original grow-out-of-the-tile.
+        const swapping = shown !== null && shown !== tile && !reduced;
+        shown?.classList.remove('is-peeked', 'is-covered');
+        shown = tile;
+        tile.classList.add('is-peeked');
+        certGrid.classList.add('is-peeking');
+        certPop.hidden = false;
+
+        if (!swapping) {
+          swapGen++;
+          certPop.classList.remove('is-swapping');
+          dress(tile);
+          // aspect-ratio gives the frame its height before the scan decodes, so
+          // this measures right even on the very first hover.
+          place(tile);
+          requestAnimationFrame(() => certPop.classList.add('is-open'));
+          return;
+        }
+
+        // Staged: clear the frame, change the scan while nothing is showing,
+        // then let it settle back in. The glide to the new tile runs underneath.
+        const mine = ++swapGen;
+        certPop.classList.add('is-swapping');
+        place(tile);
+        void (async () => {
+          await wait(130);
+          if (mine !== swapGen) return;
+          dress(tile);
+          // Cached from the grid, but decoding still isn't synchronous, and the
+          // frame's white backing would flash before a slow one landed. A sweep
+          // across the row fires this per tile, so a decode that resolves after
+          // the pointer has moved on must not paint its stale scan.
+          try { await popImg.decode(); } catch { /* replaced or aborted */ }
+          if (mine !== swapGen) return;
+          certPop.classList.remove('is-swapping');
+        })();
+      };
+
+      const hide = () => {
+        window.clearTimeout(enterTimer);
+        target = null;
+        if (!shown) return;
+        shown.classList.remove('is-peeked', 'is-covered');
+        shown = null;
+        certGrid.classList.remove('is-peeking');
+        // Orphan any swap still mid-beat, or its decode lands after this and
+        // leaves the panel emptied out for the next hover to open into.
+        swapGen++;
+        certPop.classList.remove('is-open', 'is-swapping');
+        // Let it fade before it leaves the layout; re-showing cancels this.
+        window.clearTimeout(hideTimer);
+        hideTimer = window.setTimeout(() => {
+          if (!shown) certPop.hidden = true;
+        }, 260);
+      };
+
+      // Read off the live event target with .closest() — the tile wraps nested
+      // spans and an image, which desync per-element enter/leave listeners.
+      document.addEventListener(
+        'mousemove',
+        (e) => {
+          const tile = ((e.target as HTMLElement)?.closest?.('.cert') ?? null) as HTMLButtonElement | null;
+          if (tile === target) return;
+          target = tile;
+          window.clearTimeout(enterTimer);
+          if (!tile) hide();
+          // Sweeping across the row shouldn't fire six previews; but once one is
+          // already up, moving to its neighbour swaps straight away.
+          else if (shown) show(tile);
+          else enterTimer = window.setTimeout(() => show(tile), 120);
+        },
+        { passive: true }
+      );
+
+      certTiles.forEach((tile) => {
+        // :focus-visible, not plain focus — the viewer returns focus to the tile
+        // on close, and a mouse-driven close shouldn't pop the preview back up.
+        tile.addEventListener('focus', () => {
+          if (!tile.matches(':focus-visible')) return;
+          window.clearTimeout(enterTimer);
+          show(tile);
+        });
+        tile.addEventListener('blur', hide);
+      });
+
+      // Dismissible by Escape, and gone before the viewer's scrim lands on top
+      // of it or the page moves out from under it.
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hide(); });
+      document.addEventListener('click', hide);
+      window.addEventListener('scroll', hide, { passive: true });
+      window.addEventListener('resize', hide);
+    }
+
+    // Certificate viewer. At grid size the printed course line — the evidence the
+    // caption claims — is unreadable, so each tile opens the full scan and the
+    // whole set is reachable by arrow key without going back to the grid.
+    const certView = document.getElementById('certview');
+    const certTriggers = Array.from(document.querySelectorAll<HTMLButtonElement>('.cert'));
+    if (certView && certTriggers.length) {
+      const viewImg = document.getElementById('certview-img') as HTMLImageElement;
+      const viewN = document.getElementById('certview-n') as HTMLElement;
+      const viewTitle = document.getElementById('certview-title') as HTMLElement;
+      const viewDate = document.getElementById('certview-date') as HTMLElement;
+      const viewPos = document.getElementById('certview-pos') as HTMLElement;
+      const prevBtn = certView.querySelector('.certview-prev') as HTMLButtonElement;
+      const nextBtn = certView.querySelector('.certview-next') as HTMLButtonElement;
+      const closeBtn = certView.querySelector('.certview-close') as HTMLButtonElement;
+      let index = 0;
+      let lastFocused: HTMLElement | null = null;
+      let viewGen = 0;
+
+      const dress = (t: HTMLButtonElement) => {
+        certView.style.setProperty('--cert-hue', String(CERT_HUES[Number(t.dataset.cert) % CERT_HUES.length]));
+        viewImg.src = t.dataset.src ?? '';
+        viewImg.alt = `ProgrammingAdvices certificate, course ${t.dataset.n}: ${t.dataset.title}`;
+        viewN.textContent = t.dataset.n ?? '';
+        viewTitle.textContent = t.dataset.title ?? '';
+        viewDate.textContent = t.dataset.date ?? '';
+        viewPos.textContent = String(index + 1);
+      };
+
+      // `dir` is 0 when opening and ±1 when stepping. Stepping gets the same
+      // staged beat the hover panel does, for the same reason: the scans are
+      // indistinguishable at a glance, so a bare src swap left the arrow keys
+      // looking broken.
+      const show = (i: number, dir = 0) => {
+        index = (i + certTriggers.length) % certTriggers.length;
+        const t = certTriggers[index];
+        if (!dir || reduced) {
+          viewGen++;
+          certView.classList.remove('is-swapping');
+          dress(t);
+          return;
+        }
+        const mine = ++viewGen;
+        certView.style.setProperty('--swap-dir', String(dir));
+        certView.classList.add('is-swapping');
+        void (async () => {
+          await wait(130);
+          if (mine !== viewGen) return;
+          dress(t);
+          try { await viewImg.decode(); } catch { /* replaced or aborted */ }
+          if (mine !== viewGen) return;
+          certView.classList.remove('is-swapping');
+        })();
+      };
+
+      const open = (i: number) => {
+        lastFocused = document.activeElement as HTMLElement;
+        show(i);
+        certView.hidden = false;
+        // Stop Lenis, or the page keeps scrolling behind the scrim.
+        lenis?.stop();
+        document.body.style.overflow = 'hidden';
+        requestAnimationFrame(() => certView.classList.add('is-open'));
+        closeBtn.focus();
+      };
+
+      const close = () => {
+        certView.classList.remove('is-open');
+        // Orphan a step still mid-beat, so the next open doesn't start blank.
+        viewGen++;
+        certView.classList.remove('is-swapping');
+        const finish = () => {
+          certView.hidden = true;
+          document.body.style.overflow = '';
+          lenis?.start();
+          lastFocused?.focus();
+        };
+        if (reduced) finish();
+        else window.setTimeout(finish, 260);
+      };
+
+      certTriggers.forEach((t, i) => t.addEventListener('click', () => open(i)));
+      prevBtn.addEventListener('click', () => show(index - 1, -1));
+      nextBtn.addEventListener('click', () => show(index + 1, 1));
+      certView.querySelectorAll('[data-certview-dismiss]').forEach((el) => el.addEventListener('click', close));
+
+      document.addEventListener('keydown', (e) => {
+        if (certView.hidden) return;
+        if (e.key === 'Escape') { e.preventDefault(); close(); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); show(index - 1, -1); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); show(index + 1, 1); }
+        else if (e.key === 'Tab') {
+          // Keep focus inside the dialog while it's open.
+          const f = [closeBtn, prevBtn, nextBtn];
+          const at = f.indexOf(document.activeElement as HTMLButtonElement);
+          e.preventDefault();
+          f[(at + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+        }
+      });
+    }
+
+    // A section goes active once its top passes a scan line set from the viewport
+    // height. Deterministic regardless of section height, unlike an intersection ratio.
+    const navLinkEls = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav-link'));
+    const navIndicator = document.querySelector('.nav-indicator') as HTMLElement | null;
+
+    // The dot hops to its new position, driven per frame rather than by a CSS
+    // transition so an interrupted hop resumes from where the dot actually is.
+    let dotRaf: number | null = null;
+    let liveX: number | null = null;
+    let liveY = 0;
+    function animateIndicatorTo(targetX: number) {
+      if (!navIndicator) return;
+      if (liveX === null || reduced) {
+        navIndicator.style.transform = `translate(${targetX}px, 0px)`;
+        liveX = targetX;
+        liveY = 0;
+        return;
+      }
+      const fromX = liveX;
+      const fromY = liveY;
+      const dx = targetX - fromX;
+      if (Math.abs(dx) < 0.5 && Math.abs(fromY) < 0.1) return;
+      if (dotRaf) cancelAnimationFrame(dotRaf);
+      const duration = 420;
+      const peak = Math.min(5, 2 + Math.abs(dx) * 0.015);
+      const start = performance.now();
+      const easeX = (t: number) => 1 - Math.pow(1 - t, 3);
+      const step = (now: number) => {
+        const p = Math.min(1, (now - start) / duration);
+        const settle = 1 - easeX(p);
+        const x = fromX + dx * easeX(p);
+        const y = fromY * settle - peak * Math.sin(p * Math.PI);
+        navIndicator.style.transform = `translate(${x}px, ${y}px)`;
+        liveX = x;
+        liveY = y;
+        if (p < 1) {
+          dotRaf = requestAnimationFrame(step);
+        } else {
+          dotRaf = null;
+        }
+      };
+      dotRaf = requestAnimationFrame(step);
+    }
+
+    function setActiveNavLink(link: HTMLAnchorElement) {
+      navLinkEls.forEach((a) => {
+        const active = a === link;
+        a.classList.toggle('is-active', active);
+        if (active) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+      if (navIndicator) {
+        const x = link.offsetLeft + link.offsetWidth / 2 - navIndicator.offsetWidth / 2;
+        animateIndicatorTo(x);
+        navIndicator.classList.add('is-visible');
+      }
+    }
+
+    const spyEntries = navLinkEls
+      .map((a) => {
+        const sel = a.dataset.spy || a.getAttribute('href');
+        const el = sel ? document.querySelector(sel) : null;
+        return el ? { link: a, el } : null;
+      })
+      .filter((s): s is { link: HTMLAnchorElement; el: Element } => s !== null)
+      // The scan below is last-match-wins, which only means anything in document
+      // order — so sort, never trust the nav array. Authored order used to run
+      // Work before Stack before Experience while the page runs the other way,
+      // and #experience being last of the three meant it won every frame from its
+      // own top to the bottom of the page: Stack and Work could never light up.
+      .sort((a, b) =>
+        a.el.compareDocumentPosition(b.el) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1,
+      );
+
+    if (spyEntries.length) {
+      // Sections are contiguous, so the handoff happens the moment the incoming
+      // section's top crosses this line. At the old fixed 110 the outgoing
+      // section had to be all but gone before the nav admitted it: you could be
+      // looking at a heading filling seven eighths of the screen and still be
+      // told you were in the section above. Half the viewport puts the handoff
+      // within ~40px of the point where the incoming section actually takes over
+      // the larger share of the screen, which is what the reader is judging by.
+      // The 520 ceiling is load-bearing, not taste: a clicked section lands at
+      // scroll-margin-top (84px), so the line has to stay well above 84 + the
+      // shortest section's height (Stack, 648) or the section *after* the one
+      // just clicked would win the scan and light the wrong link.
+      const scanLine = () => Math.min(Math.max(window.innerHeight * 0.5, 160), 520);
+      let spyRaf: number | null = null;
+      const updateActiveLink = () => {
+        const SCAN_Y = scanLine();
+        let current = spyEntries[0];
+        for (const entry of spyEntries) {
+          if (entry.el.getBoundingClientRect().top <= SCAN_Y) current = entry;
+        }
+        // The last section is too short to ever reach the scan line, so at the
+        // bottom of the page claim it explicitly.
+        const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+        if (atBottom) current = spyEntries[spyEntries.length - 1];
+        setActiveNavLink(current.link);
+      };
+      const onScroll = () => {
+        if (spyRaf) return;
+        spyRaf = requestAnimationFrame(() => {
+          updateActiveLink();
+          spyRaf = null;
+        });
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      updateActiveLink();
+    }
+
+    // Hysteresis (48px in, 24px out) because Lenis overshoots slightly on settle.
+    const navEl = document.querySelector('header.nav');
+    if (navEl) {
+      let navRaf: number | null = null;
+      let isCompact = false;
+      const updateNavCompact = () => {
+        const y = window.scrollY;
+        if (!isCompact && y > 48) {
+          isCompact = true;
+          navEl.classList.add('is-compact');
+        } else if (isCompact && y < 24) {
+          isCompact = false;
+          navEl.classList.remove('is-compact');
+        }
+      };
+      const onNavScroll = () => {
+        if (navRaf) return;
+        navRaf = requestAnimationFrame(() => {
+          updateNavCompact();
+          navRaf = null;
+        });
+      };
+      window.addEventListener('scroll', onNavScroll, { passive: true });
+      updateNavCompact();
+    }
+
+    // Reveals are visible in CSS by default; JS only opts them into the fade-up.
     if (!reduced && 'IntersectionObserver' in window) {
       const reveals = Array.from(document.querySelectorAll('[data-reveal]'));
       reveals.forEach((el) => el.classList.add('io-pending'));
@@ -424,15 +1437,6 @@ const iconRocket = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
         { threshold: 0.3 }
       );
       bars.forEach((el) => barObserver.observe(el));
-    }
-
-    if (!reduced) {
-      const lenis = new Lenis({ duration: 1.05, smoothWheel: true });
-      const raf = (time: number) => {
-        lenis.raf(time);
-        requestAnimationFrame(raf);
-      };
-      requestAnimationFrame(raf);
     }
   </script>
 </Layout>
