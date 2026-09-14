@@ -353,15 +353,15 @@ section{padding:3.6rem 0; scroll-margin-top:84px;}
   border:1px solid rgba(120,160,255,.16);
 }
 .section-badge svg{width:18px; height:18px;}
-h2.section-title{
+.section-title{
   font-size:clamp(1.5rem,2.4vw,var(--fs-title1)); font-weight:800; letter-spacing:-.014em; line-height:1.2; margin:0;
   /* At 390 the contact heading broke [28, 9], leaving "to build." alone. */
   text-wrap:balance;
-  background:linear-gradient(90deg,#fff,var(--blue-soft) 55%,var(--grad-end,var(--cyan)));
+  background:linear-gradient(90deg, #fff 0%, var(--blue-soft) 55%, var(--blue) 100%);
   -webkit-background-clip:text; background-clip:text; color:transparent;
 }
 @media (forced-colors:active){
-  h2.section-title{background:none; color:CanvasText; -webkit-text-fill-color:CanvasText;}
+  .section-title{background:none; color:CanvasText; -webkit-text-fill-color:CanvasText;}
   /* Forced colors drops gradients and box-shadows, which is every cue these
      three used: the travelled rail, the "you are here" edge, and the active nav
      item (whose only remaining signal was #fff against link text that all
