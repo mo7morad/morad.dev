@@ -25,18 +25,27 @@
   color-scheme: dark;
 }
 *{box-sizing:border-box;}
-html{scroll-behavior:auto;}
+html{scroll-behavior:auto; overflow-x:clip;}
 body{
   margin:0; background:var(--bg); color:var(--text);
   font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   font-size:var(--fs-body); line-height:1.47; -webkit-font-smoothing:antialiased;
-  position:relative; isolation:isolate;
+  position:relative; isolation:isolate; overflow-x:clip;
 }
 body::before{
   content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
   background-color:var(--bg);
   background-image:
     radial-gradient(ellipse 80% 50% at 50% -12%, rgba(255,255,255,.032) 0%, transparent 60%);
+}
+/* Architectural Desktop Guide Lines: frames content cleanly on wide screens (Linear / Vercel pattern) */
+body::after{
+  content:""; position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:1040px; height:100%; border-left:1px solid var(--border); border-right:1px solid var(--border);
+  pointer-events:none; z-index:-2; opacity:.35;
+}
+@media (max-width:1080px){
+  body::after{display:none;}
 }
 ::selection{background:var(--blue); color:#04121f;}
 a{color:inherit;}
