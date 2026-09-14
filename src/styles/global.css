@@ -1,17 +1,15 @@
 :root{
-  --bg:#050506; --surface:#0b0d10; --surface-2:#0e1116; --border:rgba(120,160,255,.14);
-  --text:#f5f6f8; --text-dim:#a7afba; --text-faint:#8f97a2;
-  --blue:#8ec5ff; --blue-soft:#c8e0ff; --cyan:#67e8f9; --badge-bg:#071726;
+  --bg:#0c0d11; --surface:#13151a; --surface-2:#1b1d24; --border:rgba(255,255,255,.08);
+  --border-strong:rgba(255,255,255,.14);
+  --text:#f1f3f6; --text-dim:#9ba3af; --text-faint:#868e9b;
+  --blue:#70b4ff; --blue-soft:#b8d9ff; --cyan:#5eead4; --badge-bg:#12151c;
   /* CLASSIC MATERIAL. The variable names are deliberately unchanged from the
      glass build so that every downstream rule — and index.astro, which is
      byte-identical between the two branches — needs no edit at all. They just
-     resolve to an opaque panel and a blue hairline instead of a translucent
-     sheet over a blurred backdrop.
-     NOTE: the original pre-glass branch used --text-faint:#5c6470, which is
-     3.45:1 on this ground and fails WCAG AA for body text. It is NOT inherited;
-     #8f97a2 (6.60:1 on --surface) is carried over from the accessible build. */
+     resolve to an opaque panel and a clean hairline instead of a translucent
+     sheet over a blurred backdrop. */
   --glass-bg:var(--surface); --glass-bg-strong:var(--surface-2);
-  --glass-border:var(--border); --glass-highlight:transparent;
+  --glass-border:var(--border); --glass-highlight:rgba(255,255,255,.05);
 
   /* Apple HIG type scale (San Francisco point sizes, 1pt ≈ 1px on web) */
   --fs-caption2:.6875rem; --fs-caption1:.75rem; --fs-footnote:.8125rem;
@@ -38,10 +36,7 @@ body::before{
   content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
   background-color:var(--bg);
   background-image:
-    radial-gradient(ellipse 90% 45% at 50% -5%, rgba(45,95,165,.18), transparent 70%),
-    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(30,55,90,.12), transparent 75%),
-    radial-gradient(rgba(142,197,255,.085) 1px, transparent 1px);
-  background-size:100% 100%, 100% 100%, 28px 28px;
+    radial-gradient(ellipse 80% 50% at 50% -12%, rgba(255,255,255,.032) 0%, transparent 60%);
 }
 ::selection{background:var(--blue); color:#04121f;}
 a{color:inherit;}
@@ -55,7 +50,7 @@ main:focus, main:focus-visible{outline:none;}
 
 .skip-link{
   position:fixed; top:12px; left:50%; transform:translate(-50%,-160%); z-index:700;
-  padding:.7rem 1.2rem; border-radius:var(--r-pill); background:#0b0d10;
+  padding:.7rem 1.2rem; border-radius:var(--r-pill); background:var(--surface);
   border:1px solid var(--glass-border); font-size:var(--fs-subhead); font-weight:600;
   text-decoration:none; transition:transform 260ms var(--ease-out);
 }
@@ -176,13 +171,15 @@ html.has-custom-cursor code.mono{cursor:text !important;}
 .glass{
   position:relative; background:var(--surface);
   border:1px solid var(--border);
+  box-shadow:inset 0 1px 0 0 var(--glass-highlight), 0 16px 36px -12px rgba(0,0,0,.6);
 }
 /* The specular sheen is the signature of the glass build; classic has none. */
 .glass::before{content:none;}
 .glass-interactive{transition:transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out), border-color 220ms ease, background 220ms ease;}
 .glass-interactive:hover,
 .glass-interactive:focus-within{
-  background:var(--surface-2); border-color:rgba(120,160,255,.4);
+  background:var(--surface-2); border-color:var(--border-strong);
+  box-shadow:inset 0 1px 0 0 rgba(255,255,255,.09), 0 20px 48px -12px rgba(0,0,0,.7);
   transform:translateY(-2px);
 }
 .glass-interactive:active{transform:translateY(0) scale(.98); transition-duration:120ms;}
@@ -202,11 +199,11 @@ html.has-custom-cursor code.mono{cursor:text !important;}
 header.nav{
   position:sticky; top:0; z-index:40; width:100%; max-width:none;
   margin:0; border-radius:0; border:none; border-bottom:1px solid var(--border);
-  background:rgba(5,5,6,.92) !important;
+  background:rgba(12,13,17,.92) !important;
   transition:background 320ms ease;
 }
-header.nav.is-compact{background:rgba(5,5,6,.97) !important;}
-header.nav.is-compact:hover{background:rgba(5,5,6,.92) !important;}
+header.nav.is-compact{background:rgba(12,13,17,.97) !important;}
+header.nav.is-compact:hover{background:rgba(12,13,17,.92) !important;}
 /* The bar is full-bleed; its contents still line up with .wrap. */
 .nav-inner{max-width:1040px; margin:0 auto;}
 .nav-inner{
@@ -626,7 +623,7 @@ h2.section-title{
    straight through them — the same reason header.nav carries its own tint. */
 .certpop-frame{
   position:relative;
-  border-radius:var(--r-lg); overflow:hidden; background:#0b0d10;
+  border-radius:var(--r-lg); overflow:hidden; background:var(--surface);
   border:1px solid hsl(var(--cert-hue) 88% 74% / .32);
   box-shadow:0 1px 0 rgba(255,255,255,.1) inset,
              0 40px 90px -26px rgba(0,0,0,.88),
@@ -1087,7 +1084,7 @@ h2.section-title{
 .csheet-panel{
   position:relative; width:min(430px,100%); padding:.45rem .9rem .9rem;
   border-radius:var(--r-xl); border:1px solid var(--border);
-  background:#0e1117;
+  background:var(--surface);
   box-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 26px 64px -20px rgba(0,0,0,.85);
   transform:translateY(calc(100% + 1rem));
   transition:transform 440ms var(--ease-out);
