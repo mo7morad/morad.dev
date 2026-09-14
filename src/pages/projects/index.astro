@@ -1,0 +1,232 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { projects } from '../../data/projects';
+import * as si from 'simple-icons';
+
+const line = (d: string, size = 16) =>
+  `<svg aria-hidden="true" focusable="false" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:${size}px;height:${size}px;max-width:${size}px;max-height:${size}px;flex-shrink:0;vertical-align:middle;">${d}</svg>`;
+
+const iconArrowLeft = line('<path d="m12 19-7-7 7-7M5 12h14"/>', 16);
+const iconArrowRight = line('<path d="m12 5 7 7-7 7M19 12H5"/>', 15);
+const iconBrackets = line('<path d="m8 6-6 6 6 6M16 6l6 6-6 6"/>', 18);
+const iconExternal = line('<path d="M7 17 17 7M9 7h8v8"/>', 14);
+---
+
+<Layout
+  title="Projects & Systems Architecture — Mohamed Morad"
+  description="Deep-dive engineering case studies into production systems, backend architecture, and edge AI built by Mohamed Morad."
+>
+  <div class="p-wrap">
+    <nav class="p-nav-bar">
+      <a href="/" class="p-back-link">
+        <Fragment set:html={iconArrowLeft} /> Back to Portfolio
+      </a>
+    </nav>
+
+    <header class="p-header">
+      <div class="section-head">
+        <span class="section-badge"><Fragment set:html={iconBrackets} /></span>
+        <h1 class="section-title" style="--grad-end:var(--cyan)">Selected Work &amp; Architecture</h1>
+      </div>
+      <p class="p-lead">
+        Six systems built with a bias toward correctness. Three are running in production;
+        every figure quoted is measured directly from the repository it describes. Click any project for its architectural breakdown and source receipts.
+      </p>
+    </header>
+
+    <div class="p-grid">
+      {projects.map((p) => (
+        <article class="p-card glass glass-interactive">
+          <div class="p-card-top">
+            <span class="p-card-cat">{p.category}</span>
+            <span class="p-card-status" set:html={p.status} />
+          </div>
+          <h2 class="p-card-title">
+            <a href={`/projects/${p.slug}`} set:html={p.title} />
+          </h2>
+          <p class="p-card-sub" set:html={p.subtitle} />
+
+          <div class="p-card-metrics">
+            {p.metrics.slice(0, 3).map((m) => (
+              <div class="p-mini-metric">
+                <strong class="p-mini-val num">{m.value}</strong>
+                <span class="p-mini-lbl">{m.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div class="p-card-stack">
+            {p.stack.map((t) => (
+              <span class="pill">{t}</span>
+            ))}
+          </div>
+
+          <div class="p-card-footer">
+            <a href={`/projects/${p.slug}`} class="btn btn-primary glass">
+              Read Case Study
+              <Fragment set:html={iconArrowRight} />
+            </a>
+            {p.links.length > 0 && (
+              <a href={p.links[0].url} target="_blank" rel="noopener" class="btn btn-quiet">
+                {p.links[0].label}
+                <Fragment set:html={iconExternal} />
+              </a>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .p-wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+  }
+
+  .p-nav-bar {
+    margin-bottom: 2rem;
+  }
+
+  .p-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--blue);
+    text-decoration: none;
+    font-size: var(--fs-subhead);
+    font-weight: 500;
+    transition: transform 200ms ease;
+  }
+  .p-back-link:hover {
+    transform: translateX(-3px);
+  }
+  :global(.p-back-link svg) {
+    width: 16px !important;
+    height: 16px !important;
+    flex-shrink: 0;
+  }
+
+  .p-header {
+    margin-bottom: 3.5rem;
+  }
+
+  .p-lead {
+    font-size: var(--fs-body);
+    line-height: 1.65;
+    color: var(--text-dim);
+    max-width: 68ch;
+    margin-top: 1rem;
+  }
+
+  .p-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.6rem;
+  }
+  @media (max-width: 780px) {
+    .p-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .p-card {
+    border-radius: var(--r-xl);
+    padding: 2.2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: transform 280ms var(--ease-out), border-color 280ms ease, box-shadow 280ms ease;
+  }
+  .p-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(142, 197, 255, 0.36);
+    box-shadow: 0 20px 48px -16px rgba(0, 0, 0, 0.75);
+  }
+
+  .p-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.8rem;
+  }
+
+  .p-card-cat {
+    font-size: var(--fs-caption2);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--cyan);
+  }
+
+  .p-card-status {
+    font-size: var(--fs-caption2);
+    color: var(--text-faint);
+  }
+
+  .p-card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 0.6rem;
+    line-height: 1.3;
+  }
+  .p-card-title a {
+    color: #fff;
+    text-decoration: none;
+  }
+  .p-card-title a:hover {
+    color: var(--blue);
+  }
+
+  .p-card-sub {
+    font-size: var(--fs-subhead);
+    line-height: 1.6;
+    color: var(--text-dim);
+    margin: 0 0 1.5rem;
+    flex-grow: 1;
+  }
+
+  .p-card-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 0.8rem 0.9rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .p-mini-metric {
+    display: flex;
+    flex-direction: column;
+  }
+  .p-mini-val {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .p-mini-lbl {
+    font-size: var(--fs-caption2);
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .p-card-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.6rem;
+  }
+
+  .p-card-footer {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+</style>

@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PhoneMockup from '../components/PhoneMockup.astro';
+import GitHubContributions from '../components/GitHubContributions.astro';
 import * as si from 'simple-icons';
 
 // Decorative by default. Every call site on this page either sits directly
@@ -241,6 +242,7 @@ const navLinks = [
                 attributes never promise a dialog that can't open. */}
             <a href={`mailto:${EMAIL}`} class="btn btn-primary glass glass-interactive" data-contact-open set:html={`${iconMail}Contact me`} />
             <a href="#projects" class="btn btn-quiet" data-scroll-to>View my work</a>
+            <a href="/cv" class="btn btn-quiet">Read CV</a>
           </div>
         </div>
       </div>
@@ -353,6 +355,8 @@ const navLinks = [
             </div>
           </div>
         ))}
+
+        <GitHubContributions username="mo7morad" />
       </div>
     </section>
 
@@ -371,7 +375,7 @@ const navLinks = [
               <PhoneMockup size="sm" src="/images/trippe/estimated-spending.webp" alt="Trippé estimated cost breakdown screen." />
             </div>
             <div class="project-body">
-              <h3>Trippé</h3>
+              <h3><a href="/projects/trippe" class="project-title-link">Trippé</a></h3>
               <p class="project-meta">Solo &middot; Backend, iOS &amp; cost engine &middot; App Store</p>
               <p>A travel app that recommends destinations and builds a realistic trip cost from sourced data.</p>
               <p>The important constraint is simple: a price without a traceable source never reaches the user.</p>
@@ -386,8 +390,30 @@ const navLinks = [
                 <span class="pill"><Fragment set:html={brandIcon(si.siTypescript)} />TypeScript</span>
                 <span class="pill"><Fragment set:html={brandIcon(si.siSwift)} />Swift</span>
               </div>
+              <details class="receipt-drawer">
+                <summary class="receipt-trigger">
+                  <span class="receipt-icon"><Fragment set:html={iconTerminal} /></span>
+                  <span>Inspect the receipt &mdash; Schema-level provenance</span>
+                  <span class="receipt-chevron"><Fragment set:html={iconChevronR} /></span>
+                </summary>
+                <div class="receipt-content">
+                  <span class="receipt-file">supabase/migrations/0006_price_provenance.sql</span>
+                  <pre class="receipt-code"><code>{`create table public.price_observation (
+  city_id      text not null,
+  item_class   text not null,
+  local_amount numeric(12,2) not null check (local_amount >= 0),
+  -- An extraction that cannot quote its source is discarded:
+  source_quote text not null check (char_length(source_quote) > 0),
+  method       text not null check (method in ('exa_gemma', 'manual', 'api')),
+  observed_at  timestamptz not null default now()
+);`}</code></pre>
+                  <p><strong>Refusal as a first-class outcome:</strong> Cities failing confidence thresholds yield zero rows (<code class="mono">revoke_*</code>) rather than unverified approximations.</p>
+                  <p class="receipt-note">PCC benchmark: 42 probe runs revealed on-device models silently truncate at 8,192 tokens. Trippé offloads complex itineraries to Apple PCC under a strict zero-price schema.</p>
+                </div>
+              </details>
               <div class="project-links">
-                <a href="https://apps.apple.com/app/id6766072256" class="btn btn-primary glass glass-interactive" target="_blank" rel="noopener" set:html={`View on the App Store${iconExternal}`} />
+                <a href="/projects/trippe" class="btn btn-primary glass glass-interactive">Read Case Study &rarr;</a>
+                <a href="https://apps.apple.com/app/id6766072256" class="btn btn-quiet" target="_blank" rel="noopener" set:html={`App Store${iconExternal}`} />
               </div>
             </div>
           </article>
@@ -399,7 +425,7 @@ const navLinks = [
               </figure>
             </div>
             <div class="project-body">
-              <h3>DVLD &mdash; Driving License System</h3>
+              <h3><a href="/projects/dvld" class="project-title-link">DVLD &mdash; Driving License System</a></h3>
               <p class="project-meta">Solo &middot; C# / .NET &middot; SQL Server</p>
               <p>The capstone of my 21-month backend curriculum.</p>
               <p>A three-tier desktop system built with C# WinForms and SQL Server. I implemented the data-access layer with parameterised ADO.NET rather than an ORM so database interaction stayed explicit and inspectable.</p>
@@ -412,6 +438,32 @@ const navLinks = [
               <div class="project-stack">
                 <span class="pill"><Fragment set:html={brandIcon(si.siDotnet)} />C# / .NET</span>
                 <span class="pill"><Fragment set:html={brandIcon(si.siGit)} />Git</span>
+              </div>
+              <details class="receipt-drawer">
+                <summary class="receipt-trigger">
+                  <span class="receipt-icon"><Fragment set:html={iconTerminal} /></span>
+                  <span>Inspect the receipt &mdash; Strict 3-tier &amp; async ADO.NET</span>
+                  <span class="receipt-chevron"><Fragment set:html={iconChevronR} /></span>
+                </summary>
+                <div class="receipt-content">
+                  <span class="receipt-file">DVLD_DataAccess / clsDriverData.cs</span>
+                  <pre class="receipt-code"><code>{`// Parameterized inline ADO.NET without ORM opacity
+using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString)) {
+    string query = "SELECT * FROM Drivers WHERE PersonID = @PersonID";
+    using (SqlCommand command = new SqlCommand(query, connection)) {
+        command.Parameters.Add("@PersonID", SqlDbType.Int).Value = personID;
+        await connection.OpenAsync();
+        using (SqlDataReader reader = await command.ExecuteReaderAsync()) {
+            if (await reader.ReadAsync()) { /* map DTO */ }
+        }
+    }
+}`}</code></pre>
+                  <p><strong>Architecture breakdown:</strong> 28,541 lines across 134 files divided strictly into Presentation (<code class="mono">DVLD</code>), Business Domain (<code class="mono">DVLD_Buisness</code>), and Data Access (<code class="mono">DVLD_DataAccess</code>).</p>
+                  <p class="receipt-note">Mode-driven CRUD state (<code class="mono">enMode</code>) across domain classes with 25 foreign-key constraints enforced in SQL Server.</p>
+                </div>
+              </details>
+              <div class="project-links">
+                <a href="/projects/dvld" class="btn btn-primary glass glass-interactive">Read Case Study &rarr;</a>
               </div>
             </div>
           </article>
@@ -432,7 +484,7 @@ const navLinks = [
               </div>
             </div>
             <div class="project-body">
-              <h3>Sortla</h3>
+              <h3><a href="/projects/sortla" class="project-title-link">Sortla</a></h3>
               <p class="project-meta">5-person team &middot; My role: belief engine, PCC judge &amp; evaluation</p>
               <p>A waste-sorting system using on-device YOLOv8 through Core ML.</p>
               <p>I built the belief engine that turns noisy frame-by-frame detections into stable decisions, added a Private Cloud Compute second-opinion path, and built the evaluation harness used to compare the new approach with the existing one.</p>
@@ -440,6 +492,28 @@ const navLinks = [
               <div class="project-stack">
                 <span class="pill"><Fragment set:html={brandIcon(si.siSwift)} />Swift</span>
                 <span class="pill"><Fragment set:html={brandIcon(si.siApple, LIGHT)} />Core ML</span>
+              </div>
+              <details class="receipt-drawer">
+                <summary class="receipt-trigger">
+                  <span class="receipt-icon"><Fragment set:html={iconTerminal} /></span>
+                  <span>Inspect the receipt &mdash; BeliefEngine &amp; deterministic bake-off</span>
+                  <span class="receipt-chevron"><Fragment set:html={iconChevronR} /></span>
+                </summary>
+                <div class="receipt-content">
+                  <span class="receipt-file">waste-sort/Core/Detection/BeliefEngine.swift</span>
+                  <pre class="receipt-code"><code>{`// Exponential half-life decay & hysteresis decision gate
+final class BeliefEngine {
+    private let halfLife: TimeInterval = 0.8
+    private let confidenceMargin: Float = 0.15
+    // Fuses per-frame YOLOv8 Core ML detections over time.
+    // Hysteresis lock prevents on-screen label flicker between adjacent frames.
+}`}</code></pre>
+                  <p><strong>The Bake-Off:</strong> Replayed 7 fixed fixture scenarios comparing legacy confidence-voting against the belief engine in <code class="mono">BinDecisionBakeOffTests.swift</code>. Legacy voting produced 3 confidently wrong verdicts; belief engine reduced it to 1.</p>
+                  <p class="receipt-note">PCCJudge (2,122 lines across 8 files) arbitrates edge ambiguities to Apple Private Cloud Compute with auditable verdict export.</p>
+                </div>
+              </details>
+              <div class="project-links">
+                <a href="/projects/sortla" class="btn btn-primary glass glass-interactive">Read Case Study &rarr;</a>
               </div>
             </div>
           </article>
@@ -449,7 +523,7 @@ const navLinks = [
               <PhoneMockup size="sm" src="/images/stickies/gate.webp" alt="Academy Stickies sign-in gate, a live production screenshot." />
             </div>
             <div class="project-body">
-              <h3>Academy Stickies</h3>
+              <h3><a href="/projects/academy-stickies" class="project-title-link">Academy Stickies</a></h3>
               <p class="project-meta">Solo &middot; Full-stack &middot; Live</p>
               <p>A private note wall I built for my Academy cohort and still run today.</p>
               <p>I built the full stack, including magic-link authentication, storage, migrations, and tests.</p>
@@ -459,8 +533,27 @@ const navLinks = [
                 <span class="pill"><Fragment set:html={brandIcon(si.siHono)} />Hono</span>
                 <span class="pill"><Fragment set:html={brandIcon(si.siVitest)} />Vitest</span>
               </div>
+              <details class="receipt-drawer">
+                <summary class="receipt-trigger">
+                  <span class="receipt-icon"><Fragment set:html={iconTerminal} /></span>
+                  <span>Inspect the receipt &mdash; Cloudflare edge stack</span>
+                  <span class="receipt-chevron"><Fragment set:html={iconChevronR} /></span>
+                </summary>
+                <div class="receipt-content">
+                  <span class="receipt-file">mo7morad/Academy-Stickies (Full-Stack)</span>
+                  <pre class="receipt-code"><code>{`// Cloudflare Pages + Hono + D1 SQLite + R2
+// Passwordless magic-link authentication & 9 verified migrations
+app.post('/api/auth/verify', async (c) => {
+  const { token } = await c.req.json();
+  const session = await verifyMagicLink(c.env.DB, token);
+  return c.json({ session });
+});`}</code></pre>
+                  <p><strong>Built for real users:</strong> Live tool serving 200+ cohort peers. 9 tested SQL migrations in D1, image attachments stored in R2, covered by Vitest suites.</p>
+                </div>
+              </details>
               <div class="project-links">
-                <a href="https://academy-stickies.pages.dev" class="btn btn-primary glass glass-interactive" target="_blank" rel="noopener" set:html={`Open app${iconExternal}`} />
+                <a href="/projects/academy-stickies" class="btn btn-primary glass glass-interactive">Read Case Study &rarr;</a>
+                <a href="https://academy-stickies.pages.dev" class="btn btn-quiet" target="_blank" rel="noopener" set:html={`Open app${iconExternal}`} />
                 <a href="https://github.com/mo7morad/Academy-Stickies" class="btn btn-quiet" target="_blank" rel="noopener" set:html={`${brandIcon(si.siGithub, LIGHT)}GitHub`} />
               </div>
             </div>
@@ -471,7 +564,7 @@ const navLinks = [
               <PhoneMockup size="sm" src="/images/academy/numo-meal-entry.webp" alt="Numo meal-entry screen, a real screenshot from the app." />
             </div>
             <div class="project-body">
-              <h3>Numo</h3>
+              <h3><a href="/projects/numo" class="project-title-link">Numo</a></h3>
               <p class="project-meta">Solo &middot; One-week Academy challenge &middot; Swift / iOS</p>
               <p>A meal-analysis app that turns a food photo into structured nutrition data.</p>
               <p>I built the vision client around structured output and explicit failure handling, so the app can distinguish between malformed responses, refusals, authentication errors, rate limits, and other failure cases instead of treating everything as &ldquo;AI failed.&rdquo;</p>
@@ -479,7 +572,25 @@ const navLinks = [
                 <span class="pill"><Fragment set:html={brandIcon(si.siSwift)} />Swift</span>
                 <span class="pill"><Fragment set:html={brandIcon(si.siApple, LIGHT)} />iOS</span>
               </div>
+              <details class="receipt-drawer">
+                <summary class="receipt-trigger">
+                  <span class="receipt-icon"><Fragment set:html={iconTerminal} /></span>
+                  <span>Inspect the receipt &mdash; Claude vision client with typed errors</span>
+                  <span class="receipt-chevron"><Fragment set:html={iconChevronR} /></span>
+                </summary>
+                <div class="receipt-content">
+                  <span class="receipt-file">AnthropicMealAnalysisClient.swift (Challenge 3)</span>
+                  <pre class="receipt-code"><code>{`// Claude vision client (claude-sonnet-4-6)
+// temperature: 0 — structured nutrition data must be reproducible, not creative
+enum AnthropicMealAnalysisError: Error {
+    case payloadTooLarge, rateLimited, refused, malformedResponse
+    case authenticationError, serverOverloaded, networkTimeout
+}`}</code></pre>
+                  <p><strong>Structured output over prompt trust:</strong> Base64 meal photo in, typed SwiftData entities out. 12-case typed error enum mapping specific API failures instead of swallowing issues under &ldquo;AI failed.&rdquo;</p>
+                </div>
+              </details>
               <div class="project-links">
+                <a href="/projects/numo" class="btn btn-primary glass glass-interactive">Read Case Study &rarr;</a>
                 <a href="https://github.com/mo7morad/My_Apple-Developer-Academy_Journey" class="btn btn-quiet" target="_blank" rel="noopener" set:html={`${brandIcon(si.siGithub, LIGHT)}Academy source`} />
               </div>
             </div>
@@ -498,7 +609,7 @@ const navLinks = [
               </ul>
             </div>
             <div class="project-body">
-              <h3>Homelab</h3>
+              <h3><a href="/projects/homelab" class="project-title-link">Homelab</a></h3>
               <p class="project-meta">Solo &middot; Self-hosted infrastructure &middot; Live</p>
               <p>Four services I run and maintain myself, on hardware I own.</p>
               <p>Small infrastructure, same instinct: understand what you&rsquo;re running before you trust it.</p>
@@ -506,8 +617,57 @@ const navLinks = [
                 <span class="pill"><Fragment set:html={brandIcon(si.siDebian)} />Debian</span>
                 <span class="pill"><Fragment set:html={brandIcon(si.siNginx)} />NGINX</span>
               </div>
+              <details class="receipt-drawer">
+                <summary class="receipt-trigger">
+                  <span class="receipt-icon"><Fragment set:html={iconTerminal} /></span>
+                  <span>Inspect the receipt &mdash; Infrastructure topology</span>
+                  <span class="receipt-chevron"><Fragment set:html={iconChevronR} /></span>
+                </summary>
+                <div class="receipt-content">
+                  <span class="receipt-file">Headless Debian 12 &middot; Managed over SSH</span>
+                  <pre class="receipt-code"><code>{`[Local Network Clients]
+  │
+  ▼ (DNS queries port 53)
+[Pi-hole Sinkhole] ── (Blocks trackers & telemetry network-wide)
+  │
+  ▼ (HTTPS port 443)
+[NGINX Reverse Proxy] ── Hand-configured TLS certificates
+  │
+  ▼ (Upstream reverse proxy)
+[Immich Photo Server] ── Self-hosted on local NVMe disk`}</code></pre>
+                  <p><strong>Self-hosted ownership:</strong> Replaced commercial cloud storage subscriptions with private bare-metal infrastructure under personal operational control.</p>
+                </div>
+              </details>
+              <div class="project-links">
+                <a href="/projects/homelab" class="btn btn-primary glass glass-interactive">Read Case Study &rarr;</a>
+              </div>
             </div>
           </article>
+        </div>
+
+        <div class="projects-archive-bar" data-reveal>
+          <a href="/projects" class="btn btn-quiet glass glass-interactive">
+            Explore All 6 Projects &amp; Systems Case Studies &rarr;
+          </a>
+        </div>
+
+        <div class="dispatches" data-reveal>
+          <h3 class="subhead"><span class="subhead-icon" set:html={iconTerminal} />Engineering Notes &amp; Dispatches</h3>
+          <p class="subhead-note">Architectural lessons measured in production: why database constraints beat prompt engineering, and what 42 probe runs taught me about Apple PCC.</p>
+          <div class="dispatches-grid">
+            <article class="dispatch-card glass glass-interactive">
+              <span class="dispatch-tag">Database Architecture &middot; Trippé</span>
+              <h4>The Database Constraint That Kills Hallucinated Prices</h4>
+              <p>Most LLM applications try to prevent hallucinations by pleading in system prompts: &ldquo;Please provide accurate numbers.&rdquo; That fails under temperature, token shifts, and edge queries.</p>
+              <p>In Trippé, Layer 0 is immutable. <code>source_quote text not null</code> forces every price observation to quote its exact harvested page span. If an LLM extraction cannot provide the quote, PostgreSQL aborts the write. Hallucinated numbers die at the database boundary, not through polite prompt phrasing.</p>
+            </article>
+            <article class="dispatch-card glass glass-interactive">
+              <span class="dispatch-tag">On-Device AI &middot; Apple PCC</span>
+              <h4>What 42 Measured Probe Runs Taught Me About Apple PCC</h4>
+              <p>Apple granted my account the managed <code>com.apple.developer.private-cloud-compute</code> entitlement. Rather than trusting marketing claims, I built an automated probe harness replaying 42 complex queries against on-device Foundation Models vs Private Cloud Compute.</p>
+              <p>The discovery: on-device models silently truncated structured responses at 8,192 tokens with zero errors thrown (returning 5 days of a 14-day trip). PCC delivered 32,768 tokens, 2&times; faster execution, and zero financial figure leaks. PCC was selected for multi-day itineraries with schemas that forbid price generation.</p>
+            </article>
+          </div>
         </div>
       </div>
     </section>
@@ -578,7 +738,7 @@ const navLinks = [
           content rather than an afterthought. Repeating them here would make
           the same four destinations appear twice within one screen. */}
       <div class="footer-bottom">
-        <span>&copy; {new Date().getFullYear()} Mohamed Morad</span>
+        <span>&copy; {new Date().getFullYear()} Mohamed Morad &middot; <a href="/cv" style="color:var(--blue);text-decoration:underline;text-underline-offset:3px;">Curriculum Vitae</a></span>
         <span>Every project figure here is counted from the repository it describes, not typed by hand.</span>
       </div>
     </div>

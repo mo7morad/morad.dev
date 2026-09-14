@@ -1,0 +1,482 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PhoneMockup from '../../components/PhoneMockup.astro';
+import { projects, type Project } from '../../data/projects';
+import * as si from 'simple-icons';
+
+export function getStaticPaths() {
+  return projects.map((p, index) => ({
+    params: { slug: p.slug },
+    props: {
+      project: p,
+      prev: index > 0 ? projects[index - 1] : projects[projects.length - 1],
+      next: index < projects.length - 1 ? projects[index + 1] : projects[0],
+    },
+  }));
+}
+
+interface Props {
+  project: Project;
+  prev: Project;
+  next: Project;
+}
+
+const { project, prev, next } = Astro.props;
+
+const line = (d: string, size = 16) =>
+  `<svg aria-hidden="true" focusable="false" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:${size}px;height:${size}px;max-width:${size}px;max-height:${size}px;flex-shrink:0;vertical-align:middle;">${d}</svg>`;
+
+const iconArrowLeft = line('<path d="m12 19-7-7 7-7M5 12h14"/>', 16);
+const iconArrowRight = line('<path d="m12 5 7 7-7 7M19 12H5"/>', 16);
+const iconExternal = line('<path d="M7 17 17 7M9 7h8v8"/>', 14);
+const iconTerminal = line('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/>', 16);
+const iconCheck = line('<path d="m5 13 4 4L19 7"/>', 16);
+const iconChip = line('<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>', 16);
+
+function brandIcon(icon: { hex: string; path: string; title: string }, color?: string) {
+  return `<svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 24 24" fill="${color ?? `#${icon.hex}`}" style="width:14px;height:14px;flex-shrink:0;vertical-align:middle;" xmlns="http://www.w3.org/2000/svg"><path d="${icon.path}"/></svg>`;
+}
+---
+
+<Layout
+  title={`${project.title} — Systems Architecture Case Study | Mohamed Morad`}
+  description={project.subtitle.replace(/&mdash;/g, '—')}
+>
+  <div class="cs-wrap">
+    <nav class="cs-nav-bar">
+      <a href="/projects" class="cs-back-link">
+        <Fragment set:html={iconArrowLeft} /> All Projects
+      </a>
+      <span class="cs-nav-sep">&middot;</span>
+      <a href="/#projects" class="cs-back-link">Portfolio Home</a>
+    </nav>
+
+    <header class="cs-header">
+      <div class="cs-category-badge">{project.category}</div>
+      <h1 class="cs-title" set:html={project.title} />
+      <p class="cs-subtitle" set:html={project.subtitle} />
+
+      <div class="cs-meta-bar">
+        <span><strong class="cs-meta-label">Role:</strong> <span set:html={project.role} /></span>
+        <span><strong class="cs-meta-label">Timeline:</strong> <span set:html={project.timeline} /></span>
+        <span><strong class="cs-meta-label">Status:</strong> <span set:html={project.status} /></span>
+      </div>
+
+      <div class="cs-stack-pills">
+        {project.stack.map((item) => (
+          <span class="pill">{item}</span>
+        ))}
+      </div>
+    </header>
+
+    <section class="cs-metrics-grid">
+      {project.metrics.map((m) => (
+        <div class="cs-metric-card glass">
+          <span class="cs-metric-value num">{m.value}</span>
+          <span class="cs-metric-label">{m.label}</span>
+          <span class="cs-metric-detail">{m.detail}</span>
+        </div>
+      ))}
+    </section>
+
+    {project.media && (
+      <section class="cs-media-section glass">
+        {project.media.type === 'phone-pair' && project.media.images && (
+          <div class="cs-phone-pair">
+            <PhoneMockup size="sm" src={project.media.images[0].src} alt={project.media.images[0].alt} />
+            <PhoneMockup size="sm" src={project.media.images[1].src} alt={project.media.images[1].alt} />
+          </div>
+        )}
+        {project.media.type === 'phone-single' && project.media.images && (
+          <div class="cs-phone-single">
+            <PhoneMockup size="sm" src={project.media.images[0].src} alt={project.media.images[0].alt} />
+          </div>
+        )}
+        {project.media.type === 'diagram' && project.media.images && (
+          <figure class="diagram-frame cs-diagram-frame">
+            <img src={project.media.images[0].src} alt={project.media.images[0].alt} width="1600" height="1160" loading="lazy" />
+          </figure>
+        )}
+      </section>
+    )}
+
+    <article class="cs-content">
+      <section class="cs-card glass">
+        <h2 class="cs-section-heading">The Problem &amp; Core Motivation</h2>
+        <p class="cs-body-text">{project.problem}</p>
+      </section>
+
+      {project.architectureDiagram && (
+        <section class="cs-card glass">
+          <h2 class="cs-section-heading">
+            <Fragment set:html={iconTerminal} /> Systems Architecture Flow
+          </h2>
+          <pre class="cs-ascii-diagram"><code>{project.architectureDiagram}</code></pre>
+          <ul class="cs-principles-list">
+            {project.architectureDetails.map((detail) => (
+              <li>{detail}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section class="cs-card glass cs-receipt-card">
+        <div class="cs-receipt-header">
+          <span class="receipt-icon"><Fragment set:html={iconTerminal} /></span>
+          <div>
+            <h2 class="cs-section-heading">{project.receipt.title}</h2>
+            <span class="receipt-file">{project.receipt.file}</span>
+          </div>
+        </div>
+        <pre class="receipt-code"><code>{project.receipt.code}</code></pre>
+        <p class="cs-receipt-explanation">{project.receipt.explanation}</p>
+        {project.receipt.note && (
+          <p class="receipt-note">{project.receipt.note}</p>
+        )}
+      </section>
+
+      <section class="cs-card glass">
+        <h2 class="cs-section-heading">
+          <Fragment set:html={iconCheck} /> Key Architectural Insights
+        </h2>
+        <ul class="cs-takeaways-list">
+          {project.takeaways.map((t) => (
+            <li>{t}</li>
+          ))}
+        </ul>
+      </section>
+
+      {project.links.length > 0 && (
+        <div class="cs-actions">
+          {project.links.map((link) => (
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener"
+              class:list={['btn', link.isPrimary ? 'btn-primary glass' : 'btn-quiet']}
+            >
+              {link.label}
+              <Fragment set:html={iconExternal} />
+            </a>
+          ))}
+        </div>
+      )}
+    </article>
+
+    <footer class="cs-pagination">
+      <a href={`/projects/${prev.slug}`} class="cs-page-nav cs-page-prev glass glass-interactive">
+        <span class="cs-page-nav-sub">Previous Case Study</span>
+        <span class="cs-page-nav-title" set:html={`&larr; ${prev.title}`} />
+      </a>
+      <a href={`/projects/${next.slug}`} class="cs-page-nav cs-page-next glass glass-interactive">
+        <span class="cs-page-nav-sub">Next Case Study</span>
+        <span class="cs-page-nav-title" set:html={`${next.title} &rarr;`} />
+      </a>
+    </footer>
+  </div>
+</Layout>
+
+<style>
+  .cs-wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+  }
+
+  .cs-nav-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 2.2rem;
+  }
+  .cs-nav-sep {
+    color: var(--text-faint);
+  }
+
+  .cs-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--blue);
+    text-decoration: none;
+    font-size: var(--fs-subhead);
+    font-weight: 500;
+    transition: transform 200ms ease;
+  }
+  .cs-back-link:hover {
+    transform: translateX(-3px);
+  }
+  :global(.cs-back-link svg) {
+    width: 16px !important;
+    height: 16px !important;
+    flex-shrink: 0;
+  }
+
+  .cs-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .cs-category-badge {
+    display: inline-block;
+    font-size: var(--fs-caption2);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--cyan);
+    background: rgba(103, 232, 249, 0.1);
+    border: 1px solid rgba(103, 232, 249, 0.25);
+    border-radius: var(--r-pill);
+    padding: 0.25rem 0.75rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .cs-title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0 0 0.8rem;
+    line-height: 1.25;
+  }
+
+  .cs-subtitle {
+    font-size: var(--fs-body);
+    color: var(--text-dim);
+    line-height: 1.65;
+    margin: 0 0 1.5rem;
+  }
+
+  .cs-meta-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    font-size: var(--fs-footnote);
+    color: var(--text-dim);
+    padding: 0.9rem 1.2rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    margin-bottom: 1.2rem;
+  }
+  .cs-meta-label {
+    color: var(--blue-soft);
+  }
+
+  .cs-stack-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .cs-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .cs-metric-card {
+    border-radius: var(--r-md);
+    padding: 1.2rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .cs-metric-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 0.35rem;
+  }
+  .cs-metric-label {
+    font-size: var(--fs-caption1);
+    font-weight: 600;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.2rem;
+  }
+  .cs-metric-detail {
+    font-size: var(--fs-caption2);
+    color: var(--text-faint);
+  }
+
+  .cs-media-section {
+    border-radius: var(--r-lg);
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    overflow: hidden;
+  }
+  .cs-phone-pair {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .cs-phone-single {
+    display: flex;
+    justify-content: center;
+  }
+  .cs-diagram-frame {
+    background: #fff;
+    border-radius: var(--r-sm);
+    padding: 0.6rem;
+    width: 100%;
+    max-width: 720px;
+    line-height: 0;
+  }
+  .cs-diagram-frame img {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+
+  .cs-content {
+    display: grid;
+    gap: 1.8rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .cs-card {
+    border-radius: var(--r-lg);
+    padding: 2rem 2.2rem;
+  }
+  @media (max-width: 640px) {
+    .cs-card {
+      padding: 1.5rem 1.2rem;
+    }
+  }
+
+  .cs-section-heading {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  :global(.cs-section-heading svg) {
+    width: 18px !important;
+    height: 18px !important;
+    color: var(--blue);
+  }
+
+  .cs-body-text {
+    font-size: var(--fs-body);
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  .cs-ascii-diagram {
+    background: #06080d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--r-md);
+    padding: 1.2rem;
+    margin: 0 0 1.2rem;
+    overflow-x: auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--blue-soft);
+    line-height: 1.45;
+  }
+
+  .cs-principles-list {
+    margin: 0;
+    padding-left: 1.3rem;
+    font-size: var(--fs-subhead);
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+  .cs-principles-list li {
+    margin-bottom: 0.6rem;
+  }
+
+  .cs-receipt-card {
+    border-color: rgba(120, 160, 255, 0.3);
+    background: rgba(10, 15, 24, 0.75);
+  }
+  .cs-receipt-header {
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  .cs-receipt-header .cs-section-heading {
+    margin-bottom: 0.3rem;
+  }
+  .cs-receipt-explanation {
+    font-size: var(--fs-subhead);
+    color: var(--text);
+    line-height: 1.6;
+    margin: 0.8rem 0 0.5rem;
+  }
+
+  .cs-takeaways-list {
+    margin: 0;
+    padding-left: 1.3rem;
+    font-size: var(--fs-subhead);
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+  .cs-takeaways-list li {
+    margin-bottom: 0.6rem;
+  }
+
+  .cs-actions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+
+  .cs-pagination {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    border-top: 1px solid var(--border);
+    padding-top: 2.5rem;
+  }
+  @media (max-width: 600px) {
+    .cs-pagination {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .cs-page-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 1.3rem 1.5rem;
+    border-radius: var(--r-md);
+    text-decoration: none;
+    transition: transform 220ms ease, border-color 220ms ease;
+  }
+  .cs-page-prev {
+    text-align: left;
+  }
+  .cs-page-next {
+    text-align: right;
+  }
+  .cs-page-nav:hover {
+    transform: translateY(-2px);
+    border-color: var(--blue);
+  }
+  .cs-page-nav-sub {
+    font-size: var(--fs-caption2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+    margin-bottom: 0.3rem;
+  }
+  .cs-page-nav-title {
+    font-size: var(--fs-subhead);
+    font-weight: 600;
+    color: var(--blue-soft);
+  }
+</style>
